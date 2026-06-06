@@ -775,6 +775,7 @@
       "mood": ["formal", "dangerous"],
       "blocks": [
         { "type": "dialogue", "speaker": "Mara Vey", "characterId": "mara_vey", "emotion": "confident", "stance": "presenting_evidence", "position": "lower-left", "animation": "evidence-slam", "text": "The court record says otherwise. Let's test the exact minute you say never happened." },
+        { "type": "dialogue", "speaker": "Lyra Mont", "characterId": "lyra_mont", "emotion": "serious", "stance": "testifying", "position": "upper-right", "animation": "subtle-breathing", "text": "The elevator log was not my business. I stayed where visitors could see me." },
         { "type": "dialogue", "speaker": "Lyra Mont", "characterId": "lyra_mont", "emotion": "afraid", "stance": "hands_on_rail", "position": "upper-right", "animation": "tense-shake", "text": "I left through the front doors before the alarm. I never went below the lobby." },
         { "type": "gameplay_hook", "hookId": "present-contradiction" }
       ],

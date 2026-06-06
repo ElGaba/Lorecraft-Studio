@@ -54,6 +54,11 @@ function characterMap(characters: CharacterDefinition[]) {
 }
 
 type DialogueBlock = Extract<ContentBlock, { type: "dialogue" }>;
+type TestimonyStatement = {
+  id: string;
+  text: string;
+  speaker: string;
+};
 
 function characterImage(character: CharacterDefinition | undefined, block?: DialogueBlock) {
   if (!character) {
@@ -195,32 +200,98 @@ function TargetLabel({ target }: { target: GameplayHook["successTarget"] }) {
   );
 }
 
-function lastDialogueBeforeHook(scene: SceneDefinition) {
+function dialogueBlocksBeforeHook(scene: SceneDefinition) {
   const hookIndex = scene.blocks.findIndex((block) => block.type === "gameplay_hook");
   const searchBlocks = hookIndex >= 0 ? scene.blocks.slice(0, hookIndex) : scene.blocks;
-  for (let index = searchBlocks.length - 1; index >= 0; index -= 1) {
-    const block = searchBlocks[index];
-    if (block.type === "dialogue") {
-      return block.text;
+  return searchBlocks.filter((block): block is DialogueBlock => block.type === "dialogue");
+}
+
+function testimonyStatementsBeforeHook(scene: SceneDefinition, characters: Map<string, CharacterDefinition>) {
+  const dialogueBlocks = dialogueBlocksBeforeHook(scene);
+  const witnessBlocks = dialogueBlocks.filter((block) => {
+    const character = block.characterId ? characters.get(block.characterId) : undefined;
+    const roleText = `${character?.role ?? ""} ${character?.archetype ?? ""}`.toLowerCase();
+    return roleText.includes("witness");
+  });
+  const sourceBlocks = witnessBlocks.length > 0 ? witnessBlocks : dialogueBlocks.slice(-1);
+
+  return sourceBlocks.map((block, index): TestimonyStatement => ({
+    id: `${block.characterId ?? block.speaker}-${index}`,
+    text: block.text,
+    speaker: block.speaker
+  }));
+}
+
+function targetStatementIndex(statements: TestimonyStatement[], hook: GameplayHook) {
+  if (statements.length === 0) {
+    return -1;
+  }
+
+  const hint = `${hook.expectedPlayerAction ?? ""} ${hook.successCondition ?? ""}`.toLowerCase();
+  const targetMatchers = [
+    {
+      applies: hint.includes("basement") || hint.includes("denial"),
+      terms: ["below the lobby", "basement"]
+    },
+    {
+      applies: hint.includes("window"),
+      terms: ["window", "sill", "latch"]
+    },
+    {
+      applies: hint.includes("alarm"),
+      terms: ["alarm", "before"]
+    }
+  ];
+
+  for (const matcher of targetMatchers) {
+    if (!matcher.applies) {
+      continue;
+    }
+    const index = statements.findIndex((statement) => {
+      const text = statement.text.toLowerCase();
+      return matcher.terms.some((term) => text.includes(term));
+    });
+    if (index >= 0) {
+      return index;
     }
   }
-  return "";
+
+  return statements.length - 1;
+}
+
+function pressInsight(statement: TestimonyStatement | undefined) {
+  const text = statement?.text.toLowerCase() ?? "";
+  if (text.includes("below the lobby") || text.includes("basement")) {
+    return "The basement denial becomes the pressure point.";
+  }
+  if (text.includes("elevator")) {
+    return "The elevator answer touches the timeline, but it is not the contradiction by itself.";
+  }
+  if (text.includes("alarm")) {
+    return "The alarm timing matters, but Mara needs a physical record before the court will move.";
+  }
+  return "Mara presses for texture. The answer holds, for now.";
 }
 
 function GameplayHookPanel({
   hook,
   onResolve,
-  statement,
+  statements,
   evidenceItems,
   assets
 }: {
   hook: GameplayHook;
   onResolve: (hookId: string, outcome: "success" | "failure") => void;
-  statement?: string;
+  statements?: TestimonyStatement[];
   evidenceItems?: ItemDefinition[];
   assets?: Map<string, AssetDefinition>;
 }) {
-  const [statementSelected, setStatementSelected] = useState(false);
+  const testimonyStatements = statements?.length
+    ? statements
+    : [{ id: "statement-fallback", text: hook.successCondition || "Select the contradicted statement.", speaker: "Witness" }];
+  const [activeStatementIndex, setActiveStatementIndex] = useState(0);
+  const [selectedStatementIndex, setSelectedStatementIndex] = useState<number | undefined>();
+  const [pressedStatementIndex, setPressedStatementIndex] = useState<number | undefined>();
   const [selectedEvidenceId, setSelectedEvidenceId] = useState("");
   const isCourtroomHook = hook.type === "evidence_presentation" || hook.type === "contradiction";
   const hookLabel = isCourtroomHook ? "Cross-Examination" : "Gameplay Hook";
@@ -228,11 +299,14 @@ function GameplayHookPanel({
   const hookPrompt = isCourtroomHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : "";
   const successLabel = isCourtroomHook ? "Present Evidence" : "Simulate Success";
   const failureLabel = isCourtroomHook ? "Press Witness" : "Simulate Failure";
+  const activeStatement = testimonyStatements[activeStatementIndex];
   const selectedEvidence = evidenceItems?.find((item) => item.id === selectedEvidenceId);
-  const canPresent = !isCourtroomHook || (statementSelected && Boolean(selectedEvidence));
+  const matchingStatementIndex = targetStatementIndex(testimonyStatements, hook);
+  const statementMatches = !isCourtroomHook || selectedStatementIndex === matchingStatementIndex;
+  const canPresent = !isCourtroomHook || (selectedStatementIndex !== undefined && Boolean(selectedEvidence));
   const requiredAssetIds = hook.assetRequirements ?? [];
   const evidenceMatches = selectedEvidence?.imageAssetId ? requiredAssetIds.includes(selectedEvidence.imageAssetId) : false;
-  const presentOutcome = !isCourtroomHook || requiredAssetIds.length === 0 || evidenceMatches ? "success" : "failure";
+  const presentOutcome = !isCourtroomHook || (statementMatches && (requiredAssetIds.length === 0 || evidenceMatches)) ? "success" : "failure";
 
   return (
     <section className="ak-hook" aria-label={`Gameplay hook ${hook.id}`}>
@@ -249,15 +323,45 @@ function GameplayHookPanel({
       {isCourtroomHook && (
         <div className="ak-cross-exam-module">
           <div className="ak-statement-select">
-            <span className="ak-section-label">Witness Statement</span>
+            <div className="ak-testimony-nav">
+              <span className="ak-section-label">Witness Statement</span>
+              <strong>
+                Statement {activeStatementIndex + 1} / {testimonyStatements.length}
+              </strong>
+              <button
+                type="button"
+                disabled={activeStatementIndex === 0}
+                onClick={() => setActiveStatementIndex((current) => Math.max(current - 1, 0))}
+              >
+                Previous statement
+              </button>
+              <button
+                type="button"
+                disabled={activeStatementIndex >= testimonyStatements.length - 1}
+                onClick={() => setActiveStatementIndex((current) => Math.min(current + 1, testimonyStatements.length - 1))}
+              >
+                Next statement
+              </button>
+            </div>
             <button
               type="button"
-              aria-pressed={statementSelected}
-              className={statementSelected ? "is-selected" : ""}
-              onClick={() => setStatementSelected(true)}
+              aria-pressed={selectedStatementIndex === activeStatementIndex}
+              className={selectedStatementIndex === activeStatementIndex ? "is-selected" : ""}
+              onClick={() => {
+                setSelectedStatementIndex(activeStatementIndex);
+              }}
             >
-              {statement || hook.successCondition || "Select the contradicted statement."}
+              {activeStatement?.text}
             </button>
+            <button type="button" className="ak-press-statement" onClick={() => setPressedStatementIndex(activeStatementIndex)}>
+              Press Statement
+            </button>
+            {pressedStatementIndex === activeStatementIndex && (
+              <div className="ak-press-callout" aria-live="polite">
+                <strong>HOLD IT!</strong>
+                <p>{pressInsight(activeStatement)}</p>
+              </div>
+            )}
           </div>
 
           <div className="ak-evidence-select">
@@ -281,6 +385,9 @@ function GameplayHookPanel({
             </div>
           </div>
 
+          {selectedStatementIndex !== undefined && (
+            <p className="ak-selected-evidence">Selected Statement: {selectedStatementIndex + 1}</p>
+          )}
           {selectedEvidence && <p className="ak-selected-evidence">Selected Evidence: {selectedEvidence.name}</p>}
         </div>
       )}
@@ -435,7 +542,7 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
   const visibleHooks = isArtScriptComplete ? hooks : [];
   const visibleChoices = isArtScriptComplete && (!isArtScene || visibleHooks.length === 0) ? choices : [];
   const advanceLabel = safeScriptCursor < artStoryBlocks.length - 1 ? "Advance testimony" : "Start cross-examination";
-  const courtroomStatement = lastDialogueBeforeHook(scene);
+  const testimonyStatements = testimonyStatementsBeforeHook(scene, characters);
   const evidenceItems = state.inventory
     .map((itemId) => items.get(itemId))
     .filter((item): item is ItemDefinition => item !== undefined && item.kind === "evidence");
@@ -518,7 +625,7 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
                         key={`${hook.id}-${index}`}
                         hook={hook}
                         onResolve={handleHook}
-                        statement={courtroomStatement}
+                        statements={testimonyStatements}
                         evidenceItems={evidenceItems}
                         assets={assets}
                       />

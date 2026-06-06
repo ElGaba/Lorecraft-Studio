@@ -83,14 +83,28 @@ test("the last testimony presents an image-backed courtroom visual novel scene",
   await expect(page.getByText("present-contradiction")).not.toBeVisible();
 
   await page.getByRole("button", { name: "Advance testimony" }).click();
+  await expect(page.getByText("The elevator log was not my business. I stayed where visitors could see me.")).toBeVisible();
+  await expect(page.getByText("I left through the front doors before the alarm. I never went below the lobby.")).not.toBeVisible();
+  await expect(page.getByText("The court record says otherwise. Let's test the exact minute you say never happened.")).not.toBeVisible();
+  await expect(page.getByText("present-contradiction")).not.toBeVisible();
+
+  await page.getByRole("button", { name: "Advance testimony" }).click();
   await expect(page.getByText("I left through the front doors before the alarm. I never went below the lobby.")).toBeVisible();
   await expect(page.getByText("The court record says otherwise. Let's test the exact minute you say never happened.")).not.toBeVisible();
+  await expect(page.getByText("The elevator log was not my business. I stayed where visitors could see me.")).not.toBeVisible();
   await expect(page.getByText("present-contradiction")).not.toBeVisible();
 
   await page.getByRole("button", { name: "Start cross-examination" }).click();
   await expect(page.getByRole("heading", { name: "Find the contradiction" })).toBeVisible();
   await expect(page.getByText("present-contradiction")).toBeVisible();
+  await expect(page.getByText("Statement 1 / 2")).toBeVisible();
+  await expect(page.getByRole("button", { name: "The elevator log was not my business. I stayed where visitors could see me." })).toBeVisible();
+  await page.getByRole("button", { name: "Next statement" }).click();
+  await expect(page.getByText("Statement 2 / 2")).toBeVisible();
   await expect(page.getByText("Witness Statement", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Press Statement" }).click();
+  await expect(page.getByText("HOLD IT!", { exact: true })).toBeVisible();
+  await expect(page.getByText("The basement denial becomes the pressure point.")).toBeVisible();
   await expect(page.getByRole("button", { name: "I left through the front doors before the alarm. I never went below the lobby." })).toBeVisible();
   await expect(page.getByText("Select Evidence", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Present Evidence" })).toBeDisabled();
@@ -106,4 +120,26 @@ test("the last testimony presents an image-backed courtroom visual novel scene",
   await expect(page.getByText("OBJECTION!", { exact: true })).toBeVisible();
   await expect(page.getByRole("img", { name: "Scene background: Witness Cracks" })).toBeVisible();
   await expect(page.getByText("I only went down because I heard the alarm before it sounded upstairs.")).toBeVisible();
+});
+
+test("the last testimony punishes presenting the right evidence on the wrong statement", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByLabel("Prototype").selectOption("the-last-testimony");
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
+  await page.getByRole("button", { name: "Return to court with the keycard" }).click();
+  await page.getByRole("button", { name: "Advance testimony" }).click();
+  await page.getByRole("button", { name: "Advance testimony" }).click();
+  await page.getByRole("button", { name: "Start cross-examination" }).click();
+
+  await expect(page.getByText("Statement 1 / 2")).toBeVisible();
+  await page.getByRole("button", { name: "The elevator log was not my business. I stayed where visitors could see me." }).click();
+  await page.getByRole("button", { name: "Elevator Keycard" }).click();
+  await expect(page.getByText("Selected Statement: 1")).toBeVisible();
+  await expect(page.getByText("Selected Evidence: Elevator Keycard")).toBeVisible();
+
+  await page.getByRole("button", { name: "Present Evidence" }).click();
+  await expect(page.getByRole("heading", { name: "Objection Sustained" })).toBeVisible();
+  await expect(page.getByText("The court will not follow speculation into the basement.")).toBeVisible();
 });

@@ -436,8 +436,63 @@
   text-align: left;
 }
 
-.ak-statement-select button {
+.ak-statement-select > button:not(.ak-press-statement) {
   border-left: 4px solid rgba(242, 169, 59, 0.75);
+}
+
+.ak-testimony-nav {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+.ak-testimony-nav strong {
+  color: #f8ead3;
+  font-size: 0.72rem;
+  margin-right: auto;
+}
+
+.ak-testimony-nav button,
+.ak-statement-select .ak-press-statement {
+  background: rgba(16, 32, 40, 0.86);
+  border-color: rgba(242, 169, 59, 0.28);
+  color: #f8ead3;
+  font-size: 0.68rem;
+  font-weight: 850;
+  min-height: 2rem;
+  padding: 0.38rem 0.52rem;
+  text-transform: uppercase;
+}
+
+.ak-testimony-nav button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.ak-statement-select .ak-press-statement {
+  justify-self: start;
+}
+
+.ak-press-callout {
+  background: linear-gradient(90deg, rgba(242, 169, 59, 0.98), rgba(239, 109, 103, 0.96));
+  box-shadow: 0 0.65rem 1.4rem rgba(239, 109, 103, 0.2);
+  color: #21090a;
+  display: grid;
+  gap: 0.14rem;
+  padding: 0.5rem 0.62rem;
+}
+
+.ak-press-callout strong {
+  font-size: clamp(1.05rem, 2.6vw, 1.45rem);
+  line-height: 0.95;
+}
+
+.ak-press-callout p {
+  font-size: 0.78rem;
+  font-weight: 760;
+  line-height: 1.25;
+  margin: 0;
 }
 
 .ak-evidence-select > div {
