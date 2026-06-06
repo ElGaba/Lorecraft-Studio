@@ -8,6 +8,7 @@ import {
   Download,
   Film,
   Image,
+  ListTree,
   Monitor,
   Play as PlayIcon,
   RotateCcw,
@@ -41,9 +42,12 @@ import { loadContentLibrary } from "./contentLibrary";
 import "./styles.css";
 
 type AppMode = "studio" | "play" | "chapter";
-type StudioTab = "scenes" | "characters" | "assets" | "hooks" | "bible" | "export" | "settings";
+type StudioTab = "overview" | "scenes" | "characters" | "assets" | "hooks" | "bible" | "export" | "settings";
 type PreviewMode = "mobile-landscape" | "mobile-portrait" | "tablet" | "desktop";
 type IconComponent = typeof Smartphone;
+type SceneChoice = NonNullable<SceneDefinition["choices"]>[number];
+type ChoiceEffect = NonNullable<SceneChoice["effects"]>[number];
+type ChoiceTarget = SceneChoice["target"];
 
 const previewModes: Array<{
   id: PreviewMode;
@@ -82,6 +86,7 @@ const studioTabs: Array<{
   label: string;
   Icon: IconComponent;
 }> = [
+  { id: "overview", label: "Chapter Overview", Icon: ListTree },
   { id: "scenes", label: "Scenes", Icon: Film },
   { id: "characters", label: "Characters", Icon: UserRound },
   { id: "assets", label: "Assets", Icon: Image },
@@ -312,6 +317,55 @@ function firstId<T extends { id: string }>(items: T[]) {
 
 function formatErrors(errors: ValidationError[]) {
   return errors.length > 0 ? formatValidationErrors(errors) : "No validation errors.";
+}
+
+function targetSummary(game: GameDefinition, target: ChoiceTarget) {
+  if (target.type === "ending") {
+    return `ending: ${target.id}`;
+  }
+
+  const scene = game.scenes.find((candidate) => candidate.id === target.id);
+  return `scene: ${scene?.title ?? target.id}`;
+}
+
+function hookFromSceneBlock(game: GameDefinition, block: SceneDefinition["blocks"][number]) {
+  if (block.type !== "gameplay_hook") {
+    return undefined;
+  }
+
+  return block.hook ?? game.gameplayHooks.find((hook) => hook.id === block.hookId);
+}
+
+function gameplaySequencesFor(game: GameDefinition) {
+  return game.scenes.flatMap((scene) =>
+    scene.blocks
+      .map((block) => {
+        const hook = hookFromSceneBlock(game, block);
+        return hook ? { scene, hook } : undefined;
+      })
+      .filter((entry): entry is { scene: SceneDefinition; hook: GameplayHook } => Boolean(entry))
+  );
+}
+
+function branchingChoicesFor(game: GameDefinition) {
+  return game.scenes.flatMap((scene) =>
+    (scene.choices ?? [])
+      .filter((choice) => choice.conditions?.length || choice.effects?.length || choice.target.type === "ending")
+      .map((choice) => ({ scene, choice }))
+  );
+}
+
+function choiceEffectSummary(effect: ChoiceEffect) {
+  switch (effect.type) {
+    case "setVariable":
+      return `${effect.variable} = ${String(effect.value)}`;
+    case "incrementVariable":
+      return `${effect.variable} ${effect.by >= 0 ? "+" : ""}${effect.by}`;
+    case "addItem":
+      return `add ${effect.itemId}`;
+    case "removeItem":
+      return `remove ${effect.itemId}`;
+  }
 }
 
 function ScenePreview({ scene }: { scene: SceneDefinition }) {
@@ -572,6 +626,184 @@ function App() {
       character: selectedCharacter,
       hook: selectedHook
     }));
+  }
+
+  function renderOverviewPanel() {
+    if (!selectedGame) {
+      return null;
+    }
+
+    const sequences = gameplaySequencesFor(selectedGame);
+    const evidenceItems = selectedGame.items.filter((item) => item.kind === "evidence");
+    const branchingChoices = branchingChoicesFor(selectedGame);
+    const validationResult = validateGame(selectedGame, selectedGame.metadata.id);
+    const validationIssues = validationResult.ok ? [] : validationResult.errors;
+    const readyAssets = selectedGame.assets.filter((asset) =>
+      asset.status === "approved" || asset.status === "generated" || Boolean(asset.url)
+    );
+    const promptedAssets = selectedGame.assets.filter((asset) => asset.status === "prompted");
+    const neededAssets = selectedGame.assets.filter((asset) => asset.status === "needed");
+
+    return (
+      <section className="editor-surface chapter-overview-panel" aria-label="Chapter overview">
+        <div className="panel-heading-row">
+          <div>
+            <span className="kicker">Flagship Production Map</span>
+            <h2>Chapter Overview</h2>
+            <p className="overview-lede">{selectedGame.metadata.summary}</p>
+          </div>
+          <button type="button" className="overview-reference-button" onClick={validateSelectedProject}>
+            <CheckCircle2 size={16} aria-hidden="true" />
+            <span>Run Reference Check</span>
+          </button>
+        </div>
+
+        <div className="overview-stat-grid">
+          <div>
+            <span>Scenes</span>
+            <strong>{selectedGame.scenes.length}</strong>
+            <p>{selectedGame.startScene}</p>
+          </div>
+          <div>
+            <span>Gameplay</span>
+            <strong>{sequences.length}</strong>
+            <p>{selectedGame.storyBible?.gameplayModulePlan.join(" / ")}</p>
+          </div>
+          <div>
+            <span>Evidence</span>
+            <strong>{evidenceItems.length}</strong>
+            <p>{selectedGame.items.filter((item) => item.initiallyOwned).length} initially owned</p>
+          </div>
+          <div>
+            <span>Endings</span>
+            <strong>{selectedGame.endings.length}</strong>
+            <p>{branchingChoices.length} branching points</p>
+          </div>
+        </div>
+
+        <div className="overview-grid">
+          <section className="overview-section overview-section-wide">
+            <header>
+              <span>Story Beats</span>
+              <strong>{selectedGame.storyBible?.chapterOutline.join(" -> ")}</strong>
+            </header>
+            <ol className="overview-timeline">
+              {selectedGame.scenes.map((scene, index) => (
+                <li key={scene.id}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <strong>{scene.title}</strong>
+                    <p>{scene.purpose ?? scene.synopsis ?? scene.background}</p>
+                    <small>{[scene.location, scene.transition, scene.camera].filter(Boolean).join(" / ")}</small>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section className="overview-section">
+            <header>
+              <span>Gameplay Sequences</span>
+              <strong>{sequences.length} playable hooks</strong>
+            </header>
+            <ul className="overview-list">
+              {sequences.map(({ scene, hook }) => (
+                <li key={`${scene.id}-${hook.id}`}>
+                  <strong>{hook.id}</strong>
+                  <p>{hook.title ?? hook.narrativePurpose ?? hook.notes}</p>
+                  <small>{hook.type} in {scene.title}</small>
+                  <small>Success: {targetSummary(selectedGame, hook.successTarget)}</small>
+                  <small>Failure: {targetSummary(selectedGame, hook.failureTarget)}</small>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="overview-section">
+            <header>
+              <span>Evidence Chain</span>
+              <strong>{evidenceItems.length} court record items</strong>
+            </header>
+            <ul className="overview-list">
+              {evidenceItems.map((item) => {
+                const asset = item.imageAssetId ? selectedGame.assets.find((candidate) => candidate.id === item.imageAssetId) : undefined;
+                return (
+                  <li key={item.id}>
+                    <strong>{item.name}</strong>
+                    <p>{item.description}</p>
+                    <small>{item.id}{asset ? ` / ${asset.status}` : ""}</small>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+
+          <section className="overview-section">
+            <header>
+              <span>Branching Points</span>
+              <strong>{branchingChoices.length} state-aware choices</strong>
+            </header>
+            <ul className="overview-list">
+              {branchingChoices.map(({ scene, choice }) => (
+                <li key={`${scene.id}-${choice.id}`}>
+                  <strong>{choice.label}</strong>
+                  <p>{scene.title}{" -> "}{targetSummary(selectedGame, choice.target)}</p>
+                  <small>{choice.effects?.map(choiceEffectSummary).join(" / ") || "conditional branch"}</small>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="overview-section">
+            <header>
+              <span>Chapter Outcomes</span>
+              <strong>{selectedGame.endings.length} possible results</strong>
+            </header>
+            <ul className="overview-list">
+              {selectedGame.endings.map((ending) => (
+                <li key={ending.id}>
+                  <strong>{ending.id}</strong>
+                  <p>{ending.title}</p>
+                  <small>{ending.tone}</small>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="overview-section">
+            <header>
+              <span>Reference Check</span>
+              <strong>{validationIssues.length === 0 ? "Clean" : `${validationIssues.length} issues`}</strong>
+            </header>
+            {validationIssues.length === 0 ? (
+              <p className="overview-ok">No broken references.</p>
+            ) : (
+              <pre className="validation-output">{formatValidationErrors(validationIssues)}</pre>
+            )}
+          </section>
+
+          <section className="overview-section">
+            <header>
+              <span>Asset Readiness</span>
+              <strong>{readyAssets.length} ready / {selectedGame.assets.length} total</strong>
+            </header>
+            <dl className="overview-readiness">
+              <div><dt>Generated or approved</dt><dd>{readyAssets.length}</dd></div>
+              <div><dt>Prompted</dt><dd>{promptedAssets.length}</dd></div>
+              <div><dt>Needed</dt><dd>{neededAssets.length}</dd></div>
+            </dl>
+            <ul className="overview-list compact">
+              {selectedGame.assets.slice(0, 6).map((asset) => (
+                <li key={asset.id}>
+                  <strong>{asset.title}</strong>
+                  <small>{asset.type} / {asset.status} / {asset.aspectRatio}</small>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+      </section>
+    );
   }
 
   function renderScenePanel() {
@@ -939,6 +1171,8 @@ function App() {
 
   function renderActivePanel() {
     switch (activeTab) {
+      case "overview":
+        return renderOverviewPanel();
       case "characters":
         return renderCharacterPanel();
       case "assets":

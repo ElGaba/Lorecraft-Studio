@@ -92,6 +92,29 @@ test("the last testimony launches as a dedicated chapter playthrough", async ({ 
   await expect(page.getByRole("button", { name: "Studio" })).toBeVisible();
 });
 
+test("the last testimony exposes a chapter overview for production readiness", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByLabel("Project")).toHaveValue("the-last-testimony");
+  await expect(page.getByRole("button", { name: "Chapter Overview" })).toBeVisible();
+  await page.getByRole("button", { name: "Chapter Overview" }).click();
+
+  const overview = page.getByLabel("Chapter overview");
+  await expect(overview.getByRole("heading", { name: "Chapter Overview" })).toBeVisible();
+  await expect(overview.getByText("Story Beats", { exact: true })).toBeVisible();
+  await expect(overview.getByText("Gameplay Sequences", { exact: true })).toBeVisible();
+  await expect(overview.getByText("Evidence Chain", { exact: true })).toBeVisible();
+  await expect(overview.getByText("Branching Points", { exact: true })).toBeVisible();
+  await expect(overview.getByText("Chapter Outcomes", { exact: true })).toBeVisible();
+  await expect(overview.getByText("Reference Check", { exact: true })).toBeVisible();
+  await expect(overview.getByText("Asset Readiness", { exact: true })).toBeVisible();
+  await expect(overview.getByText("Rain at the Courthouse", { exact: true }).first()).toBeVisible();
+  await expect(overview.getByText("present-contradiction")).toBeVisible();
+  await expect(overview.getByText("Elevator Keycard", { exact: true })).toBeVisible();
+  await expect(overview.getByText("timeline-revealed", { exact: true })).toBeVisible();
+  await expect(overview.getByText("No broken references.")).toBeVisible();
+});
+
 test("the last testimony chapter playthrough resumes local progress until restarted", async ({ page }) => {
   await page.goto("/");
 

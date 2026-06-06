@@ -26,6 +26,10 @@ The Last Testimony is the flagship project and should be treated as the main sho
 
 The current Chapter 1 direction is a noir courtroom mystery with testimony navigation, evidence presentation, contradiction feedback, chain-of-custody review, and cinematic payoff moments. The flagship content floor is now represented in source data: at least 18 scenes, 7 characters, 10 evidence items, 8 gameplay sequences, 4 variable-driven choices, and 3 outcomes.
 
+## Chapter Overview
+
+Studio mode includes a Chapter Overview tab for the selected project. For The Last Testimony it acts as the flagship production map: scene order and dramatic purpose, gameplay sequence routing, evidence chain, branching choice effects, possible outcomes, validation status, and asset readiness.
+
 ## Compatibility Names
 
 Internal package names still use `@adventurekit/*` for now. This keeps the current workspace stable while the product identity transitions. Public UI, README copy, docs, browser metadata, and flagship content should use Lorecraft Studio.

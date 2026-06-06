@@ -72,6 +72,7 @@ The Chapter 1 target is a complete beginning, middle, climax, and chapter ending
 
 ## Studio Areas
 
+- Chapter Overview: story beats, gameplay sequences, evidence chain, branching points, outcomes, reference check, and asset readiness.
 - Scene Editor: purpose, synopsis, camera, background, prompts, mood, assets, and mobile layout notes.
 - Character Editor: role, visual description, base portrait prompt, emotions, stances, and variants.
 - Asset Prompt Manager: prompts for backgrounds, portraits, CGs, overlays, evidence, and hook concepts.

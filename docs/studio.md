@@ -13,6 +13,7 @@ The user-facing product name is Lorecraft Studio. Internal packages still use `@
 ## Authoring Areas
 
 - Project dashboard: scene, cast, and hook counts for the selected project.
+- Chapter Overview: flagship production map with story beats, gameplay sequence routing, evidence chain, branching choices, chapter outcomes, validation status, and asset readiness.
 - Scene Editor: rich scene metadata, background prompt, layout notes, asset ids, agent buttons, and validation.
 - Character Editor: role, visual description, base portrait prompt, emotions, stances, and variants.
 - Asset Prompt Manager: background, portrait, CG, overlay, evidence, and hook concept prompts with status.
