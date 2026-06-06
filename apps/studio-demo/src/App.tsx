@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   Archive,
@@ -9,6 +9,7 @@ import {
   Film,
   Image,
   ListTree,
+  Maximize2,
   Monitor,
   Play as PlayIcon,
   RotateCcw,
@@ -18,7 +19,8 @@ import {
   Tablet,
   UserRound,
   Wand2,
-  Workflow
+  Workflow,
+  X
 } from "lucide-react";
 import {
   createInitialState,
@@ -393,6 +395,7 @@ function ScenePreview({ scene }: { scene: SceneDefinition }) {
 }
 
 function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: () => void }) {
+  const gameViewportRef = useRef<HTMLDivElement>(null);
   const [restoredProgress, setRestoredProgress] = useState(() => loadChapterProgress(game));
   const [runtimeState, setRuntimeState] = useState<RuntimeState | undefined>(() => restoredProgress?.state);
   const [saveStatusAt, setSaveStatusAt] = useState(restoredProgress?.savedAt);
@@ -420,58 +423,73 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
   }
 
   async function enterFullscreen() {
-    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-      await document.documentElement.requestFullscreen();
+    if (!document.fullscreenElement && gameViewportRef.current?.requestFullscreen) {
+      await gameViewportRef.current.requestFullscreen();
     }
   }
 
   return (
     <main className="chapter-playthrough-shell">
-      <header className={["chapter-hud", hasSavedProgress ? "has-save-status" : ""].filter(Boolean).join(" ")} aria-label="Chapter playthrough controls">
-        <div className="chapter-title-lockup">
-          <span>Lorecraft Studio</span>
-          <h1>{game.metadata.title}</h1>
-          <p>Chapter 1 Playthrough</p>
-        </div>
-
-        <div className="chapter-hud-panel" aria-label="Current chapter objective">
-          <span>Objective</span>
-          <strong>{objective}</strong>
-        </div>
-
-        <div className="chapter-progress" aria-label="Chapter progress">
-          <span>Progress</span>
-          <strong>{chapterProgress}%</strong>
-          <div aria-hidden="true"><span style={{ width: `${chapterProgress}%` }} /></div>
-        </div>
-
-        {hasSavedProgress && (
-          <div className="chapter-hud-panel chapter-save-status" aria-label="Local save status">
-            <span>Saved Progress</span>
-            <strong>{currentScene?.title ?? "Chapter progress"}</strong>
+      <section
+        ref={gameViewportRef}
+        className={["chapter-game-viewport", hasSavedProgress ? "has-save-status" : ""].filter(Boolean).join(" ")}
+        aria-label="The Last Testimony game viewport"
+      >
+        <header className="chapter-hud" aria-label="Chapter playthrough controls">
+          <div className="chapter-title-lockup">
+            <span>Chapter 1</span>
+            <h1>{game.metadata.title}</h1>
+            <p>Chapter 1 Playthrough</p>
           </div>
-        )}
 
-        <div className="chapter-hud-actions">
-          <button type="button" onClick={enterFullscreen}>Enter Fullscreen</button>
-          <button type="button" onClick={restartChapter}>Restart Chapter</button>
-          <button type="button" onClick={onExit}>Exit Playthrough</button>
-        </div>
-      </header>
+          <div className="chapter-hud-panel" aria-label="Current chapter objective">
+            <span>Objective</span>
+            <strong>{objective}</strong>
+          </div>
 
-      <section className="chapter-stage-wrap" aria-label="The Last Testimony full-screen playthrough">
+          <div className="chapter-progress" aria-label="Chapter progress">
+            <span>Progress</span>
+            <strong>{chapterProgress}%</strong>
+            <div aria-hidden="true"><span style={{ width: `${chapterProgress}%` }} /></div>
+          </div>
+
+          {hasSavedProgress && (
+            <div className="chapter-hud-panel chapter-save-status" aria-label="Local save status">
+              <span>Saved Progress</span>
+              <strong>{currentScene?.title ?? "Chapter progress"}</strong>
+            </div>
+          )}
+
+          <div className="chapter-record-pill" aria-label="Court Record count">
+            <span>Court Record</span>
+            <strong>{evidenceCount}</strong>
+          </div>
+
+          <div className="chapter-hud-actions">
+            <button type="button" onClick={enterFullscreen}>
+              <Maximize2 aria-hidden="true" />
+              <span>Enter Fullscreen</span>
+            </button>
+            <button type="button" onClick={restartChapter}>
+              <RotateCcw aria-hidden="true" />
+              <span>Restart Chapter</span>
+            </button>
+            <button type="button" onClick={onExit}>
+              <X aria-hidden="true" />
+              <span>Exit Playthrough</span>
+            </button>
+          </div>
+        </header>
+
         <div className="chapter-stage">
           <AdventureRuntime
             key={`${game.metadata.id}-${restartKey}`}
             game={game}
             initialState={restoredProgress?.state}
             onStateChange={handleRuntimeStateChange}
+            presentation="playthrough"
           />
         </div>
-        <aside className="chapter-evidence-peek" aria-label="Playthrough evidence access">
-          <span>Court Record</span>
-          <strong>{evidenceCount}</strong>
-        </aside>
       </section>
     </main>
   );

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Maintenance call slip evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <rect x="184" y="78" width="432" height="444" rx="18" fill="#e5decf"/>
+  <g fill="none" stroke="#152b36" stroke-opacity="0.56" stroke-width="10">
+    <path d="M238 166h324M238 232h258M238 298h308M238 364h220"/>
+  </g>
+  <path d="M502 382c-74-34-110-84-108-150 2-48 34-92 84-130" stroke="#5bd3df" stroke-width="18" stroke-opacity="0.22" fill="none"/>
+  <path d="M500 118l56 76-80 10z" fill="#f2a93b" opacity="0.46"/>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Elevator keycard evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <rect x="116" y="126" width="568" height="348" rx="28" fill="#172633" stroke="#5bd3df" stroke-opacity="0.65" stroke-width="8"/>
+  <rect x="164" y="180" width="190" height="112" rx="14" fill="#d8c894" opacity="0.92"/>
+  <circle cx="542" cy="254" r="62" fill="#5bd3df" opacity="0.28"/>
+  <path d="M502 254h80M542 214v80" stroke="#5bd3df" stroke-width="14" stroke-linecap="round"/>
+  <g stroke="#d9eef0" stroke-opacity="0.42" stroke-width="12">
+    <path d="M166 352h466M166 400h354"/>
+  </g>
+</svg>

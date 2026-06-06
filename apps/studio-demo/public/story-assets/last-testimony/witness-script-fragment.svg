@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Witness script fragment evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <path d="M196 92h408l-32 132 44 100-54 184H216l38-142-58-104 44-76z" fill="#e6ddc9"/>
+  <g stroke="#1a303a" stroke-width="11" stroke-opacity="0.54">
+    <path d="M270 178h260M250 246h308M284 314h220M258 382h286"/>
+  </g>
+  <rect x="258" y="296" width="280" height="44" fill="#f2a93b" opacity="0.34"/>
+</svg>

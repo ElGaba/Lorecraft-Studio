@@ -31,6 +31,19 @@
   overflow: hidden;
 }
 
+.ak-runtime-playthrough {
+  display: block;
+  gap: 0;
+}
+
+.ak-runtime-playthrough .ak-stage {
+  aspect-ratio: auto;
+  border: 0;
+  box-shadow: none;
+  height: 100%;
+  width: 100%;
+}
+
 .ak-stage.has-art {
   background: #05070a;
 }
@@ -148,6 +161,18 @@
   scrollbar-color: rgba(91, 211, 223, 0.36) rgba(2, 7, 12, 0.2);
   scrollbar-width: thin;
   z-index: 3;
+}
+
+.ak-runtime-playthrough .ak-scene {
+  overflow: hidden;
+  padding: clamp(4.25rem, 7.4vh, 5.3rem) clamp(1rem, 1.8vw, 1.35rem) clamp(0.78rem, 1.4vw, 1.1rem);
+}
+
+.ak-runtime-playthrough .ak-scene.has-art {
+  background:
+    linear-gradient(90deg, rgba(1, 4, 8, 0.62), rgba(1, 4, 8, 0.08) 44%, rgba(1, 4, 8, 0.36)),
+    linear-gradient(180deg, rgba(1, 4, 8, 0.22), transparent 42%, rgba(1, 4, 8, 0.72));
+  padding-top: clamp(4.55rem, 8vh, 5.7rem);
 }
 
 .ak-scene.has-art::-webkit-scrollbar {
@@ -279,6 +304,21 @@
   padding: 0.48rem 0.62rem;
 }
 
+.ak-runtime-playthrough .ak-scene.has-art .ak-script {
+  margin-top: auto;
+}
+
+.ak-runtime-playthrough .ak-scene.has-art .ak-dialogue,
+.ak-runtime-playthrough .ak-scene.has-art .ak-narration,
+.ak-runtime-playthrough .ak-scene.has-art .ak-hook {
+  backdrop-filter: blur(6px);
+  max-width: min(58rem, calc(100% - 1rem));
+}
+
+.ak-runtime-playthrough .ak-scene.has-art .ak-dialogue {
+  background: linear-gradient(180deg, rgba(5, 9, 14, 0.98), rgba(3, 6, 10, 0.96));
+}
+
 .ak-dialogue p {
   grid-column: 2;
   font-size: 0.94rem;
@@ -379,6 +419,11 @@
   justify-self: end;
   min-width: 10.8rem;
   width: auto;
+}
+
+.ak-runtime-playthrough .ak-dialogue-advance {
+  min-height: 2.35rem;
+  min-width: 9.5rem;
 }
 
 .ak-hook-actions .ak-danger {
@@ -615,6 +660,24 @@
 
 .ak-scene.has-art .ak-inspection-assets {
   display: none;
+}
+
+.ak-runtime-playthrough .ak-character-sprite {
+  bottom: -0.4rem;
+  max-height: 72%;
+  max-width: 34%;
+}
+
+.ak-runtime-playthrough .ak-character-sprite.is-left {
+  left: 0.5%;
+}
+
+.ak-runtime-playthrough .ak-character-sprite.is-right {
+  right: 2%;
+}
+
+.ak-runtime-playthrough .ak-character-sprite.is-muted {
+  opacity: 0.34;
 }
 
 .ak-statement-select button.is-selected,
@@ -959,6 +1022,36 @@
 
   .ak-side-rail {
     grid-template-columns: 1fr;
+  }
+
+  .ak-runtime-playthrough .ak-scene {
+    padding: clamp(3.8rem, 12vh, 4.4rem) 0.72rem 0.62rem;
+  }
+
+  .ak-runtime-playthrough .ak-scene.has-art {
+    padding-top: clamp(3.8rem, 12vh, 4.4rem);
+  }
+
+  .ak-runtime-playthrough .ak-scene.has-art .ak-scene-header,
+  .ak-runtime-playthrough .ak-scene.has-art .ak-background,
+  .ak-runtime-playthrough .ak-scene.has-art .ak-mood-list {
+    display: none;
+  }
+
+  .ak-runtime-playthrough .ak-scene.has-art .ak-script.is-vn-beat {
+    margin-left: clamp(5.4rem, 24vw, 6.2rem);
+  }
+
+  .ak-runtime-playthrough .ak-scene.has-art .ak-dialogue,
+  .ak-runtime-playthrough .ak-scene.has-art .ak-narration {
+    background: rgba(3, 8, 13, 0.92);
+    font-size: 0.9rem;
+    line-height: 1.28;
+  }
+
+  .ak-runtime-playthrough .ak-dialogue-advance {
+    min-width: 0;
+    padding-inline: 0.82rem;
   }
 }
 

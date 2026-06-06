@@ -1,4 +1,44 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function revealChoice(page: Page, choiceName: string) {
+  const choice = page.getByRole("button", { name: choiceName });
+
+  for (let step = 0; step < 6; step += 1) {
+    if (await choice.isVisible()) {
+      return;
+    }
+
+    const reviewChoices = page.getByRole("button", { name: "Review choices" });
+    if (await reviewChoices.isVisible()) {
+      await reviewChoices.click();
+      continue;
+    }
+
+    const advanceTestimony = page.getByRole("button", { name: "Advance testimony" });
+    if (await advanceTestimony.isVisible()) {
+      await advanceTestimony.click();
+      continue;
+    }
+  }
+
+  await expect(choice).toBeVisible();
+}
+
+async function revealOpeningChoices(page: Page) {
+  await revealChoice(page, "Inspect the basement elevator log");
+}
+
+async function inspectBasementLog(page: Page) {
+  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
+  await page.getByRole("button", { name: "Start inspection" }).click();
+  await page.getByRole("button", { name: "Select the 11:42 row" }).click();
+}
+
+async function returnToCourtWithCrosscheck(page: Page) {
+  await inspectBasementLog(page);
+  await revealChoice(page, "Return to court with the cross-check");
+  await page.getByRole("button", { name: "Return to court with the cross-check" }).click();
+}
 
 test("studio demo loads prototypes, switches previews, and plays through hook zones", async ({ page }) => {
   const consoleErrors: string[] = [];
@@ -72,6 +112,17 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
 });
 
 test("the last testimony launches as a dedicated chapter playthrough", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(document, "fullscreenElement", {
+      configurable: true,
+      get: () => null
+    });
+    HTMLElement.prototype.requestFullscreen = function requestFullscreenMock() {
+      const target = this.getAttribute("aria-label") ?? this.className.toString();
+      (window as Window & typeof globalThis & { __fullscreenTarget?: string }).__fullscreenTarget = target;
+      return Promise.resolve();
+    };
+  });
   await page.goto("/");
 
   await expect(page.getByLabel("Project")).toHaveValue("the-last-testimony");
@@ -86,10 +137,30 @@ test("the last testimony launches as a dedicated chapter playthrough", async ({ 
   await expect(page.getByRole("button", { name: "Exit Playthrough" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Studio" })).not.toBeVisible();
   await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
+  await expect(page.getByLabel("The Last Testimony game viewport")).toBeVisible();
+  await expect(page.getByLabel("Inventory and evidence")).not.toBeVisible();
+  await expect(page.getByLabel("Playthrough evidence access")).not.toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollHeight <= window.innerHeight + 1)).toBe(true);
+
+  await page.getByRole("button", { name: "Enter Fullscreen" }).click();
+  await expect.poll(() =>
+    page.evaluate(() => (window as Window & typeof globalThis & { __fullscreenTarget?: string }).__fullscreenTarget)
+  ).toBe("The Last Testimony game viewport");
 
   await page.getByRole("button", { name: "Exit Playthrough" }).click();
   await expect(page.getByRole("heading", { name: "Lorecraft Studio" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Studio" })).toBeVisible();
+});
+
+test("the last testimony playthrough keeps investigation scenes image-backed", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Play Chapter" }).click();
+  await revealOpeningChoices(page);
+  await inspectBasementLog(page);
+
+  await expect(page.getByRole("heading", { name: "Records Crosscheck" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Scene background: Records Crosscheck" })).toBeVisible();
 });
 
 test("the last testimony exposes a chapter overview for production readiness", async ({ page }) => {
@@ -119,6 +190,7 @@ test("the last testimony chapter playthrough resumes local progress until restar
   await page.goto("/");
 
   await page.getByRole("button", { name: "Play Chapter" }).click();
+  await revealOpeningChoices(page);
   await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
   await expect(page.getByRole("heading", { name: "Basement Log" })).toBeVisible();
 
@@ -143,8 +215,8 @@ test("the last testimony presents an image-backed courtroom visual novel scene",
 
   await page.getByLabel("Project").selectOption("the-last-testimony");
   await page.getByRole("button", { name: "Play", exact: true }).click();
-  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
-  await page.getByRole("button", { name: "Return to court with the keycard" }).click();
+  await revealOpeningChoices(page);
+  await returnToCourtWithCrosscheck(page);
 
   await expect(page.getByRole("heading", { name: "Witness Stand" })).toBeVisible();
   await expect(page.getByRole("img", { name: "Scene background: Witness Stand" })).toBeVisible();
@@ -202,8 +274,8 @@ test("the last testimony supports inspection and chain-of-custody gameplay modes
 
   await page.getByLabel("Project").selectOption("the-last-testimony");
   await page.getByRole("button", { name: "Play", exact: true }).click();
-  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
-  await page.getByRole("button", { name: "Return to court with the keycard" }).click();
+  await revealOpeningChoices(page);
+  await returnToCourtWithCrosscheck(page);
   await page.getByRole("button", { name: "Advance testimony" }).click();
   await page.getByRole("button", { name: "Advance testimony" }).click();
   await page.getByRole("button", { name: "Start cross-examination" }).click();
@@ -228,9 +300,11 @@ test("the last testimony supports inspection and chain-of-custody gameplay modes
   await page.getByRole("button", { name: "Mark the stain beneath the sill" }).click();
   await expect(page.getByRole("heading", { name: "Staged Window Path" })).toBeVisible();
 
+  await revealChoice(page, "Build the closing argument");
   await page.getByRole("button", { name: "Build the closing argument" }).click();
   await expect(page.getByRole("heading", { name: "Photo Envelope Chain" })).toBeVisible();
   await expect(page.getByText("Ione Marr", { exact: true })).toBeVisible();
+  await revealChoice(page, "Log the late photo envelope");
   await page.getByRole("button", { name: "Log the late photo envelope" }).click();
 
   await expect(page.getByRole("heading", { name: "Closing Argument", exact: true })).toBeVisible();
@@ -244,8 +318,8 @@ test("the last testimony punishes presenting the right evidence on the wrong sta
 
   await page.getByLabel("Project").selectOption("the-last-testimony");
   await page.getByRole("button", { name: "Play", exact: true }).click();
-  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
-  await page.getByRole("button", { name: "Return to court with the keycard" }).click();
+  await revealOpeningChoices(page);
+  await returnToCourtWithCrosscheck(page);
   await page.getByRole("button", { name: "Advance testimony" }).click();
   await page.getByRole("button", { name: "Advance testimony" }).click();
   await page.getByRole("button", { name: "Start cross-examination" }).click();

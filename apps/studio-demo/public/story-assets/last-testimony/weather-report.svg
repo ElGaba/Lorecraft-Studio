@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Weather report evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <rect x="118" y="72" width="564" height="456" rx="16" fill="#e8e3d3"/>
+  <rect x="156" y="118" width="488" height="58" fill="#152a35" opacity="0.9"/>
+  <g fill="none" stroke="#1b3541" stroke-width="12" opacity="0.7">
+    <path d="M174 230h452M174 292h360M174 354h422M174 416h284"/>
+  </g>
+  <path d="M542 282c42 8 76 44 76 90 0 52-42 94-94 94h-98c-56 0-102-46-102-102 0-50 36-92 84-100 22-46 70-78 126-78 52 0 98 28 122 70" fill="#91a9ad" opacity="0.62"/>
+  <g stroke="#2b7084" stroke-width="10" stroke-linecap="round">
+    <path d="M454 484l-26 52M526 484l-26 52M598 480l-26 52"/>
+  </g>
+</svg>

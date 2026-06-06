@@ -26,6 +26,7 @@ export interface AdventureRuntimeProps {
   className?: string;
   initialState?: RuntimeState;
   onStateChange?: (state: RuntimeState) => void;
+  presentation?: "preview" | "playthrough";
 }
 
 function runtimeStateForGame(game: GameDefinition, initialState?: RuntimeState) {
@@ -597,7 +598,13 @@ function impactLabel(state: RuntimeState) {
   return isCourtroomHook ? "OBJECTION!" : "";
 }
 
-export function AdventureRuntime({ game, className, initialState, onStateChange }: AdventureRuntimeProps) {
+export function AdventureRuntime({
+  game,
+  className,
+  initialState,
+  onStateChange,
+  presentation = "preview"
+}: AdventureRuntimeProps) {
   const [state, setState] = useRuntimeState(game, initialState, onStateChange);
   const [scriptCursor, setScriptCursor] = useState(0);
   const scene = getCurrentScene(state);
@@ -660,7 +667,7 @@ export function AdventureRuntime({ game, className, initialState, onStateChange 
   }
 
   return (
-    <div className={["ak-runtime", className].filter(Boolean).join(" ")}>
+    <div className={["ak-runtime", presentation === "playthrough" ? "ak-runtime-playthrough" : "", className].filter(Boolean).join(" ")}>
       <div className={["ak-stage", backgroundUrl ? "has-art" : ""].filter(Boolean).join(" ")}>
         {backgroundUrl ? (
           <img className="ak-scene-image" src={backgroundUrl} alt={`Scene background: ${scene.title}`} />
@@ -731,18 +738,20 @@ export function AdventureRuntime({ game, className, initialState, onStateChange 
         </section>
       </div>
 
-      <div className="ak-side-rail">
-        <InventoryPanel state={state} items={items} assets={assets} />
-        <VariableReadout state={state} />
-        {visibleHooks.length > 0 && (
-          <div className="ak-hook-index" aria-label="Active gameplay hooks">
-            <span className="ak-section-label">Active hook zones</span>
-            {visibleHooks.map((hook) => (
-              <span key={hook.id}>{hook.id}</span>
-            ))}
-          </div>
-        )}
-      </div>
+      {presentation !== "playthrough" && (
+        <div className="ak-side-rail">
+          <InventoryPanel state={state} items={items} assets={assets} />
+          <VariableReadout state={state} />
+          {visibleHooks.length > 0 && (
+            <div className="ak-hook-index" aria-label="Active gameplay hooks">
+              <span className="ak-section-label">Active hook zones</span>
+              {visibleHooks.map((hook) => (
+                <span key={hook.id}>{hook.id}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

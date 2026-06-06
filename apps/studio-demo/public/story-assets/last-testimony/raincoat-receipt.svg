@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Raincoat receipt evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <path d="M282 72h270l-18 456H248z" fill="#e9e0cb"/>
+  <path d="M282 72l28 42 32-42 34 42 34-42 34 42 34-42 34 42 40-42" fill="#071018"/>
+  <g stroke="#182935" stroke-width="9" stroke-opacity="0.58">
+    <path d="M300 172h188M296 228h210M292 284h176M286 340h212"/>
+  </g>
+  <rect x="304" y="398" width="170" height="52" fill="#f2a93b" opacity="0.38"/>
+  <path d="M524 196c58 58 70 122 36 192" stroke="#5bd3df" stroke-width="16" stroke-opacity="0.28" fill="none"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Charcoal glove thread evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <rect x="128" y="88" width="544" height="424" rx="22" fill="#111923" stroke="#5bd3df" stroke-opacity="0.22" stroke-width="8"/>
+  <ellipse cx="398" cy="304" rx="214" ry="126" fill="#e5dcc8" opacity="0.16"/>
+  <path d="M220 354c96-84 176-122 240-114 48 6 82 30 102 72" fill="none" stroke="#25292c" stroke-width="22" stroke-linecap="round"/>
+  <path d="M212 360c96-84 176-122 240-114 48 6 82 30 102 72" fill="none" stroke="#a9b2ae" stroke-width="5" stroke-linecap="round" opacity="0.78"/>
+  <circle cx="562" cy="318" r="34" fill="#f2a93b" opacity="0.34"/>
+</svg>

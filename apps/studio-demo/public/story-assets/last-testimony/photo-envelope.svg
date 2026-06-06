@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Sealed photo envelope evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <rect x="110" y="148" width="580" height="310" rx="16" fill="#d9cfb8" stroke="#f2a93b" stroke-opacity="0.38" stroke-width="8"/>
+  <path d="M118 166l282 192 282-192" fill="none" stroke="#8b6d43" stroke-width="10" opacity="0.42"/>
+  <path d="M118 442l214-160M682 442L468 282" fill="none" stroke="#8b6d43" stroke-width="10" opacity="0.3"/>
+  <circle cx="546" cy="324" r="44" fill="#7a1b1f" opacity="0.74"/>
+  <path d="M520 324h52M546 298v52" stroke="#f8ead3" stroke-opacity="0.42" stroke-width="8"/>
+</svg>

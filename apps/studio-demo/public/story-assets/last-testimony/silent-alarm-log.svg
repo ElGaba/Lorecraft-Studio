@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Silent alarm log evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <rect x="96" y="98" width="608" height="404" rx="18" fill="#0b151f" stroke="#5bd3df" stroke-opacity="0.45" stroke-width="8"/>
+  <g stroke="#5bd3df" stroke-opacity="0.32" stroke-width="6">
+    <path d="M148 178h504M148 242h504M148 306h504M148 370h504M148 434h504"/>
+    <path d="M318 140v330M500 140v330"/>
+  </g>
+  <rect x="326" y="304" width="166" height="52" fill="#f2a93b" opacity="0.36"/>
+  <circle cx="604" cy="330" r="24" fill="#ef6d67" opacity="0.72"/>
+</svg>

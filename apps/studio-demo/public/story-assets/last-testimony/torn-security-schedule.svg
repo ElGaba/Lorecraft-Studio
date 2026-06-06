@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Torn security schedule evidence">
+  <rect width="800" height="600" fill="#071018"/>
+  <path d="M190 76h410l32 112-44 74 50 96-32 166H176l46-126-34-92 44-82z" fill="#e4dbc6"/>
+  <g stroke="#172633" stroke-opacity="0.52" stroke-width="10">
+    <path d="M246 164h286M234 230h330M246 296h280M236 362h326M250 428h250"/>
+  </g>
+  <path d="M542 76l-42 448" stroke="#8d5a2b" stroke-opacity="0.55" stroke-width="9" stroke-dasharray="18 18"/>
+</svg>

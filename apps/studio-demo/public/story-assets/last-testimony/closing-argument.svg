@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Courtroom closing argument">
+  <defs>
+    <linearGradient id="court" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#07111b"/>
+      <stop offset="0.45" stop-color="#1a1418"/>
+      <stop offset="1" stop-color="#05070b"/>
+    </linearGradient>
+    <radialGradient id="dawn" cx="0.5" cy="0.12" r="0.72">
+      <stop offset="0" stop-color="#5bd3df" stop-opacity="0.28"/>
+      <stop offset="0.45" stop-color="#f2a93b" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#court)"/>
+  <rect width="1600" height="900" fill="url(#dawn)"/>
+  <rect x="0" y="614" width="1600" height="286" fill="#05070a"/>
+  <path d="M220 508h1160l84 178H136z" fill="#1b1412" stroke="#4e3425" stroke-width="7"/>
+  <path d="M585 306c34-96 92-144 174-144s140 48 174 144v232H585z" fill="#0d1219" stroke="#5bd3df" stroke-opacity="0.22" stroke-width="7"/>
+  <path d="M648 320c22-52 58-78 110-78 54 0 92 26 114 78" fill="none" stroke="#f2a93b" stroke-opacity="0.55" stroke-width="8"/>
+  <g fill="#151d25" stroke="#314653" stroke-width="5" opacity="0.86">
+    <rect x="174" y="338" width="260" height="160"/>
+    <rect x="1166" y="338" width="260" height="160"/>
+  </g>
+  <g stroke="#5bd3df" stroke-opacity="0.22" stroke-width="5">
+    <path d="M520 120v210M684 96v210M848 96v210M1012 120v210"/>
+  </g>
+</svg>

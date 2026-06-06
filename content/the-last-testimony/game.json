@@ -327,10 +327,10 @@
       "negativePrompt": "cartoon, watermark, text, logo",
       "aspectRatio": "16:9",
       "targetDeviceUsage": "mobile landscape courtroom stage",
-      "url": "",
+      "url": "/story-assets/last-testimony/courtroom-predawn.png",
       "linkedSceneIds": ["rain-at-the-courthouse", "cold_open_verdict_before_dawn"],
       "linkedCharacterIds": ["mara_vey", "judge_hale"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "bg_witness_stand_close_rain_window",
@@ -355,10 +355,10 @@
       "negativePrompt": "watermark, logo",
       "aspectRatio": "16:9",
       "targetDeviceUsage": "investigation scene",
-      "url": "",
+      "url": "/story-assets/last-testimony/records-room.png",
       "linkedSceneIds": ["basement-log", "records-crosscheck"],
       "linkedCharacterIds": ["tobin_clerk"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "bg_security_desk",
@@ -369,10 +369,10 @@
       "negativePrompt": "logo, readable real names",
       "aspectRatio": "16:9",
       "targetDeviceUsage": "evidence scene",
-      "url": "",
+      "url": "/story-assets/last-testimony/security-desk.svg",
       "linkedSceneIds": ["security-desk", "kiosk-receipt"],
       "linkedCharacterIds": ["tobin_clerk"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "bg_kiosk_rain",
@@ -383,10 +383,10 @@
       "negativePrompt": "real brand, readable logo, watermark",
       "aspectRatio": "16:9",
       "targetDeviceUsage": "receipt evidence scene",
-      "url": "",
+      "url": "/story-assets/last-testimony/kiosk-rain.svg",
       "linkedSceneIds": ["kiosk-receipt"],
       "linkedCharacterIds": ["tobin_clerk"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "bg_closing_argument",
@@ -397,10 +397,10 @@
       "negativePrompt": "logo, text, cartoon",
       "aspectRatio": "16:9",
       "targetDeviceUsage": "final argument scene",
-      "url": "",
+      "url": "/story-assets/last-testimony/closing-argument.svg",
       "linkedSceneIds": ["closing-argument", "prosecutor_counterattack"],
       "linkedCharacterIds": ["mara_vey", "cassian_roe", "judge_hale"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "bg_courtroom_revelation_photo_focus",
@@ -439,10 +439,10 @@
       "negativePrompt": "real logo, real data",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence card",
-      "url": "",
+      "url": "/story-assets/last-testimony/weather-report.svg",
       "linkedSceneIds": ["witness-stand"],
       "linkedCharacterIds": [],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_keycard",
@@ -453,10 +453,10 @@
       "negativePrompt": "real brand, text-heavy",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence panel",
-      "url": "",
+      "url": "/story-assets/last-testimony/elevator-keycard.svg",
       "linkedSceneIds": ["basement-log"],
       "linkedCharacterIds": [],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_schedule",
@@ -467,10 +467,10 @@
       "negativePrompt": "real names, logo",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence panel",
-      "url": "",
+      "url": "/story-assets/last-testimony/torn-security-schedule.svg",
       "linkedSceneIds": ["security-desk"],
       "linkedCharacterIds": [],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_receipt",
@@ -481,10 +481,10 @@
       "negativePrompt": "real brand, readable private data",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence panel",
-      "url": "",
+      "url": "/story-assets/last-testimony/raincoat-receipt.svg",
       "linkedSceneIds": ["kiosk-receipt"],
       "linkedCharacterIds": [],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "bg_photo_lab_chain",
@@ -495,10 +495,10 @@
       "negativePrompt": "real logos, readable names, watermark",
       "aspectRatio": "16:9",
       "targetDeviceUsage": "chain-of-custody evidence scene",
-      "url": "",
+      "url": "/story-assets/last-testimony/photo-lab-chain.svg",
       "linkedSceneIds": ["photo_envelope_chain"],
       "linkedCharacterIds": ["ione_marr"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_photo_envelope",
@@ -509,10 +509,10 @@
       "negativePrompt": "real court seal, real names, readable private data, logo",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence card and chain-of-custody scene",
-      "url": "",
+      "url": "/story-assets/last-testimony/photo-envelope.svg",
       "linkedSceneIds": ["photo_envelope_chain"],
       "linkedCharacterIds": ["ione_marr"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_maintenance_call",
@@ -523,10 +523,10 @@
       "negativePrompt": "real logo, real address, personal data",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence card",
-      "url": "",
+      "url": "/story-assets/last-testimony/maintenance-call-slip.svg",
       "linkedSceneIds": ["photo_envelope_chain", "security-desk"],
       "linkedCharacterIds": ["tobin_clerk", "ione_marr"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_script_fragment",
@@ -537,10 +537,10 @@
       "negativePrompt": "real handwriting sample, private data, logo",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence card and pressure sequence",
-      "url": "",
+      "url": "/story-assets/last-testimony/witness-script-fragment.svg",
       "linkedSceneIds": ["photo_envelope_chain", "lyra_pressure_first_crack"],
       "linkedCharacterIds": ["lyra_mont", "ione_marr"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_glove_thread",
@@ -551,10 +551,10 @@
       "negativePrompt": "gore, real case evidence, logo",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence card and inspection detail",
-      "url": "",
+      "url": "/story-assets/last-testimony/charcoal-glove-thread.svg",
       "linkedSceneIds": ["photo_envelope_chain"],
       "linkedCharacterIds": ["ione_marr", "cassian_roe"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_alarm_log",
@@ -565,10 +565,10 @@
       "negativePrompt": "real brand, real database screenshot, private data",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence card and timeline sequence",
-      "url": "",
+      "url": "/story-assets/last-testimony/silent-alarm-log.svg",
       "linkedSceneIds": ["photo_envelope_chain", "records-crosscheck"],
       "linkedCharacterIds": ["tobin_clerk"],
-      "status": "needed"
+      "status": "generated"
     }
   ],
   "gameplayHooks": [

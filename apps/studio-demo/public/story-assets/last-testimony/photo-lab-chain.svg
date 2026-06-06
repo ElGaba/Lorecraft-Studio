@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Courthouse photo lab">
+  <defs>
+    <linearGradient id="lab" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#071018"/>
+      <stop offset="0.56" stop-color="#17110d"/>
+      <stop offset="1" stop-color="#040609"/>
+    </linearGradient>
+    <radialGradient id="amber" cx="0.48" cy="0.26" r="0.6">
+      <stop offset="0" stop-color="#f2a93b" stop-opacity="0.46"/>
+      <stop offset="0.5" stop-color="#a85a25" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#lab)"/>
+  <rect width="1600" height="900" fill="url(#amber)"/>
+  <rect x="160" y="186" width="1280" height="428" rx="12" fill="#0d1217" stroke="#3d352c" stroke-width="6"/>
+  <g fill="#efe2c6" opacity="0.18" stroke="#f2a93b" stroke-opacity="0.36" stroke-width="5">
+    <rect x="246" y="294" width="250" height="156" rx="8"/>
+    <rect x="558" y="260" width="250" height="184" rx="8"/>
+    <rect x="870" y="302" width="250" height="146" rx="8"/>
+    <rect x="1168" y="270" width="168" height="190" rx="8"/>
+  </g>
+  <g stroke="#5bd3df" stroke-opacity="0.24" stroke-width="6">
+    <path d="M250 514h1080M318 552h930M412 590h760"/>
+  </g>
+  <path d="M0 660c286-52 574-62 862-30 258 28 504 90 738 184v86H0z" fill="#030609" opacity="0.9"/>
+</svg>

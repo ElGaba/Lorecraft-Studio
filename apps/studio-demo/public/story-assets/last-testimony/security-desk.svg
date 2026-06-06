@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Courthouse security desk">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#09111a"/>
+      <stop offset="0.55" stop-color="#15131b"/>
+      <stop offset="1" stop-color="#05070b"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.58" cy="0.18" r="0.55">
+      <stop offset="0" stop-color="#f2a93b" stop-opacity="0.34"/>
+      <stop offset="0.45" stop-color="#5bd3df" stop-opacity="0.13"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#lamp)"/>
+  <path d="M0 595h1600v305H0z" fill="#07090d"/>
+  <path d="M154 602c250-58 544-76 882-54 194 13 338 39 430 78v56H154z" fill="#141a21" stroke="#2b4652" stroke-width="6"/>
+  <g opacity="0.9">
+    <path d="M310 536c88-126 196-190 324-190 118 0 199 56 244 168" fill="none" stroke="#334a55" stroke-width="15"/>
+    <path d="M296 536c78-72 176-108 294-108 139 0 244 38 315 114" fill="none" stroke="#111820" stroke-width="42"/>
+    <rect x="872" y="454" width="270" height="106" rx="12" fill="#0c151c" stroke="#5bd3df" stroke-opacity="0.4" stroke-width="5"/>
+    <circle cx="1168" cy="508" r="42" fill="#0b1218" stroke="#f2a93b" stroke-opacity="0.56" stroke-width="5"/>
+    <rect x="492" y="516" width="250" height="64" rx="8" fill="#e9e4ce" opacity="0.12"/>
+    <path d="M510 540h200M510 560h162" stroke="#e9e4ce" stroke-opacity="0.34" stroke-width="5"/>
+  </g>
+  <g stroke="#5bd3df" stroke-opacity="0.16">
+    <path d="M96 0v900M286 0v900M476 0v900M666 0v900M856 0v900M1046 0v900M1236 0v900M1426 0v900"/>
+  </g>
+</svg>
