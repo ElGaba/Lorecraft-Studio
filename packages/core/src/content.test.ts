@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   choose,
+  createExportPackage,
   createInitialState,
   getAvailableChoices,
   getCurrentScene,
@@ -184,5 +185,25 @@ describe("demo content library", () => {
     expect(testimony.gameplayHooks.length).toBeGreaterThanOrEqual(8);
     expect(countChoicesWithVariableEffects(testimony)).toBeGreaterThanOrEqual(4);
     expect(testimony.endings.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("exports The Last Testimony as a Chapter 1 production handoff package", () => {
+    const testimony = parsedGameById("the-last-testimony");
+    const exported = createExportPackage(testimony, "2026-06-06T00:00:00.000Z");
+    const evidence = JSON.parse(exported.files["evidence.json"]);
+    const variables = JSON.parse(exported.files["variables.json"]);
+    const sequences = JSON.parse(exported.files["gameplay-sequences.json"]);
+    const animations = JSON.parse(exported.files["animation-presets.json"]);
+
+    expect(exported.files["chapter-outline.md"]).toContain("Chain of custody challenge");
+    expect(evidence).toHaveLength(10);
+    expect(evidence.map((item: { id: string }) => item.id)).toContain("photo-envelope-chain");
+    expect(variables).toHaveProperty("chainOfCustody", 0);
+    expect(sequences.map((sequence: { id: string }) => sequence.id)).toContain("inspect_crime_scene_photo_detail");
+    expect(sequences.find((sequence: { id: string }) => sequence.id === "closing-argument-build")).toMatchObject({
+      type: "custom",
+      linkedSceneIds: ["closing-argument"]
+    });
+    expect(animations.map((animation: { preset: string }) => animation.preset)).toEqual(expect.arrayContaining(["evidence-slam", "tool-ready"]));
   });
 });

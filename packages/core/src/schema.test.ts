@@ -347,17 +347,26 @@ describe("AdventureKit schema validation", () => {
     if (result.ok) {
       const exported = createExportPackage(result.game);
       expect(Object.keys(exported.files).sort()).toEqual([
+        "animation-presets.json",
         "assets.json",
+        "chapter-outline.md",
         "characters.json",
+        "evidence.json",
         "game.json",
         "gameplay-hooks.json",
+        "gameplay-sequences.json",
         "implementation-plan.md",
         "prompts.md",
         "scenes.json",
-        "story-bible.md"
+        "story-bible.md",
+        "variables.json"
       ]);
       expect(exported.files["story-bible.md"]).toContain("A precise courtroom mystery");
       expect(exported.files["prompts.md"]).toContain("bg_courtroom_predawn_rain");
+      expect(exported.files["chapter-outline.md"]).toContain("Verdict before dawn");
+      expect(exported.files["gameplay-sequences.json"]).toContain("contradiction_window");
+      expect(exported.files["variables.json"]).toContain("confidence");
+      expect(exported.files["animation-presets.json"]).toContain("evidence-slam");
     }
   });
 });

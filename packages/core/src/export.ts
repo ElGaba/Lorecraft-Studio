@@ -1,4 +1,4 @@
-import type { AssetDefinition, CharacterDefinition, GameDefinition, GameplayHook, SceneDefinition } from "./types";
+import type { AssetDefinition, CharacterDefinition, GameDefinition, GameplayHook, ItemDefinition, SceneDefinition } from "./types";
 
 export interface ExportPackage {
   projectId: string;
@@ -101,6 +101,80 @@ ${game.assets.map((asset) => `- ${asset.id}: ${asset.status} - ${asset.targetDev
 `;
 }
 
+function chapterOutlineMarkdown(game: GameDefinition) {
+  const outline = game.storyBible?.chapterOutline ?? game.scenes.map((scene) => scene.title);
+
+  return `# ${game.metadata.title} Chapter Outline
+
+## Story Beats
+${list(outline)}
+
+## Scene Flow
+${game.scenes.map((scene, index) => `${index + 1}. ${scene.title} (${scene.id}) - ${scene.purpose ?? scene.synopsis ?? scene.background}`).join("\n")}
+
+## Outcomes
+${game.endings.map((ending) => `- ${ending.title} (${ending.id}): ${ending.summary}`).join("\n")}
+`;
+}
+
+function gameplaySequences(game: GameDefinition) {
+  return game.gameplayHooks.map((hook) => ({
+    id: hook.id,
+    type: hook.type,
+    title: hook.title,
+    module: hook.module,
+    futureModuleType: hook.futureModuleType,
+    narrativePurpose: hook.narrativePurpose,
+    gameplayPurpose: hook.gameplayPurpose,
+    expectedPlayerAction: hook.expectedPlayerAction,
+    requiredInputs: hook.requiredInputs ?? [],
+    successCondition: hook.successCondition,
+    failureCondition: hook.failureCondition,
+    successTarget: hook.successTarget,
+    failureTarget: hook.failureTarget,
+    successEffects: hook.successEffects ?? [],
+    failureEffects: hook.failureEffects ?? [],
+    uiLayoutNotes: hook.uiLayoutNotes,
+    mobileGestureNotes: hook.mobileGestureNotes,
+    implementationNotes: hook.implementationNotes,
+    assetRequirements: hook.assetRequirements ?? [],
+    agentPrompt: hook.agentPrompt,
+    notes: hook.notes,
+    linkedSceneIds: game.scenes
+      .filter((scene) => scene.blocks.some((block) => block.type === "gameplay_hook" && (block.hookId === hook.id || block.hook?.id === hook.id)))
+      .map((scene) => scene.id)
+  }));
+}
+
+function animationPresets(game: GameDefinition) {
+  const presets = new Map<string, Array<Record<string, string | number>>>();
+
+  function addPreset(preset: string | undefined, source: Record<string, string | number>) {
+    if (!preset) {
+      return;
+    }
+    presets.set(preset, [...(presets.get(preset) ?? []), source]);
+  }
+
+  game.scenes.forEach((scene) => {
+    scene.blocks.forEach((block, blockIndex) => {
+      if (block.type === "dialogue" || block.type === "narration") {
+        addPreset(block.animation, { type: "scene-block", sceneId: scene.id, blockIndex });
+      }
+    });
+  });
+
+  game.characters.forEach((character) => {
+    character.variants.forEach((variant, variantIndex) => {
+      addPreset(variant.animation, { type: "character-variant", characterId: character.id, variantIndex });
+    });
+  });
+
+  return Array.from(presets.entries())
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([preset, sources]) => ({ preset, sources }));
+}
+
 function pickGameShell(game: GameDefinition) {
   const { storyBible, characters, assets, gameplayHooks, scenes, ...shell } = game;
   return shell;
@@ -111,6 +185,7 @@ export function createExportPackage(game: GameDefinition, generatedAt = new Date
   const assets: AssetDefinition[] = game.assets;
   const hooks: GameplayHook[] = game.gameplayHooks;
   const scenes: SceneDefinition[] = game.scenes;
+  const evidence: ItemDefinition[] = game.items.filter((item) => item.kind === "evidence");
 
   return {
     projectId: game.metadata.id,
@@ -118,10 +193,15 @@ export function createExportPackage(game: GameDefinition, generatedAt = new Date
     files: {
       "game.json": json(pickGameShell(game)),
       "story-bible.md": storyBibleMarkdown(game),
+      "chapter-outline.md": chapterOutlineMarkdown(game),
       "characters.json": json(characters),
       "scenes.json": json(scenes),
       "gameplay-hooks.json": json(hooks),
+      "gameplay-sequences.json": json(gameplaySequences(game)),
       "assets.json": json(assets),
+      "evidence.json": json(evidence),
+      "variables.json": json(game.variables),
+      "animation-presets.json": json(animationPresets(game)),
       "prompts.md": promptsMarkdown(game),
       "implementation-plan.md": implementationPlanMarkdown(game)
     }

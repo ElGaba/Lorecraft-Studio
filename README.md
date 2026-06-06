@@ -104,14 +104,17 @@ The export panel currently generates:
 
 - `game.json`
 - `story-bible.md`
+- `chapter-outline.md`
 - `characters.json`
 - `scenes.json`
 - `gameplay-hooks.json`
+- `gameplay-sequences.json`
 - `assets.json`
+- `evidence.json`
+- `variables.json`
+- `animation-presets.json`
 - `prompts.md`
 - `implementation-plan.md`
-
-The long-term export target for The Last Testimony adds chapter outline, evidence, variables, animation presets, and gameplay-sequence files.
 
 ## Documentation
 

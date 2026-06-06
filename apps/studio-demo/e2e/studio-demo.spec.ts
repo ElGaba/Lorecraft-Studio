@@ -39,6 +39,11 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
   await page.getByRole("button", { name: "Export" }).click();
   await expect(page.getByRole("heading", { name: "Export Package" })).toBeVisible();
   await expect(page.getByText("story-bible.md")).toBeVisible();
+  await expect(page.getByText("chapter-outline.md")).toBeVisible();
+  await expect(page.getByText("evidence.json")).toBeVisible();
+  await expect(page.getByText("variables.json")).toBeVisible();
+  await expect(page.getByText("gameplay-sequences.json")).toBeVisible();
+  await expect(page.getByText("animation-presets.json")).toBeVisible();
   await page.getByRole("button", { name: "Scenes", exact: true }).click();
 
   for (const mode of ["Mobile Landscape", "Mobile Portrait", "Tablet", "Desktop"]) {
