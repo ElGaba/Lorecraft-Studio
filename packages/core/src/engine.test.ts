@@ -30,6 +30,9 @@ const flowGame: GameDefinition = {
       initiallyOwned: false
     }
   ],
+  characters: [],
+  assets: [],
+  gameplayHooks: [],
   scenes: [
     {
       id: "entry",

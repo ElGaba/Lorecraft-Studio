@@ -2,21 +2,216 @@
   "metadata": {
     "id": "the-last-testimony",
     "title": "The Last Testimony",
-    "genre": "investigation courtroom",
-    "author": "AdventureKit",
-    "summary": "An evidence-forward testimony prototype with investigation setup, witness dialogue, contradiction pressure, and a presentation hook."
+    "genre": "investigation / courtroom mystery",
+    "author": "AdventureKit Studio",
+    "summary": "A noir legal thriller vertical slice about a defense attorney proving that the witness saw an impossible open window."
   },
   "startScene": "rain-at-the-courthouse",
   "variables": {
     "judgePatience": 2,
-    "witnessPressure": 0
+    "witnessPressure": 0,
+    "maraPressure": 0
   },
+  "storyBible": {
+    "premise": "At dawn, defense attorney Mara Vey must find the contradiction hidden in a final testimony before an innocent man is convicted.",
+    "genre": "investigation / courtroom mystery",
+    "tone": "noir legal thriller, elegant, tense, intelligent",
+    "targetPlatform": "mobile-first web",
+    "targetPlayStyle": "dialogue, evidence inspection, contradiction presentation, branching pressure",
+    "visualDirection": "rain-streaked windows, polished wood, cold blue dawn, amber legal lamps",
+    "pacingRules": ["Start at the verdict", "Make every clue physical", "Reward careful pressure over theatrics"],
+    "worldRules": ["Evidence must be internally consistent", "Witness memory can be coached", "The court responds to tone"],
+    "mainCast": ["mara_vey", "lyra_mont", "judge_hale", "cassian_roe", "elias_vorn", "tobin_clerk"],
+    "keyLocations": ["predawn_courtroom", "witness_stand", "records_room", "kiosk", "study_projection"],
+    "coreMystery": "A window that should have been closed was described as open.",
+    "chapterOutline": ["Verdict before dawn", "Final testimony", "Closed window contradiction", "Staged scene path", "Witness break"],
+    "writingStyleGuide": "Precise legal lines, noir narration, emotional restraint until evidence lands.",
+    "contentBoundaries": ["No real legal cases", "No gore", "No copied mechanics"],
+    "gameplayModulePlan": ["contradiction", "evidence_presentation", "inspection", "timed_choice"]
+  },
+  "characters": [
+    {
+      "id": "mara_vey",
+      "displayName": "Mara Vey",
+      "role": "Defense attorney",
+      "archetype": "controlled truth hunter",
+      "biography": "A defense attorney who hears the one impossible word in a polished statement.",
+      "traits": ["precise", "restrained", "relentless"],
+      "secrets": "Her first mentor hid evidence to win.",
+      "motivations": "Save Elias and keep the court honest.",
+      "visualDescription": "Dark suit, rain-damp collar, file held like a blade.",
+      "baseImagePrompt": "Noir defense attorney in predawn courtroom, cold rain light, cinematic portrait.",
+      "portraitUrl": "",
+      "emotions": ["neutral", "serious", "confident", "thinking", "presenting evidence"],
+      "stances": ["reading_file", "presenting_evidence", "pointing_to_photo"],
+      "screenPositions": ["lower-left", "center-left"],
+      "voiceNotes": "Calm, exact, devastating.",
+      "relationshipNotes": "Respected by Judge Hale; opposed by Cassian.",
+      "variants": [
+        {
+          "emotionId": "confident",
+          "stanceId": "presenting_evidence",
+          "description": "Mara lands a contradiction.",
+          "imagePrompt": "Defense attorney presenting evidence in noir courtroom, rainlit windows.",
+          "imageUrl": "",
+          "animation": "evidence-slam",
+          "usageNotes": "Use for proof reveals."
+        }
+      ]
+    },
+    {
+      "id": "lyra_mont",
+      "displayName": "Lyra Mont",
+      "role": "Key witness",
+      "archetype": "exhausted unreliable witness",
+      "biography": "A night porter who saw too much or was told what to see.",
+      "traits": ["tired", "defensive", "haunted"],
+      "secrets": "She was coached after seeing only lightning and glass.",
+      "motivations": "Survive the courtroom without admitting fear.",
+      "visualDescription": "Pale coat, wet cuffs, fingers tight on witness rail.",
+      "baseImagePrompt": "Exhausted witness at courtroom stand, rain window behind, noir lighting.",
+      "portraitUrl": "",
+      "emotions": ["afraid", "serious", "surprised", "breakdown"],
+      "stances": ["testifying", "recoiling", "hands_on_rail"],
+      "screenPositions": ["upper-right", "center"],
+      "voiceNotes": "Repeats lines until pressure cracks them.",
+      "relationshipNotes": "Fears Cassian more than Mara.",
+      "variants": [
+        {
+          "emotionId": "breakdown",
+          "stanceId": "recoiling",
+          "description": "Lyra realizes the testimony cannot stand.",
+          "imagePrompt": "Shocked courtroom witness recoiling, rain-streaked window, noir legal thriller.",
+          "imageUrl": "",
+          "animation": "tense-shake",
+          "usageNotes": "Use after contradiction."
+        }
+      ]
+    },
+    {
+      "id": "judge_hale",
+      "displayName": "Judge Arden Hale",
+      "role": "Judge",
+      "archetype": "severe gatekeeper",
+      "biography": "A judge with little patience for drama and deep respect for proof.",
+      "traits": ["stern", "fair", "tired"],
+      "secrets": "He suspects the trial moved too quickly.",
+      "motivations": "Protect the court from spectacle.",
+      "visualDescription": "Older judge under high bench shadow, silver hair, folded hands.",
+      "baseImagePrompt": "Severe judge in shadowed predawn courtroom, cinematic noir portrait.",
+      "portraitUrl": "",
+      "emotions": ["serious", "surprised", "thinking"],
+      "stances": ["seated", "leaning_forward"],
+      "screenPositions": ["center-back"],
+      "voiceNotes": "Heavy, clipped, final.",
+      "relationshipNotes": "Gives Mara one chance at a time.",
+      "variants": [
+        {
+          "emotionId": "thinking",
+          "stanceId": "leaning_forward",
+          "description": "The judge recognizes a real contradiction.",
+          "imagePrompt": "Judge leaning forward in noir courtroom, alert expression, rain windows.",
+          "imageUrl": "",
+          "animation": "dramatic-zoom",
+          "usageNotes": "Use when judge trust rises."
+        }
+      ]
+    },
+    {
+      "id": "cassian_roe",
+      "displayName": "Cassian Roe",
+      "role": "Prosecutor",
+      "archetype": "polished adversary",
+      "biography": "A prosecutor who wins by making uncertainty feel vulgar.",
+      "traits": ["confident", "sharp", "withholding"],
+      "secrets": "He knows the window photo arrived late.",
+      "motivations": "Protect the verdict and his record.",
+      "visualDescription": "Tailored charcoal suit, immaculate tie, half-lit smile.",
+      "baseImagePrompt": "Confident prosecutor in noir courtroom, cold dawn light, cinematic portrait.",
+      "portraitUrl": "",
+      "emotions": ["confident", "angry", "serious"],
+      "stances": ["arms_behind_back", "stepping_forward"],
+      "screenPositions": ["lower-right"],
+      "voiceNotes": "Elegant knives.",
+      "relationshipNotes": "Pressures Lyra and antagonizes Mara.",
+      "variants": [
+        {
+          "emotionId": "angry",
+          "stanceId": "stepping_forward",
+          "description": "Cassian counters after the window reveal.",
+          "imagePrompt": "Irritated prosecutor stepping forward in rainlit courtroom.",
+          "imageUrl": "",
+          "animation": "slide-in-right",
+          "usageNotes": "Use for counterattack."
+        }
+      ]
+    },
+    {
+      "id": "elias_vorn",
+      "displayName": "Elias Vorn",
+      "role": "Accused council aide",
+      "archetype": "quiet innocent",
+      "biography": "A clerk accused of killing the councilman who was about to expose a scheme.",
+      "traits": ["quiet", "principled", "exhausted"],
+      "secrets": "He hid a ledger to protect someone else.",
+      "motivations": "Survive the verdict without betraying the real witness.",
+      "visualDescription": "Thin man at defense table, cuffed hands still.",
+      "baseImagePrompt": "Accused man at defense table in predawn noir courtroom, solemn.",
+      "portraitUrl": "",
+      "emotions": ["afraid", "thinking", "relieved"],
+      "stances": ["seated", "standing"],
+      "screenPositions": ["lower-left"],
+      "voiceNotes": "Sparse and careful.",
+      "relationshipNotes": "Trusts Mara because she listened.",
+      "variants": [
+        {
+          "emotionId": "relieved",
+          "stanceId": "standing",
+          "description": "Elias hears the first crack in the case.",
+          "imagePrompt": "Accused man standing in noir courtroom, dawn light, restrained relief.",
+          "imageUrl": "",
+          "animation": "fade-in",
+          "usageNotes": "Use for hopeful branch."
+        }
+      ]
+    },
+    {
+      "id": "tobin_clerk",
+      "displayName": "Tobin Vale",
+      "role": "Court records clerk",
+      "archetype": "nervous keeper of logs",
+      "biography": "The clerk who can prove the evidence photo arrived after testimony was drafted.",
+      "traits": ["nervous", "methodical", "honest"],
+      "secrets": "He copied the receipt before Cassian's aide collected it.",
+      "motivations": "Tell the truth without losing his post.",
+      "visualDescription": "Raincoat over courthouse uniform, ink-stained fingers.",
+      "baseImagePrompt": "Nervous courthouse records clerk in dim archive, noir rainlight.",
+      "portraitUrl": "",
+      "emotions": ["afraid", "thinking", "confident"],
+      "stances": ["holding_log", "pointing_to_record"],
+      "screenPositions": ["center-right"],
+      "voiceNotes": "Hesitant but exact with timestamps.",
+      "relationshipNotes": "Becomes Mara's quiet ally.",
+      "variants": [
+        {
+          "emotionId": "thinking",
+          "stanceId": "holding_log",
+          "description": "Tobin offers the elevator record.",
+          "imagePrompt": "Courthouse clerk holding logbook in dim records room, noir style.",
+          "imageUrl": "",
+          "animation": "slide-in-left",
+          "usageNotes": "Use in investigation scenes."
+        }
+      ]
+    }
+  ],
   "items": [
     {
       "id": "elevator-keycard",
       "name": "Elevator Keycard",
       "kind": "evidence",
-      "description": "A keycard showing a basement elevator access at 11:42 p.m.",
+      "description": "A keycard showing basement elevator access at 11:42 p.m.",
+      "imageAssetId": "asset_keycard",
       "initiallyOwned": false
     },
     {
@@ -24,225 +219,773 @@
       "name": "Torn Security Schedule",
       "kind": "evidence",
       "description": "A ripped schedule that contradicts the guard's claimed post.",
+      "imageAssetId": "asset_schedule",
       "initiallyOwned": false
     },
     {
       "id": "raincoat-receipt",
       "name": "Raincoat Receipt",
       "kind": "evidence",
-      "description": "A receipt from the courthouse kiosk, timestamped minutes before the alarm.",
+      "description": "A kiosk receipt timestamped minutes before the alarm.",
+      "imageAssetId": "asset_receipt",
       "initiallyOwned": false
+    },
+    {
+      "id": "crime_scene_photo_window",
+      "name": "Crime Scene Photo - Study Window",
+      "kind": "evidence",
+      "description": "The latch is closed, but a narrow stain sits beneath the sill.",
+      "imageAssetId": "asset_window_photo",
+      "initiallyOwned": true
+    },
+    {
+      "id": "weather_report",
+      "name": "Weather Report - 01:10 AM",
+      "kind": "evidence",
+      "description": "Heavy rain and eastern winds near the courthouse district.",
+      "imageAssetId": "asset_weather_report",
+      "initiallyOwned": true
+    }
+  ],
+  "assets": [
+    {
+      "id": "bg_courtroom_predawn_rain",
+      "type": "background",
+      "title": "Predawn Courtroom",
+      "description": "Courtroom before dawn under rain and fluorescent hum.",
+      "prompt": "Cinematic noir courtroom before dawn, rain streaking tall windows, judge bench in shadow, witness stand visible, 16:9, no text.",
+      "negativePrompt": "cartoon, watermark, text, logo",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "mobile landscape courtroom stage",
+      "url": "",
+      "linkedSceneIds": ["rain-at-the-courthouse", "cold_open_verdict_before_dawn"],
+      "linkedCharacterIds": ["mara_vey", "judge_hale"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_witness_stand_close_rain_window",
+      "type": "background",
+      "title": "Witness Stand Rain Window",
+      "description": "Close witness view with rain window behind.",
+      "prompt": "Cinematic close view of courtroom witness stand, rain-streaked window behind, cold dawn light, premium visual novel style, 16:9, no text.",
+      "negativePrompt": "logo, text, cheerful lighting",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "testimony mode",
+      "url": "",
+      "linkedSceneIds": ["witness-stand", "final_testimony_review"],
+      "linkedCharacterIds": ["lyra_mont"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_records_room",
+      "type": "background",
+      "title": "Basement Records Room",
+      "description": "Dim archive with one awake terminal.",
+      "prompt": "Courthouse basement records room, one glowing terminal, shelves of files, noir rain ambience, 16:9, no text.",
+      "negativePrompt": "watermark, logo",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "investigation scene",
+      "url": "",
+      "linkedSceneIds": ["basement-log", "records-crosscheck"],
+      "linkedCharacterIds": ["tobin_clerk"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_security_desk",
+      "type": "background",
+      "title": "Security Desk",
+      "description": "Umbrellas, thermal paper, and silent radio.",
+      "prompt": "Narrow courthouse security desk with umbrellas and thermal paper, noir night rain, 16:9, no text.",
+      "negativePrompt": "logo, readable real names",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "evidence scene",
+      "url": "",
+      "linkedSceneIds": ["security-desk", "kiosk-receipt"],
+      "linkedCharacterIds": ["tobin_clerk"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_kiosk_rain",
+      "type": "background",
+      "title": "Closed Courthouse Kiosk",
+      "description": "A shuttered kiosk under a buzzing maintenance light.",
+      "prompt": "Closed courthouse kiosk at predawn, damp counter, one buzzing maintenance light, noir rain atmosphere, 16:9, no text.",
+      "negativePrompt": "real brand, readable logo, watermark",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "receipt evidence scene",
+      "url": "",
+      "linkedSceneIds": ["kiosk-receipt"],
+      "linkedCharacterIds": ["tobin_clerk"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_closing_argument",
+      "type": "background",
+      "title": "Closing Argument",
+      "description": "Defense table and unseen jury under dawn rainlight.",
+      "prompt": "Noir courtroom closing argument, defense attorney centered, unseen jury, rain-bright dawn windows, cinematic legal thriller, 16:9, no text.",
+      "negativePrompt": "logo, text, cartoon",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "final argument scene",
+      "url": "",
+      "linkedSceneIds": ["closing-argument", "prosecutor_counterattack"],
+      "linkedCharacterIds": ["mara_vey", "cassian_roe", "judge_hale"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_courtroom_revelation_photo_focus",
+      "type": "cg_cutscene",
+      "title": "Rain on the Inside",
+      "description": "Projected evidence photo reveal.",
+      "prompt": "Dramatic courtroom evidence reveal, crime scene photograph projected large, rain-streaked window detail highlighted, noir legal thriller, 16:9, no text.",
+      "negativePrompt": "text, logo, cartoon",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "revelation mode",
+      "url": "",
+      "linkedSceneIds": ["witness-cracks", "window_contradiction_revealed"],
+      "linkedCharacterIds": ["mara_vey", "lyra_mont"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_window_photo",
+      "type": "evidence_item",
+      "title": "Study Window Photo",
+      "description": "Crime scene window photo with latch detail.",
+      "prompt": "Fictional crime scene study window photo, closed latch, narrow water stain beneath sill, no text, no gore.",
+      "negativePrompt": "real crime photo, gore, watermark",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence card and inspection",
+      "url": "",
+      "linkedSceneIds": ["witness-stand", "witness-cracks"],
+      "linkedCharacterIds": [],
+      "status": "needed"
+    },
+    {
+      "id": "asset_weather_report",
+      "type": "evidence_item",
+      "title": "Weather Report",
+      "description": "Fictional weather log.",
+      "prompt": "Fictional city weather report prop, storm symbols, no real agency, no readable personal data.",
+      "negativePrompt": "real logo, real data",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence card",
+      "url": "",
+      "linkedSceneIds": ["witness-stand"],
+      "linkedCharacterIds": [],
+      "status": "needed"
+    },
+    {
+      "id": "asset_keycard",
+      "type": "evidence_item",
+      "title": "Elevator Keycard",
+      "description": "Access record prop.",
+      "prompt": "Fictional courthouse elevator keycard evidence, generic symbols, no logo.",
+      "negativePrompt": "real brand, text-heavy",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence panel",
+      "url": "",
+      "linkedSceneIds": ["basement-log"],
+      "linkedCharacterIds": [],
+      "status": "needed"
+    },
+    {
+      "id": "asset_schedule",
+      "type": "evidence_item",
+      "title": "Torn Security Schedule",
+      "description": "Ripped schedule prop.",
+      "prompt": "Torn fictional courthouse security schedule, rain stain, no readable real names.",
+      "negativePrompt": "real names, logo",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence panel",
+      "url": "",
+      "linkedSceneIds": ["security-desk"],
+      "linkedCharacterIds": [],
+      "status": "needed"
+    },
+    {
+      "id": "asset_receipt",
+      "type": "evidence_item",
+      "title": "Raincoat Receipt",
+      "description": "Kiosk receipt prop.",
+      "prompt": "Fictional damp kiosk receipt, timestamp emphasis, no real business.",
+      "negativePrompt": "real brand, readable private data",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence panel",
+      "url": "",
+      "linkedSceneIds": ["kiosk-receipt"],
+      "linkedCharacterIds": [],
+      "status": "needed"
+    }
+  ],
+  "gameplayHooks": [
+    {
+      "id": "present-contradiction",
+      "type": "evidence_presentation",
+      "title": "Present the Contradiction",
+      "module": "future-contradiction-presentation-module",
+      "narrativePurpose": "Mara must prove the witness's final answer cannot be true.",
+      "gameplayPurpose": "Select testimony and present evidence.",
+      "expectedPlayerAction": "Select the window statement and present the crime scene photo.",
+      "requiredInputs": ["testimony_statement", "evidence_selection"],
+      "successCondition": "Statement four plus crime scene photo.",
+      "failureCondition": "Wrong statement or irrelevant evidence.",
+      "successTarget": { "type": "scene", "id": "witness-cracks" },
+      "failureTarget": { "type": "scene", "id": "objection-sustained" },
+      "successEffects": [{ "type": "incrementVariable", "variable": "witnessPressure", "by": 2 }],
+      "failureEffects": [{ "type": "incrementVariable", "variable": "judgePatience", "by": -1 }],
+      "uiLayoutNotes": "Statement cards center, evidence tray right.",
+      "mobileGestureNotes": "Tap statement, tap evidence, press present.",
+      "futureModuleType": "contradiction",
+      "implementationNotes": "Core contradiction module candidate.",
+      "assetRequirements": ["asset_window_photo", "asset_weather_report"],
+      "agentPrompt": "Design contradiction gameplay for an impossible open window testimony.",
+      "notes": "Primary evidence hook."
+    },
+    {
+      "id": "contradiction_window_was_closed",
+      "type": "contradiction",
+      "title": "The Window That Was Closed",
+      "module": "future-contradiction-module",
+      "narrativePurpose": "The player identifies the exact impossible line.",
+      "gameplayPurpose": "Statement plus evidence selection.",
+      "expectedPlayerAction": "Select statement four and present the window photo.",
+      "requiredInputs": ["statement_selection", "evidence_selection"],
+      "successCondition": "Correct statement and photo.",
+      "failureCondition": "Wrong statement.",
+      "successTarget": { "type": "scene", "id": "window_contradiction_revealed" },
+      "failureTarget": { "type": "scene", "id": "judge_warning_after_failed_objection" },
+      "uiLayoutNotes": "Swipeable testimony cards.",
+      "mobileGestureNotes": "Tap-first no drag.",
+      "futureModuleType": "evidence_presentation",
+      "implementationNotes": "Reference-scene hook.",
+      "assetRequirements": ["asset_window_photo"],
+      "agentPrompt": "Draft the closed-window contradiction sequence.",
+      "notes": "Reference hook."
+    },
+    {
+      "id": "inspect_crime_scene_photo_detail",
+      "type": "inspection",
+      "title": "The Stain Beneath the Sill",
+      "module": "future-photo-inspection-module",
+      "narrativePurpose": "Let the player identify the staged-window detail.",
+      "gameplayPurpose": "Tap suspicious photo region.",
+      "expectedPlayerAction": "Tap the narrow stain below the latch.",
+      "requiredInputs": ["tap_region"],
+      "successCondition": "Stain region selected.",
+      "failureCondition": "Repeated irrelevant taps.",
+      "successTarget": { "type": "scene", "id": "staged_window_investigation_path" },
+      "failureTarget": { "type": "scene", "id": "mara_explains_photo_without_bonus" },
+      "uiLayoutNotes": "Photo zoom card with focus box.",
+      "mobileGestureNotes": "Tap-to-zoom regions.",
+      "futureModuleType": "inspection",
+      "implementationNotes": "Region hotspot system.",
+      "assetRequirements": ["asset_window_photo", "bg_courtroom_revelation_photo_focus"],
+      "agentPrompt": "Create an inspection hook spec for a window stain.",
+      "notes": "Inspection hook."
+    },
+    {
+      "id": "elevator-log-parse",
+      "type": "inspection",
+      "title": "Elevator Log Parse",
+      "module": "future-log-inspection-module",
+      "narrativePurpose": "Find the impossible basement access timestamp.",
+      "gameplayPurpose": "Inspect a log and select the matching keycard row.",
+      "expectedPlayerAction": "Tap the 11:42 basement access row.",
+      "requiredInputs": ["row_selection"],
+      "successCondition": "Correct row selected.",
+      "failureCondition": "Wrong timestamp.",
+      "successTarget": { "type": "scene", "id": "records-crosscheck" },
+      "failureTarget": { "type": "scene", "id": "security-desk" },
+      "uiLayoutNotes": "Large log rows with magnifier.",
+      "mobileGestureNotes": "Tap rows.",
+      "futureModuleType": "inspection",
+      "implementationNotes": "Reusable document row picker.",
+      "assetRequirements": ["asset_keycard"],
+      "agentPrompt": "Design a document row inspection hook.",
+      "notes": "Investigation hook."
+    },
+    {
+      "id": "witness-pressure-timed-choice",
+      "type": "timed_choice",
+      "title": "One More Question",
+      "module": "future-court-pressure-module",
+      "narrativePurpose": "Mara must choose pressure or patience under judge scrutiny.",
+      "gameplayPurpose": "Timed tone choice.",
+      "expectedPlayerAction": "Pick careful pressure.",
+      "requiredInputs": ["choice"],
+      "successCondition": "Preserve judge patience.",
+      "failureCondition": "Overreach.",
+      "successTarget": { "type": "scene", "id": "final_testimony_review" },
+      "failureTarget": { "type": "scene", "id": "objection-sustained" },
+      "uiLayoutNotes": "Two large legal tone cards.",
+      "mobileGestureNotes": "Tap response.",
+      "futureModuleType": "timed_choice",
+      "implementationNotes": "Tone and variable update.",
+      "assetRequirements": ["bg_courtroom_predawn_rain"],
+      "agentPrompt": "Design a courtroom timed pressure hook.",
+      "notes": "Court pressure hook."
+    },
+    {
+      "id": "receipt-timeline-build",
+      "type": "puzzle",
+      "title": "Receipt Timeline",
+      "module": "future-timeline-module",
+      "narrativePurpose": "Build the sequence between kiosk, basement, and alarm.",
+      "gameplayPurpose": "Arrange evidence timestamps.",
+      "expectedPlayerAction": "Order receipt, keycard, alarm.",
+      "requiredInputs": ["timeline_order"],
+      "successCondition": "Correct order.",
+      "failureCondition": "Timeline contradiction remains hidden.",
+      "successTarget": { "type": "scene", "id": "witness-stand" },
+      "failureTarget": { "type": "scene", "id": "objection-sustained" },
+      "uiLayoutNotes": "Horizontal timeline cards.",
+      "mobileGestureNotes": "Tap move left/right controls.",
+      "futureModuleType": "puzzle",
+      "implementationNotes": "Simple ordering puzzle.",
+      "assetRequirements": ["asset_receipt", "asset_keycard"],
+      "agentPrompt": "Spec an evidence timeline puzzle.",
+      "notes": "Timeline hook."
+    },
+    {
+      "id": "coaching-thread",
+      "type": "evidence_presentation",
+      "title": "Who Coached Lyra",
+      "module": "future-coaching-proof-module",
+      "narrativePurpose": "Connect Lyra's phrasing to Cassian's aide.",
+      "gameplayPurpose": "Present repeated language as proof.",
+      "expectedPlayerAction": "Choose matching testimony phrases.",
+      "requiredInputs": ["phrase_selection"],
+      "successCondition": "Two matching coached phrases.",
+      "failureCondition": "Accuse without pattern.",
+      "successTarget": { "type": "scene", "id": "lyra_pressure_first_crack" },
+      "failureTarget": { "type": "scene", "id": "prosecutor_counterattack" },
+      "uiLayoutNotes": "Phrase cards with highlight.",
+      "mobileGestureNotes": "Tap two phrase cards.",
+      "futureModuleType": "evidence_presentation",
+      "implementationNotes": "Pattern-matching proof module.",
+      "assetRequirements": ["bg_witness_stand_close_rain_window"],
+      "agentPrompt": "Create a coached-testimony evidence hook.",
+      "notes": "Witness pressure hook."
+    },
+    {
+      "id": "closing-argument-build",
+      "type": "custom",
+      "title": "Closing Argument Builder",
+      "module": "future-closing-builder-module",
+      "narrativePurpose": "Convert discoveries into the final pitch.",
+      "gameplayPurpose": "Choose the strongest proof sequence.",
+      "expectedPlayerAction": "Select three closing beats.",
+      "requiredInputs": ["argument_selection"],
+      "successCondition": "Photo, weather, witness coaching.",
+      "failureCondition": "Weak or reckless close.",
+      "successTarget": { "type": "ending", "id": "timeline-revealed" },
+      "failureTarget": { "type": "ending", "id": "thin-acquittal" },
+      "uiLayoutNotes": "Three-slot argument board.",
+      "mobileGestureNotes": "Tap proof into slots.",
+      "futureModuleType": "argument_builder",
+      "implementationNotes": "Can reuse evidence slot UI.",
+      "assetRequirements": ["asset_window_photo", "asset_weather_report"],
+      "agentPrompt": "Design a closing argument builder hook.",
+      "notes": "Ending hook."
     }
   ],
   "scenes": [
     {
       "id": "rain-at-the-courthouse",
       "title": "Rain at the Courthouse",
+      "purpose": "Set noir pressure and start investigation.",
+      "synopsis": "Mara arrives before dawn with one final testimony to break.",
+      "location": "predawn_courtroom",
+      "camera": "wide courthouse steps into courtroom dissolve",
       "background": "Stone steps reflecting blue security lights and late rain.",
+      "backgroundImage": "",
+      "backgroundPrompt": "Rainy courthouse steps before dawn, blue security lights, noir legal thriller, 16:9, no text.",
+      "musicMood": "low strings",
+      "soundMood": "rain and paper shuffling",
+      "transition": "fade-in",
+      "layoutNotes": { "mobileLandscape": "16:9 courtroom stage with case title top left.", "mobilePortrait": "Stack courtroom frame and dialogue.", "tablet": "Stage with case rail.", "desktop": "Large stage and metadata panels." },
+      "assetIds": ["bg_courtroom_predawn_rain"],
       "mood": ["measured", "uneasy"],
       "blocks": [
-        {
-          "type": "narration",
-          "text": "By morning, the trial has one witness left and one truth too many."
-        },
-        {
-          "type": "dialogue",
-          "speaker": "Ari Vale",
-          "text": "We do not need the whole night. We need the one minute the witness keeps stepping around."
-        }
+        { "type": "narration", "animation": "fade-in", "text": "By morning, the trial has one witness left and one truth too many." },
+        { "type": "dialogue", "speaker": "Mara Vey", "characterId": "mara_vey", "emotion": "thinking", "stance": "reading_file", "position": "lower-left", "text": "We do not need the whole night. We need the one minute the witness keeps stepping around." }
       ],
       "choices": [
-        {
-          "id": "inspect-basement-log",
-          "label": "Inspect the basement elevator log",
-          "target": { "type": "scene", "id": "basement-log" },
-          "effects": [{ "type": "addItem", "itemId": "elevator-keycard" }]
-        },
-        {
-          "id": "question-security-clerk",
-          "label": "Question the security clerk",
-          "target": { "type": "scene", "id": "security-desk" },
-          "effects": [{ "type": "addItem", "itemId": "torn-schedule" }]
-        }
+        { "id": "inspect-basement-log", "label": "Inspect the basement elevator log", "tone": "analytical", "target": { "type": "scene", "id": "basement-log" }, "effects": [{ "type": "addItem", "itemId": "elevator-keycard" }] },
+        { "id": "question-security-clerk", "label": "Question the security clerk", "tone": "methodical", "target": { "type": "scene", "id": "security-desk" }, "effects": [{ "type": "addItem", "itemId": "torn-schedule" }] }
+      ]
+    },
+    {
+      "id": "cold_open_verdict_before_dawn",
+      "title": "The Verdict Before Dawn",
+      "purpose": "Cinematic intro at the brink of conviction.",
+      "synopsis": "Mara asks the court for one more question.",
+      "location": "predawn_courtroom",
+      "camera": "judge centered, witness upper right, defense lower left",
+      "background": "The courtroom waits in blue predawn rain.",
+      "backgroundPrompt": "Cinematic noir courtroom before dawn with rain on tall windows, judge bench shadow, 16:9, no text.",
+      "musicMood": "restrained courtroom tension",
+      "soundMood": "rain, old fluorescent hum",
+      "transition": "fade-in",
+      "layoutNotes": { "mobileLandscape": "Dialogue bottom 28%, evidence tray disabled right.", "mobilePortrait": "Portrait dialogue stack." },
+      "assetIds": ["bg_courtroom_predawn_rain"],
+      "mood": ["tense", "elegant"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Judge Arden Hale", "characterId": "judge_hale", "emotion": "serious", "stance": "seated", "position": "center-back", "text": "Counselor Vey. This court has granted you every possible delay." },
+        { "type": "dialogue", "speaker": "Mara Vey", "characterId": "mara_vey", "emotion": "serious", "stance": "reading_file", "position": "lower-left", "text": "Then grant me one more question." },
+        { "type": "gameplay_hook", "hookId": "witness-pressure-timed-choice" }
+      ],
+      "choices": [
+        { "id": "review-testimony-carefully", "label": "Ask to review the testimony", "target": { "type": "scene", "id": "final_testimony_review" }, "effects": [{ "type": "incrementVariable", "variable": "judgePatience", "by": 1 }] },
+        { "id": "challenge-now", "label": "Challenge the testimony now", "target": { "type": "scene", "id": "witness-stand" }, "effects": [{ "type": "incrementVariable", "variable": "maraPressure", "by": 1 }] }
       ]
     },
     {
       "id": "basement-log",
       "title": "Basement Log",
+      "purpose": "Give the keycard clue and introduce document inspection.",
+      "synopsis": "Tobin shows the elevator access record.",
+      "location": "records_room",
+      "camera": "terminal glow on logbook and clerk hands",
       "background": "A humming records room with a single terminal awake in the dark.",
+      "backgroundPrompt": "Courthouse basement records room, glowing terminal, shelves, noir rain atmosphere, 16:9, no text.",
+      "musicMood": "soft investigative pulse",
+      "soundMood": "terminal hum",
+      "transition": "flash-cut",
+      "layoutNotes": { "mobileLandscape": "Log inspection card center.", "mobilePortrait": "Log rows stacked." },
+      "assetIds": ["bg_records_room", "asset_keycard"],
       "mood": ["investigative", "quiet"],
       "blocks": [
-        {
-          "type": "dialogue",
-          "speaker": "Court Clerk",
-          "text": "Nobody was meant to use the basement elevator after eleven."
-        },
-        {
-          "type": "narration",
-          "text": "The access record says someone did, and the keycard number belongs to the witness."
-        }
+        { "type": "dialogue", "speaker": "Tobin Vale", "characterId": "tobin_clerk", "emotion": "afraid", "stance": "holding_log", "position": "center-right", "text": "Nobody was meant to use the basement elevator after eleven." },
+        { "type": "gameplay_hook", "hookId": "elevator-log-parse" }
       ],
       "choices": [
-        {
-          "id": "collect-clerk-schedule",
-          "label": "Cross-check the security schedule",
-          "target": { "type": "scene", "id": "security-desk" },
-          "effects": [{ "type": "addItem", "itemId": "torn-schedule" }]
-        },
-        {
-          "id": "enter-court-with-keycard",
-          "label": "Return to court with the keycard",
-          "target": { "type": "scene", "id": "witness-stand" }
-        }
+        { "id": "collect-clerk-schedule", "label": "Cross-check the security schedule", "target": { "type": "scene", "id": "security-desk" }, "effects": [{ "type": "addItem", "itemId": "torn-schedule" }] },
+        { "id": "enter-court-with-keycard", "label": "Return to court with the keycard", "target": { "type": "scene", "id": "witness-stand" } }
+      ]
+    },
+    {
+      "id": "records-crosscheck",
+      "title": "Records Crosscheck",
+      "purpose": "Confirm the basement timestamp against the witness route.",
+      "synopsis": "Mara matches the keycard row to a door camera time nobody mentioned.",
+      "location": "records_room",
+      "camera": "terminal reflection across Mara's file",
+      "background": "The archive terminal throws blue light across a logbook and a wet sleeve.",
+      "backgroundPrompt": "Courthouse records room terminal and logbook under blue light, raincoat sleeve visible, noir investigation, 16:9, no text.",
+      "musicMood": "focused pulse",
+      "soundMood": "keys, fluorescent buzz, rain",
+      "transition": "camera-pan",
+      "layoutNotes": { "mobileLandscape": "Document row comparison center with evidence tray right.", "mobilePortrait": "Rows stacked under terminal art." },
+      "assetIds": ["bg_records_room", "asset_keycard"],
+      "mood": ["precise", "revealing"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Mara Vey", "characterId": "mara_vey", "emotion": "thinking", "stance": "reading_file", "position": "lower-left", "text": "The elevator log does not place Lyra near the crime. It places her near the story she was told to repeat." },
+        { "type": "dialogue", "speaker": "Tobin Vale", "characterId": "tobin_clerk", "emotion": "afraid", "stance": "holding_log", "position": "center-right", "text": "And the camera receipt came in after the statement was drafted." }
+      ],
+      "choices": [
+        { "id": "return-with-record-crosscheck", "label": "Return to court with the cross-check", "target": { "type": "scene", "id": "witness-stand" }, "effects": [{ "type": "incrementVariable", "variable": "witnessPressure", "by": 1 }] },
+        { "id": "check-security-desk-after-crosscheck", "label": "Check the security desk next", "target": { "type": "scene", "id": "security-desk" }, "effects": [{ "type": "addItem", "itemId": "torn-schedule" }] }
       ]
     },
     {
       "id": "security-desk",
       "title": "Security Desk",
+      "purpose": "Add schedule contradiction and route to receipt clue.",
+      "synopsis": "A torn schedule puts the witness near the wrong door.",
+      "location": "security_desk",
+      "camera": "desk closeup with umbrella shadows",
       "background": "A narrow desk stacked with umbrellas, thermal paper, and a silent radio.",
+      "backgroundPrompt": "Narrow courthouse security desk with umbrellas and paper, noir rain night, 16:9, no text.",
+      "musicMood": "methodical tension",
+      "soundMood": "radio static",
+      "transition": "camera-pan",
+      "layoutNotes": { "mobileLandscape": "Evidence cards on right, dialogue bottom.", "mobilePortrait": "Evidence stack below dialogue." },
+      "assetIds": ["bg_security_desk", "asset_schedule"],
       "mood": ["methodical", "claustrophobic"],
       "blocks": [
-        {
-          "type": "dialogue",
-          "speaker": "Security Clerk",
-          "text": "The guard swapped posts when the rain started. Said the east doors were leaking again."
-        },
-        {
-          "type": "narration",
-          "text": "A torn schedule places the witness away from the route he swore he never took."
-        }
+        { "type": "dialogue", "speaker": "Tobin Vale", "characterId": "tobin_clerk", "emotion": "thinking", "stance": "pointing_to_record", "position": "center-right", "text": "The guard swapped posts when the rain started. Said the east doors were leaking again." }
       ],
       "choices": [
-        {
-          "id": "buy-time-with-receipt",
-          "label": "Check the kiosk receipt box",
-          "target": { "type": "scene", "id": "kiosk-receipt" },
-          "effects": [{ "type": "addItem", "itemId": "raincoat-receipt" }]
-        },
-        {
-          "id": "return-to-testimony",
-          "label": "Return to the witness stand",
-          "target": { "type": "scene", "id": "witness-stand" }
-        }
+        { "id": "buy-time-with-receipt", "label": "Check the kiosk receipt box", "target": { "type": "scene", "id": "kiosk-receipt" }, "effects": [{ "type": "addItem", "itemId": "raincoat-receipt" }] },
+        { "id": "return-to-testimony", "label": "Return to the witness stand", "target": { "type": "scene", "id": "witness-stand" } }
       ]
     },
     {
       "id": "kiosk-receipt",
       "title": "Kiosk Receipt",
+      "purpose": "Add timestamp evidence for the final court sequence.",
+      "synopsis": "A damp receipt proves someone stayed later than claimed.",
+      "location": "security_desk",
+      "camera": "receipt under maintenance light",
       "background": "A closed coffee kiosk beneath a maintenance light that buzzes like a held breath.",
+      "backgroundPrompt": "Closed courthouse kiosk, damp receipt under maintenance light, noir legal thriller, 16:9, no text.",
+      "musicMood": "single sustained note",
+      "soundMood": "light buzz, rain",
+      "transition": "dramatic-zoom",
+      "layoutNotes": { "mobileLandscape": "Receipt card center, timeline prompt ready.", "mobilePortrait": "Receipt above choices." },
+      "assetIds": ["bg_security_desk", "asset_receipt"],
       "mood": ["specific", "revealing"],
       "blocks": [
-        {
-          "type": "narration",
-          "text": "The receipt is small, damp, and decisive: a raincoat bought after the witness claimed he was already home."
-        }
+        { "type": "narration", "text": "The receipt is small, damp, and decisive: a raincoat bought after the witness claimed she was already home." },
+        { "type": "gameplay_hook", "hookId": "receipt-timeline-build" }
       ],
       "choices": [
-        {
-          "id": "enter-court-with-receipt",
-          "label": "Bring the timestamp to court",
-          "target": { "type": "scene", "id": "witness-stand" }
-        }
+        { "id": "enter-court-with-receipt", "label": "Bring the timestamp to court", "target": { "type": "scene", "id": "witness-stand" } }
+      ]
+    },
+    {
+      "id": "final_testimony_review",
+      "title": "Final Testimony Review",
+      "purpose": "Present the statement-card structure and contradiction target.",
+      "synopsis": "Lyra repeats the line about the open study window.",
+      "location": "witness_stand",
+      "camera": "witness left, statements center, evidence tray right",
+      "background": "The witness stand sits under cold dawn light with rain behind it.",
+      "backgroundPrompt": "Courtroom witness stand close view, rain-streaked window behind witness, premium visual novel noir, 16:9, no text.",
+      "musicMood": "ticking legal suspense",
+      "soundMood": "rain, pen scratching",
+      "transition": "flash-cut",
+      "layoutNotes": { "mobileLandscape": "Witness 25%, testimony cards center, evidence tray 25%.", "mobilePortrait": "Swipeable statement cards stacked." },
+      "assetIds": ["bg_witness_stand_close_rain_window", "asset_window_photo", "asset_weather_report"],
+      "mood": ["formal", "dangerous"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Lyra Mont", "characterId": "lyra_mont", "emotion": "serious", "stance": "testifying", "position": "upper-right", "text": "The study window was open. I saw Elias Vorn standing inside, holding the letter opener." },
+        { "type": "gameplay_hook", "hookId": "contradiction_window_was_closed" }
+      ],
+      "choices": [
+        { "id": "return-to-court-pressure", "label": "Press the statement in open court", "target": { "type": "scene", "id": "witness-stand" } }
       ]
     },
     {
       "id": "witness-stand",
       "title": "Witness Stand",
+      "purpose": "Core contradiction scene.",
+      "synopsis": "Mara challenges Lyra's impossible open-window account.",
+      "location": "witness_stand",
+      "camera": "witness upper right, Mara lower left, judge centered",
       "background": "A courtroom washed in gray daylight, every surface too polished for comfort.",
+      "backgroundPrompt": "Noir courtroom witness stand in gray dawn, rain windows, polished wood, 16:9, no text.",
+      "musicMood": "restrained legal suspense",
+      "soundMood": "courtroom silence",
+      "transition": "fade-in",
+      "layoutNotes": { "mobileLandscape": "Hook card over testimony cards, evidence rail visible.", "mobilePortrait": "Hook below statement." },
+      "assetIds": ["bg_witness_stand_close_rain_window"],
       "mood": ["formal", "dangerous"],
       "blocks": [
-        {
-          "type": "dialogue",
-          "speaker": "Witness",
-          "text": "I left through the front doors before the alarm. I never went below the lobby."
-        },
-        {
-          "type": "dialogue",
-          "speaker": "Judge Ren",
-          "text": "Counsel, your next question should matter."
-        },
-        {
-          "type": "gameplay_hook",
-          "hook": {
-            "id": "present-contradiction",
-            "type": "evidence_presentation",
-            "module": "future-contradiction-presentation-module",
-            "successTarget": { "type": "scene", "id": "witness-cracks" },
-            "failureTarget": { "type": "scene", "id": "objection-sustained" },
-            "successEffects": [{ "type": "incrementVariable", "variable": "witnessPressure", "by": 2 }],
-            "failureEffects": [{ "type": "incrementVariable", "variable": "judgePatience", "by": -1 }],
-            "notes": "Future module can let players select evidence and point to the exact line of testimony it contradicts."
-          }
-        }
+        { "type": "dialogue", "speaker": "Lyra Mont", "characterId": "lyra_mont", "emotion": "afraid", "stance": "hands_on_rail", "position": "upper-right", "text": "I left through the front doors before the alarm. I never went below the lobby." },
+        { "type": "gameplay_hook", "hookId": "present-contradiction" }
       ],
       "choices": [
-        {
-          "id": "press-with-keycard",
-          "label": "Press the elevator keycard contradiction",
-          "target": { "type": "scene", "id": "witness-cracks" },
-          "conditions": [{ "type": "hasItem", "itemId": "elevator-keycard" }],
-          "effects": [{ "type": "incrementVariable", "variable": "witnessPressure", "by": 1 }]
-        },
-        {
-          "id": "press-too-early",
-          "label": "Press without enough proof",
-          "target": { "type": "scene", "id": "objection-sustained" },
-          "conditions": [{ "type": "notHasItem", "itemId": "elevator-keycard" }]
-        }
+        { "id": "press-with-keycard", "label": "Press the elevator keycard contradiction", "target": { "type": "scene", "id": "witness-cracks" }, "conditions": [{ "type": "hasItem", "itemId": "elevator-keycard" }], "effects": [{ "type": "incrementVariable", "variable": "witnessPressure", "by": 1 }] },
+        { "id": "press-too-early", "label": "Press without enough proof", "target": { "type": "scene", "id": "objection-sustained" }, "conditions": [{ "type": "notHasItem", "itemId": "elevator-keycard" }] }
       ]
     },
     {
       "id": "objection-sustained",
       "title": "Objection Sustained",
+      "purpose": "Failure branch preserving recovery.",
+      "synopsis": "The judge punishes speculation but Mara can recover with stronger proof.",
+      "location": "predawn_courtroom",
+      "camera": "gavel foreground, Mara in shadow",
       "background": "The courtroom sound drops away after the gavel.",
+      "backgroundPrompt": "Noir courtroom gavel foreground, defense attorney in shadow, rain windows, 16:9.",
+      "musicMood": "low impact hit",
+      "soundMood": "gavel, rain",
+      "transition": "screen-shake",
+      "layoutNotes": { "mobileLandscape": "Setback text center with recovery choices.", "mobilePortrait": "Stack setback card and choices." },
+      "assetIds": ["bg_courtroom_predawn_rain"],
       "mood": ["setback", "controlled"],
       "blocks": [
-        {
-          "type": "dialogue",
-          "speaker": "Judge Ren",
-          "text": "The court will not follow speculation into the basement."
-        },
-        {
-          "type": "narration",
-          "text": "The witness exhales as if the floor has returned under him."
-        }
+        { "type": "dialogue", "speaker": "Judge Arden Hale", "characterId": "judge_hale", "emotion": "serious", "stance": "seated", "position": "center-back", "text": "The court will not follow speculation into the basement." }
       ],
       "choices": [
-        {
-          "id": "recover-with-receipt",
-          "label": "Recover with the raincoat timestamp",
-          "target": { "type": "scene", "id": "witness-cracks" },
-          "conditions": [{ "type": "hasItem", "itemId": "raincoat-receipt" }]
-        },
-        {
-          "id": "close-with-doubt",
-          "label": "Close on reasonable doubt",
-          "target": { "type": "ending", "id": "thin-acquittal" }
-        }
+        { "id": "recover-with-receipt", "label": "Recover with the raincoat timestamp", "target": { "type": "scene", "id": "witness-cracks" }, "conditions": [{ "type": "hasItem", "itemId": "raincoat-receipt" }] },
+        { "id": "close-with-doubt", "label": "Close on reasonable doubt", "target": { "type": "ending", "id": "thin-acquittal" } }
       ]
     },
     {
       "id": "witness-cracks",
       "title": "Witness Cracks",
+      "purpose": "Reward evidence presentation and open the staged-window reveal.",
+      "synopsis": "Lyra admits she knew something before she could have known it.",
+      "location": "witness_stand",
+      "camera": "bead of rain on witness sleeve, close",
       "background": "A bead of rainwater falls from the witness's sleeve onto the rail.",
+      "backgroundPrompt": "Courtroom witness closeup, rainwater on sleeve, shocked expression, noir legal thriller, 16:9.",
+      "musicMood": "sudden silence then strings",
+      "soundMood": "courtroom gasp",
+      "transition": "dramatic-zoom",
+      "layoutNotes": { "mobileLandscape": "Witness portrait right, revelation copy left.", "mobilePortrait": "Witness card above dialogue." },
+      "assetIds": ["bg_courtroom_revelation_photo_focus"],
       "mood": ["sharp", "decisive"],
       "blocks": [
-        {
-          "type": "dialogue",
-          "speaker": "Witness",
-          "text": "I only went down because I heard the alarm before it sounded upstairs."
-        },
-        {
-          "type": "narration",
-          "text": "The contradiction is not just where he was. It is what he knew too early."
-        }
+        { "type": "dialogue", "speaker": "Lyra Mont", "characterId": "lyra_mont", "emotion": "surprised", "stance": "recoiling", "position": "upper-right", "animation": "tense-shake", "text": "I only went down because I heard the alarm before it sounded upstairs." },
+        { "type": "narration", "text": "The contradiction is not just where she was. It is what she knew too early." }
       ],
       "choices": [
-        {
-          "id": "deliver-final-testimony",
-          "label": "Frame the impossible timeline",
-          "target": { "type": "ending", "id": "timeline-revealed" }
-        }
+        { "id": "deliver-final-testimony", "label": "Frame the impossible timeline", "target": { "type": "ending", "id": "timeline-revealed" } },
+        { "id": "reveal-window", "label": "Reveal the window contradiction", "target": { "type": "scene", "id": "window_contradiction_revealed" } }
+      ]
+    },
+    {
+      "id": "window_contradiction_revealed",
+      "title": "Rain on the Inside",
+      "purpose": "Major game moment from the reference scene.",
+      "synopsis": "Mara proves the open window was staged after the murder.",
+      "location": "study_projection",
+      "camera": "projected photo center, Mara left, Lyra right",
+      "background": "The crime scene photograph expands over the courtroom wall.",
+      "backgroundPrompt": "Dramatic courtroom evidence reveal with projected crime scene window photo, highlighted stain, noir, 16:9, no text.",
+      "musicMood": "rising strings after silence",
+      "soundMood": "evidence slam, rain swell",
+      "transition": "evidence-slam",
+      "layoutNotes": { "mobileLandscape": "Photo dominates center with highlighted detail.", "mobilePortrait": "Photo prompt above dialogue." },
+      "assetIds": ["bg_courtroom_revelation_photo_focus", "asset_window_photo"],
+      "mood": ["revelatory", "dangerous"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Mara Vey", "characterId": "mara_vey", "emotion": "confident", "stance": "presenting_evidence", "position": "lower-left", "animation": "evidence-slam", "text": "If that window had been open, the rain would have crossed the sill and soaked the study floor." },
+        { "type": "gameplay_hook", "hookId": "inspect_crime_scene_photo_detail" }
+      ],
+      "choices": [
+        { "id": "trace-staging", "label": "Trace who staged the window", "target": { "type": "scene", "id": "staged_window_investigation_path" } },
+        { "id": "pressure-lyra", "label": "Pressure Lyra about who coached her", "target": { "type": "scene", "id": "lyra_pressure_first_crack" } }
+      ]
+    },
+    {
+      "id": "judge_warning_after_failed_objection",
+      "title": "Judge's Warning",
+      "purpose": "Reference failure branch.",
+      "synopsis": "Mara is warned to present proof, not instinct.",
+      "location": "predawn_courtroom",
+      "camera": "judge leaning forward",
+      "background": "Judge Hale leans into a silence that feels final.",
+      "backgroundPrompt": "Severe judge leaning forward in noir courtroom, rain windows, 16:9.",
+      "musicMood": "low warning tone",
+      "soundMood": "bench creak",
+      "transition": "dramatic-zoom",
+      "layoutNotes": { "mobileLandscape": "Judge portrait center with recovery choice.", "mobilePortrait": "Warning card stacked." },
+      "assetIds": ["bg_courtroom_predawn_rain"],
+      "mood": ["warning", "focused"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Judge Arden Hale", "characterId": "judge_hale", "emotion": "serious", "stance": "leaning_forward", "position": "center-back", "text": "One more unsupported accusation and this court is finished listening." }
+      ],
+      "choices": [
+        { "id": "return-with-photo", "label": "Return to the photograph", "target": { "type": "scene", "id": "window_contradiction_revealed" } }
+      ]
+    },
+    {
+      "id": "staged_window_investigation_path",
+      "title": "Staged Window Path",
+      "purpose": "Branch toward the larger conspiracy.",
+      "synopsis": "The staged window points to someone inside the prosecution timeline.",
+      "location": "records_room",
+      "camera": "ledger and photo side by side",
+      "background": "The photo and logbook sit together like they were waiting to meet.",
+      "backgroundPrompt": "Noir records table with crime scene photo and logbook, rain ambience, 16:9.",
+      "musicMood": "investigative resolve",
+      "soundMood": "paper, rain",
+      "transition": "fade-in",
+      "layoutNotes": { "mobileLandscape": "Evidence pair center, branch choices bottom.", "mobilePortrait": "Evidence cards stacked." },
+      "assetIds": ["bg_records_room", "asset_window_photo"],
+      "mood": ["analytical", "opening"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Mara Vey", "characterId": "mara_vey", "emotion": "thinking", "stance": "reading_file", "position": "lower-left", "text": "The killer did not need a witness. They needed a witness who believed herself." }
+      ],
+      "choices": [
+        { "id": "follow-coaching", "label": "Follow who coached Lyra", "target": { "type": "scene", "id": "lyra_pressure_first_crack" } },
+        { "id": "build-closing", "label": "Build the closing argument", "target": { "type": "scene", "id": "closing-argument" } }
+      ]
+    },
+    {
+      "id": "mara_explains_photo_without_bonus",
+      "title": "Mara Explains the Photo",
+      "purpose": "Inspection failure branch without blocking story.",
+      "synopsis": "Mara explains the stain herself, but loses momentum.",
+      "location": "study_projection",
+      "camera": "photo highlight appears late",
+      "background": "The focus box finally finds the narrow stain.",
+      "backgroundPrompt": "Courtroom projection with late evidence highlight, noir rain, 16:9.",
+      "musicMood": "muted resolve",
+      "soundMood": "projector hum",
+      "transition": "fade-in",
+      "layoutNotes": { "mobileLandscape": "Hint overlay and recovery choice.", "mobilePortrait": "Photo then explanation." },
+      "assetIds": ["bg_courtroom_revelation_photo_focus", "asset_window_photo"],
+      "mood": ["instructional", "costly"],
+      "blocks": [
+        { "type": "narration", "text": "The court understands the stain, but not before the moment cools." }
+      ],
+      "choices": [
+        { "id": "continue-staging-path", "label": "Continue the staged-window path", "target": { "type": "scene", "id": "staged_window_investigation_path" } }
+      ]
+    },
+    {
+      "id": "lyra_pressure_first_crack",
+      "title": "Lyra's First Crack",
+      "purpose": "Reveal coaching pressure.",
+      "synopsis": "Lyra admits someone gave her the phrasing.",
+      "location": "witness_stand",
+      "camera": "Lyra tight closeup, Cassian entering frame",
+      "background": "Lyra's hands leave marks on the witness rail.",
+      "backgroundPrompt": "Witness breakdown in noir courtroom, hands tense on rail, prosecutor shadow, 16:9.",
+      "musicMood": "tight strings",
+      "soundMood": "breath, rain",
+      "transition": "tense-shake",
+      "layoutNotes": { "mobileLandscape": "Phrase cards and Lyra portrait.", "mobilePortrait": "Phrase list below portrait." },
+      "assetIds": ["bg_witness_stand_close_rain_window"],
+      "mood": ["fragile", "dangerous"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Lyra Mont", "characterId": "lyra_mont", "emotion": "breakdown", "stance": "recoiling", "position": "upper-right", "text": "He said if I used the exact words, nobody would ask about the rain." },
+        { "type": "gameplay_hook", "hookId": "coaching-thread" }
+      ],
+      "choices": [
+        { "id": "build-final-close", "label": "Build the closing argument", "target": { "type": "scene", "id": "closing-argument" } }
+      ]
+    },
+    {
+      "id": "prosecutor_counterattack",
+      "title": "Prosecutor Counterattack",
+      "purpose": "Reckless branch where Cassian strikes back.",
+      "synopsis": "Cassian turns Mara's accusation into a threat to the defense.",
+      "location": "predawn_courtroom",
+      "camera": "Cassian cutting into foreground",
+      "background": "Cassian steps into the aisle before the judge can speak.",
+      "backgroundPrompt": "Irritated prosecutor stepping into noir courtroom aisle, rain windows, 16:9.",
+      "musicMood": "sharp brass hit",
+      "soundMood": "chair scrape",
+      "transition": "slide-in-right",
+      "layoutNotes": { "mobileLandscape": "Cassian portrait right, defensive choices bottom.", "mobilePortrait": "Counterattack card." },
+      "assetIds": ["bg_courtroom_predawn_rain"],
+      "mood": ["hostile", "reckless"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Cassian Roe", "characterId": "cassian_roe", "emotion": "angry", "stance": "stepping_forward", "position": "lower-right", "animation": "slide-in-right", "text": "The defense is not revealing truth. It is manufacturing fog." }
+      ],
+      "choices": [
+        { "id": "retreat-to-doubt", "label": "Retreat to reasonable doubt", "target": { "type": "ending", "id": "thin-acquittal" } },
+        { "id": "answer-with-proof", "label": "Answer with the photo", "target": { "type": "scene", "id": "closing-argument" } }
+      ]
+    },
+    {
+      "id": "closing-argument",
+      "title": "Closing Argument",
+      "purpose": "Convert investigation into outcome.",
+      "synopsis": "Mara chooses the proof order that will define the verdict.",
+      "location": "predawn_courtroom",
+      "camera": "Mara centered, jury unseen",
+      "background": "The courtroom has become still enough to hear rain choose a window.",
+      "backgroundPrompt": "Defense attorney closing argument in predawn noir courtroom, rain windows, cinematic 16:9.",
+      "musicMood": "rising final strings",
+      "soundMood": "rain quiets",
+      "transition": "fade-in",
+      "layoutNotes": { "mobileLandscape": "Three-slot argument hook center.", "mobilePortrait": "Argument slots stacked." },
+      "assetIds": ["bg_courtroom_predawn_rain"],
+      "mood": ["final", "precise"],
+      "blocks": [
+        { "type": "gameplay_hook", "hookId": "closing-argument-build" }
+      ],
+      "choices": [
+        { "id": "complete-revealed-timeline", "label": "Deliver the impossible timeline", "target": { "type": "ending", "id": "timeline-revealed" } },
+        { "id": "complete-quiet-doubt", "label": "Leave the court with doubt", "target": { "type": "ending", "id": "thin-acquittal" } }
       ]
     }
   ],
@@ -251,13 +994,22 @@
       "id": "timeline-revealed",
       "title": "Timeline Revealed",
       "tone": "clean victory",
-      "summary": "The witness admits he knew about the alarm before it sounded, turning the case on a minute no one could explain."
+      "summary": "The witness admits she knew about the alarm before it sounded, and the court sees the staged window for what it was.",
+      "cinematicNotes": "Rain brightens as the judge calls for a recess."
     },
     {
       "id": "thin-acquittal",
       "title": "Thin Acquittal",
       "tone": "ambiguous relief",
-      "summary": "The defense creates doubt, but the hidden route through the courthouse remains only half-lit."
+      "summary": "Mara creates enough doubt to save Elias, but the person who staged the window remains unnamed.",
+      "cinematicNotes": "Elias exhales while Cassian gathers untouched papers."
+    },
+    {
+      "id": "case-reopened",
+      "title": "Case Reopened",
+      "tone": "dangerous hope",
+      "summary": "The verdict is suspended and the court orders a new investigation into the staged evidence.",
+      "cinematicNotes": "The projector keeps glowing after everyone stands."
     }
   ]
 }

@@ -2,21 +2,187 @@
   "metadata": {
     "id": "the-clocktower-riddle",
     "title": "The Clocktower Riddle",
-    "genre": "puzzle adventure",
-    "author": "AdventureKit",
-    "summary": "A mysterious exploration prototype with item discovery, atmospheric choices, and a clockwork puzzle hook."
+    "genre": "puzzle adventure / magical mystery",
+    "author": "AdventureKit Studio",
+    "summary": "A moonlit puzzle adventure vertical slice about a town stopped at midnight and the hidden hour inside its clocktower."
   },
   "startScene": "moonlit-square",
   "variables": {
     "bellsAligned": 0,
-    "lanternLit": false
+    "lanternLit": false,
+    "townMemory": 0
   },
+  "storyBible": {
+    "premise": "A young bell apprentice returns to a town frozen at midnight and must align the tower's impossible bells before the hidden hour erases itself.",
+    "genre": "puzzle adventure / magical mystery",
+    "tone": "mysterious, warm, precise, wonder-edged",
+    "targetPlatform": "mobile-first web",
+    "targetPlayStyle": "exploration, object collection, pattern puzzles, cinematic riddle reveals",
+    "visualDirection": "blue moonlight, brass mechanisms, wet cobblestones, candle-warm interiors, floating dust motes",
+    "pacingRules": ["Start with the stopped clock", "Give every object a ritual purpose", "Let puzzle failure reveal lore"],
+    "worldRules": ["The tower responds to remembered names", "Every bell carries one hour", "The hidden hour cannot be owned"],
+    "mainCast": ["ilen_var", "maes_quill", "vell_brass", "sora_lune", "keeper_orrin"],
+    "keyLocations": ["moonlit_square", "dry_fountain", "clocktower_stairs", "lantern_gallery", "bell_chamber", "hidden_hour"],
+    "coreMystery": "The town did not lose an hour. Someone sealed it inside the clocktower to protect a dangerous memory.",
+    "chapterOutline": ["The stopped square", "Fountain cache", "Tower ascent", "Bell alignment", "Hidden hour choice"],
+    "writingStyleGuide": "Lyrical but playable. Short riddle lines, concrete objects, clear puzzle verbs.",
+    "contentBoundaries": ["No horror gore", "No real religion", "No copied puzzle layouts"],
+    "gameplayModulePlan": ["inspection", "object_manipulation", "puzzle", "timed_choice"]
+  },
+  "characters": [
+    {
+      "id": "ilen_var",
+      "displayName": "Ilen Var",
+      "role": "Bell apprentice",
+      "archetype": "curious restorer",
+      "biography": "Ilen left the tower as a child and returns with the only memory not frozen at midnight.",
+      "traits": ["curious", "careful", "brave"],
+      "secrets": "Ilen's name is etched into the hidden hour gear.",
+      "motivations": "Wake the town without breaking the memory inside the tower.",
+      "visualDescription": "Short cloak, brass tool satchel, moonlit eyes, chalk on fingers.",
+      "baseImagePrompt": "Young bell apprentice in moonlit clocktower square, brass tools, cinematic fantasy mystery portrait, no text.",
+      "portraitUrl": "",
+      "emotions": ["curious", "serious", "wonder", "afraid"],
+      "stances": ["holding_winder", "reading_map", "raising_lantern"],
+      "screenPositions": ["lower-left", "center-left"],
+      "voiceNotes": "Bright, observant, gentler when afraid.",
+      "relationshipNotes": "Trusts Maes, challenges Keeper Orrin.",
+      "variants": [
+        {
+          "emotionId": "wonder",
+          "stanceId": "raising_lantern",
+          "description": "Ilen raises the blue lantern when the hidden hour opens.",
+          "imagePrompt": "Bell apprentice raising blue lantern in a clocktower chamber, moonlit brass, cinematic fantasy.",
+          "imageUrl": "",
+          "animation": "dramatic-zoom",
+          "usageNotes": "Use at the hidden-hour reveal."
+        }
+      ]
+    },
+    {
+      "id": "maes_quill",
+      "displayName": "Maes Quill",
+      "role": "Town archivist",
+      "archetype": "warm keeper of records",
+      "biography": "Maes remembers the town through ledgers that keep rewriting themselves at midnight.",
+      "traits": ["kind", "precise", "anxious"],
+      "secrets": "Maes once helped hide the thirteenth-hour map.",
+      "motivations": "Make sure the town wakes with its history intact.",
+      "visualDescription": "Round spectacles, ink-black scarf, moonlit ledger under one arm.",
+      "baseImagePrompt": "Warm town archivist on clocktower balcony, ledger, blue moonlight and amber candles, fantasy portrait.",
+      "portraitUrl": "",
+      "emotions": ["thinking", "afraid", "relieved"],
+      "stances": ["holding_ledger", "pointing_to_map"],
+      "screenPositions": ["center-right"],
+      "voiceNotes": "Soft, exact, often quotes old minutes.",
+      "relationshipNotes": "Mentor figure to Ilen.",
+      "variants": [
+        {
+          "emotionId": "thinking",
+          "stanceId": "pointing_to_map",
+          "description": "Maes points out a changed route in the tower map.",
+          "imagePrompt": "Archivist pointing to moonlit tower map, blue and candle lighting, fantasy mystery.",
+          "imageUrl": "",
+          "animation": "slide-in-right",
+          "usageNotes": "Use when map evidence appears."
+        }
+      ]
+    },
+    {
+      "id": "vell_brass",
+      "displayName": "Vell Brass",
+      "role": "Clockmaker",
+      "archetype": "guilty mechanic",
+      "biography": "Vell rebuilt the tower gears and knows which one was made to lie.",
+      "traits": ["practical", "guilty", "inventive"],
+      "secrets": "Vell removed the moon gear to stop the hidden hour from ringing.",
+      "motivations": "Repair the tower without reopening old blame.",
+      "visualDescription": "Sleeves rolled, brass filings on apron, pocket full of springs.",
+      "baseImagePrompt": "Clockmaker in brass gear library, moonlight through gears, cinematic fantasy portrait.",
+      "portraitUrl": "",
+      "emotions": ["serious", "ashamed", "confident"],
+      "stances": ["holding_gear", "adjusting_clockwork"],
+      "screenPositions": ["lower-right"],
+      "voiceNotes": "Dry, technical, vulnerable under pressure.",
+      "relationshipNotes": "Avoids Keeper Orrin and owes Maes a confession.",
+      "variants": [
+        {
+          "emotionId": "confident",
+          "stanceId": "adjusting_clockwork",
+          "description": "Vell understands how the rings should align.",
+          "imagePrompt": "Clockmaker adjusting brass clockwork rings in blue moonlight, cinematic fantasy.",
+          "imageUrl": "",
+          "animation": "tool-ready",
+          "usageNotes": "Use during gear module prompts."
+        }
+      ]
+    },
+    {
+      "id": "sora_lune",
+      "displayName": "Sora Lune",
+      "role": "Lantern keeper",
+      "archetype": "playful guide",
+      "biography": "Sora tends the blue lanterns that only burn near true hours.",
+      "traits": ["playful", "watchful", "loyal"],
+      "secrets": "Sora can hear the hour hidden behind the bell chamber wall.",
+      "motivations": "Help Ilen choose the hour instead of merely solving it.",
+      "visualDescription": "Lantern satchel, silver braid, moon-dust on sleeves.",
+      "baseImagePrompt": "Lantern keeper with blue glass lanterns in clocktower gallery, cinematic fantasy portrait.",
+      "portraitUrl": "",
+      "emotions": ["curious", "afraid", "confident"],
+      "stances": ["holding_lantern", "listening_to_bell"],
+      "screenPositions": ["upper-right", "center-right"],
+      "voiceNotes": "Quick, bright, then very still when listening.",
+      "relationshipNotes": "Friendly rival to Ilen.",
+      "variants": [
+        {
+          "emotionId": "confident",
+          "stanceId": "holding_lantern",
+          "description": "Sora steadies the blue lantern.",
+          "imagePrompt": "Lantern keeper holding glowing blue lantern, brass clocktower gallery, fantasy portrait.",
+          "imageUrl": "",
+          "animation": "subtle-breathing",
+          "usageNotes": "Use in lantern scenes."
+        }
+      ]
+    },
+    {
+      "id": "keeper_orrin",
+      "displayName": "Keeper Orrin",
+      "role": "Clocktower guardian",
+      "archetype": "stern protector of the seal",
+      "biography": "Orrin sealed the hidden hour after the town used it to undo grief.",
+      "traits": ["stern", "protective", "tired"],
+      "secrets": "Orrin remembers every failed restoration attempt.",
+      "motivations": "Prevent the tower from becoming a machine for denial.",
+      "visualDescription": "Tall coat, key ring, white hair, shadowed eyes.",
+      "baseImagePrompt": "Stern clocktower guardian in moonlit bell chamber, brass keys, cinematic fantasy portrait.",
+      "portraitUrl": "",
+      "emotions": ["serious", "angry", "sad"],
+      "stances": ["blocking_door", "holding_keys"],
+      "screenPositions": ["center-back", "upper-left"],
+      "voiceNotes": "Low and formal, with old grief beneath.",
+      "relationshipNotes": "Tests whether Ilen understands restoration is not ownership.",
+      "variants": [
+        {
+          "emotionId": "sad",
+          "stanceId": "holding_keys",
+          "description": "Orrin admits why the hidden hour was sealed.",
+          "imagePrompt": "Sad clocktower guardian holding brass keys under blue moonlight, cinematic fantasy.",
+          "imageUrl": "",
+          "animation": "fade-in",
+          "usageNotes": "Use for moral reveal."
+        }
+      ]
+    }
+  ],
   "items": [
     {
       "id": "brass-winder",
       "name": "Brass Winder",
       "kind": "item",
       "description": "A palm-sized winding key with teeth worn smooth by many hands.",
+      "imageAssetId": "asset_brass_winder",
       "initiallyOwned": false
     },
     {
@@ -24,6 +190,7 @@
       "name": "Ink-Spattered Map",
       "kind": "evidence",
       "description": "A map showing the clocktower stairs and three marked bell chambers.",
+      "imageAssetId": "asset_inked_map",
       "initiallyOwned": false
     },
     {
@@ -31,196 +198,720 @@
       "name": "Blue Lantern",
       "kind": "item",
       "description": "A lantern that glows only when the tower bells are near alignment.",
+      "imageAssetId": "asset_blue_lantern",
       "initiallyOwned": false
+    },
+    {
+      "id": "moon-gear",
+      "name": "Moon Gear",
+      "kind": "item",
+      "description": "A small gear cut with thirteen teeth and a moon notch.",
+      "imageAssetId": "asset_moon_gear",
+      "initiallyOwned": false
+    },
+    {
+      "id": "bell-chalk",
+      "name": "Bell Chalk",
+      "kind": "item",
+      "description": "Silver chalk used to mark the true order of bell ropes.",
+      "imageAssetId": "asset_bell_chalk",
+      "initiallyOwned": false
+    }
+  ],
+  "assets": [
+    {
+      "id": "bg_moonlit_square",
+      "type": "background",
+      "title": "Moonlit Square",
+      "description": "Stopped town square beneath a blue-lit clocktower.",
+      "prompt": "Empty old-town square at midnight under towering clocktower, wet cobblestones, blue moonlight, brass clock face glowing, cinematic fantasy background, 16:9, no text.",
+      "negativePrompt": "modern cars, logo, watermark, text",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "opening mobile landscape stage",
+      "url": "",
+      "linkedSceneIds": ["moonlit-square"],
+      "linkedCharacterIds": ["ilen_var"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_fountain_cache",
+      "type": "background",
+      "title": "Fountain Cache",
+      "description": "Dry fountain with leaves and a hidden brass glint.",
+      "prompt": "Cracked dry fountain in moonlit town square, leaves, hidden brass glint, cinematic fantasy puzzle scene, 16:9, no text.",
+      "negativePrompt": "watermark, text, modern street signs",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "object inspection stage",
+      "url": "",
+      "linkedSceneIds": ["fountain-cache"],
+      "linkedCharacterIds": ["ilen_var"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_archivist_balcony",
+      "type": "background",
+      "title": "Archivist Balcony",
+      "description": "A candlelit balcony above the stopped square.",
+      "prompt": "Clocktower archivist balcony with ledgers, candlelight, blue moonlit square below, cinematic fantasy, 16:9, no text.",
+      "negativePrompt": "logo, watermark, readable real text",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "story bible and map scene",
+      "url": "",
+      "linkedSceneIds": ["archivist-balcony"],
+      "linkedCharacterIds": ["maes_quill"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_tower_stairs",
+      "type": "background",
+      "title": "Tower Stairs",
+      "description": "Spiral stairs with bell ropes descending like black threads.",
+      "prompt": "Ancient clocktower spiral stairwell, bell ropes descending, moon dust, brass shadows, cinematic fantasy background, 16:9, no text.",
+      "negativePrompt": "modern railings, logo, watermark",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "navigation scene",
+      "url": "",
+      "linkedSceneIds": ["tower-stairs", "keeper-warning"],
+      "linkedCharacterIds": ["keeper_orrin"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_lantern_gallery",
+      "type": "background",
+      "title": "Lantern Gallery",
+      "description": "A suspended walkway of blue lanterns and hour glass.",
+      "prompt": "Clocktower lantern gallery with rows of blue glass lanterns, brass walkway, moonlight, cinematic fantasy, 16:9, no text.",
+      "negativePrompt": "text, watermark, electric lights",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "lantern object scene",
+      "url": "",
+      "linkedSceneIds": ["lantern-gallery"],
+      "linkedCharacterIds": ["sora_lune"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_bell_chamber",
+      "type": "background",
+      "title": "Bell Chamber",
+      "description": "Three bells over a clockwork floor.",
+      "prompt": "Grand clocktower bell chamber, three silent bells, circular brass floor etched with moons and hour marks, cinematic puzzle background, 16:9, no text.",
+      "negativePrompt": "logo, text, clutter",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "main puzzle stage",
+      "url": "",
+      "linkedSceneIds": ["bell-chamber", "wrong-chime"],
+      "linkedCharacterIds": ["ilen_var", "keeper_orrin"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_hidden_hour",
+      "type": "background",
+      "title": "Hidden Hour",
+      "description": "A blue chamber behind the clock face.",
+      "prompt": "Secret thirteenth hour chamber behind clock face, suspended rain, blue dust, brass stars, cinematic fantasy reveal, 16:9, no text.",
+      "negativePrompt": "watermark, text, modern objects",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "revelation and ending scene",
+      "url": "",
+      "linkedSceneIds": ["hidden-hour", "star-map"],
+      "linkedCharacterIds": ["ilen_var", "sora_lune"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_gear_library",
+      "type": "background",
+      "title": "Gear Library",
+      "description": "Shelves of brass gears and repair ledgers.",
+      "prompt": "Clocktower gear library, shelves of brass gears, repair ledgers, moonlight shafts, cinematic fantasy workshop, 16:9, no text.",
+      "negativePrompt": "logo, watermark, readable text",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "mechanical branch",
+      "url": "",
+      "linkedSceneIds": ["gear-library"],
+      "linkedCharacterIds": ["vell_brass"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_moon_dial",
+      "type": "background",
+      "title": "Moon Dial",
+      "description": "A rotating moon dial with thirteen slots.",
+      "prompt": "Clocktower moon dial mechanism with thirteen slots, brass and blue moonlight, cinematic puzzle closeup, 16:9, no text.",
+      "negativePrompt": "text, logo, watermark",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "precision puzzle scene",
+      "url": "",
+      "linkedSceneIds": ["moon-dial"],
+      "linkedCharacterIds": ["vell_brass"],
+      "status": "needed"
+    },
+    {
+      "id": "bg_star_map",
+      "type": "background",
+      "title": "Star Map",
+      "description": "A brass star map unfolding over the hidden hour.",
+      "prompt": "Brass star map unfolding over blue hidden-hour chamber, suspended rain, cinematic fantasy, 16:9, no text.",
+      "negativePrompt": "logo, watermark, readable text",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "late reveal branch",
+      "url": "",
+      "linkedSceneIds": ["star-map"],
+      "linkedCharacterIds": ["maes_quill", "ilen_var"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_brass_winder",
+      "type": "evidence_item",
+      "title": "Brass Winder",
+      "description": "Closeup prop for the found winder.",
+      "prompt": "Small brass winding key with worn teeth on moonlit stone, fantasy prop closeup, no text.",
+      "negativePrompt": "logo, watermark",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "inventory and object inspection",
+      "url": "",
+      "linkedSceneIds": ["fountain-cache", "bell-chamber"],
+      "linkedCharacterIds": [],
+      "status": "needed"
+    },
+    {
+      "id": "asset_inked_map",
+      "type": "evidence_item",
+      "title": "Ink-Spattered Map",
+      "description": "Tower map with marked bell chambers.",
+      "prompt": "Fictional ink-spattered clocktower map with abstract marks, no readable real text, fantasy prop.",
+      "negativePrompt": "real map, real place names, logo",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence tray and map preview",
+      "url": "",
+      "linkedSceneIds": ["fountain-cache", "tower-stairs"],
+      "linkedCharacterIds": ["maes_quill"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_blue_lantern",
+      "type": "evidence_item",
+      "title": "Blue Lantern",
+      "description": "Glowing lantern object.",
+      "prompt": "Blue glass lantern glowing softly, brass frame, moonlit fantasy prop closeup, no text.",
+      "negativePrompt": "logo, watermark",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "inventory and lantern hook",
+      "url": "",
+      "linkedSceneIds": ["lantern-gallery", "bell-chamber", "hidden-hour"],
+      "linkedCharacterIds": ["sora_lune"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_moon_gear",
+      "type": "evidence_item",
+      "title": "Moon Gear",
+      "description": "Thirteen-tooth gear with moon notch.",
+      "prompt": "Small brass moon gear with thirteen teeth, blue light, fantasy clockwork prop, no text.",
+      "negativePrompt": "logo, watermark",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "gear assembly hook",
+      "url": "",
+      "linkedSceneIds": ["gear-library", "moon-dial"],
+      "linkedCharacterIds": ["vell_brass"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_bell_chalk",
+      "type": "evidence_item",
+      "title": "Bell Chalk",
+      "description": "Silver chalk for marking bell ropes.",
+      "prompt": "Silver chalk stick on dark brass bell rope marker, fantasy prop closeup, no text.",
+      "negativePrompt": "logo, watermark",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "bell alignment helper",
+      "url": "",
+      "linkedSceneIds": ["tower-stairs", "bell-chamber"],
+      "linkedCharacterIds": [],
+      "status": "needed"
+    }
+  ],
+  "gameplayHooks": [
+    {
+      "id": "square-time-scan",
+      "type": "inspection",
+      "title": "Read the Stopped Square",
+      "module": "future-environment-scan-module",
+      "narrativePurpose": "Teach that the clock hands disagree with the shadows.",
+      "gameplayPurpose": "Tap three environmental clues and form a riddle hypothesis.",
+      "expectedPlayerAction": "Tap the tower face, fountain shadow, and dark windows.",
+      "requiredInputs": ["tap_region", "clue_order"],
+      "successCondition": "Three clue regions found.",
+      "failureCondition": "Player exits without clue set.",
+      "successTarget": { "type": "scene", "id": "fountain-cache" },
+      "failureTarget": { "type": "scene", "id": "archivist-balcony" },
+      "successEffects": [{ "type": "incrementVariable", "variable": "townMemory", "by": 1 }],
+      "failureEffects": [{ "type": "incrementVariable", "variable": "townMemory", "by": 0 }],
+      "uiLayoutNotes": "Full background hotspot scan with three clue chips at bottom.",
+      "mobileGestureNotes": "Single tap hotspots, large target zones.",
+      "futureModuleType": "inspection",
+      "implementationNotes": "Reusable environment hotspot reader.",
+      "assetRequirements": ["bg_moonlit_square"],
+      "agentPrompt": "Design a mobile hotspot scan for a stopped magical town square.",
+      "notes": "Opening exploration hook."
+    },
+    {
+      "id": "fountain-cache-inspection",
+      "type": "inspection",
+      "title": "Find the Brass Winder",
+      "module": "future-object-inspection-module",
+      "narrativePurpose": "Turn the dry fountain into the first physical clue.",
+      "gameplayPurpose": "Search leaves, reveal hidden object, and log item.",
+      "expectedPlayerAction": "Brush leaves aside and tap the brass glint.",
+      "requiredInputs": ["tap_region", "confirm_item"],
+      "successCondition": "Winder collected.",
+      "failureCondition": "Wrong region after hints expire.",
+      "successTarget": { "type": "scene", "id": "tower-stairs" },
+      "failureTarget": { "type": "scene", "id": "archivist-balcony" },
+      "successEffects": [{ "type": "addItem", "itemId": "brass-winder" }],
+      "failureEffects": [],
+      "uiLayoutNotes": "Fountain art center with object drawer below.",
+      "mobileGestureNotes": "Tap and hold optional magnifier.",
+      "futureModuleType": "inspection",
+      "implementationNotes": "Hotspot plus inventory reward.",
+      "assetRequirements": ["bg_fountain_cache", "asset_brass_winder"],
+      "agentPrompt": "Create a fountain object-inspection hook for a brass winder clue.",
+      "notes": "First item hook."
+    },
+    {
+      "id": "tower-rope-listen",
+      "type": "rhythm_or_precision",
+      "title": "Listen to the Bell Ropes",
+      "module": "future-bell-listening-module",
+      "narrativePurpose": "Teach that each rope carries a different hour.",
+      "gameplayPurpose": "Identify the late, early, and lying bell tones.",
+      "expectedPlayerAction": "Tap ropes in the heard order.",
+      "requiredInputs": ["tone_sequence"],
+      "successCondition": "Ropes tapped in matching order.",
+      "failureCondition": "Wrong sequence.",
+      "successTarget": { "type": "scene", "id": "lantern-gallery" },
+      "failureTarget": { "type": "scene", "id": "wrong-chime" },
+      "successEffects": [{ "type": "addItem", "itemId": "bell-chalk" }],
+      "failureEffects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": -1 }],
+      "uiLayoutNotes": "Three vertical rope lanes with pulse rings.",
+      "mobileGestureNotes": "Tap ropes, no swipe precision required.",
+      "futureModuleType": "rhythm_or_precision",
+      "implementationNotes": "Can become an audio-visual pattern module.",
+      "assetRequirements": ["bg_tower_stairs", "asset_bell_chalk"],
+      "agentPrompt": "Design a bell-rope listening hook with forgiving mobile taps.",
+      "notes": "Navigation hook."
+    },
+    {
+      "id": "lantern-focus",
+      "type": "object_manipulation",
+      "title": "Focus the Blue Lantern",
+      "module": "future-lantern-focus-module",
+      "narrativePurpose": "Use lantern light to reveal the route into the bell chamber.",
+      "gameplayPurpose": "Rotate lantern shutters until the hidden markings appear.",
+      "expectedPlayerAction": "Tap shutter controls until the blue beam aligns.",
+      "requiredInputs": ["orientation_choice"],
+      "successCondition": "Beam catches the hidden stair mark.",
+      "failureCondition": "Beam points away and wakes Orrin early.",
+      "successTarget": { "type": "scene", "id": "bell-chamber" },
+      "failureTarget": { "type": "scene", "id": "keeper-warning" },
+      "successEffects": [{ "type": "setVariable", "variable": "lanternLit", "value": true }],
+      "failureEffects": [],
+      "uiLayoutNotes": "Lantern object left, revealed mark right.",
+      "mobileGestureNotes": "Use segmented rotate buttons instead of drag.",
+      "futureModuleType": "object_manipulation",
+      "implementationNotes": "Object orientation state with reveal threshold.",
+      "assetRequirements": ["bg_lantern_gallery", "asset_blue_lantern"],
+      "agentPrompt": "Draft a blue-lantern object manipulation hook for mobile.",
+      "notes": "Object focus hook."
+    },
+    {
+      "id": "align-bells",
+      "type": "puzzle",
+      "title": "Align the Three Bells",
+      "module": "future-clockwork-alignment-module",
+      "narrativePurpose": "Open the hidden hour by aligning the late, early, and lying bells.",
+      "gameplayPurpose": "Place three bell tones into the correct hour slots.",
+      "expectedPlayerAction": "Use the winder, map, and lantern cues to set the bell order.",
+      "requiredInputs": ["ring_rotation", "item_context"],
+      "successCondition": "Bell order matches map and lantern glow.",
+      "failureCondition": "Any bell lands on the false midnight mark.",
+      "successTarget": { "type": "scene", "id": "hidden-hour" },
+      "failureTarget": { "type": "scene", "id": "wrong-chime" },
+      "successEffects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": 3 }],
+      "failureEffects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": -1 }],
+      "uiLayoutNotes": "Circular ring puzzle center with inventory hints along lower edge.",
+      "mobileGestureNotes": "Stepper buttons for each ring, confirm button below.",
+      "futureModuleType": "clockwork_alignment",
+      "implementationNotes": "Primary puzzle module candidate.",
+      "assetRequirements": ["bg_bell_chamber", "asset_brass_winder", "asset_inked_map", "asset_blue_lantern"],
+      "agentPrompt": "Design a clockwork bell alignment puzzle using winder, map, and lantern clues.",
+      "notes": "Main puzzle hook."
+    },
+    {
+      "id": "gear-library-assembly",
+      "type": "object_manipulation",
+      "title": "Assemble the Moon Gear",
+      "module": "future-gear-assembly-module",
+      "narrativePurpose": "Reveal that Vell removed one gear to protect the town.",
+      "gameplayPurpose": "Select the thirteen-tooth gear and place it in the repair frame.",
+      "expectedPlayerAction": "Compare gear teeth and install the moon gear.",
+      "requiredInputs": ["gear_selection", "slot_choice"],
+      "successCondition": "Moon gear installed.",
+      "failureCondition": "Wrong gear binds the mechanism.",
+      "successTarget": { "type": "scene", "id": "moon-dial" },
+      "failureTarget": { "type": "scene", "id": "wrong-chime" },
+      "successEffects": [{ "type": "addItem", "itemId": "moon-gear" }],
+      "failureEffects": [{ "type": "incrementVariable", "variable": "townMemory", "by": -1 }],
+      "uiLayoutNotes": "Gear shelf left, repair frame center, Vell notes right.",
+      "mobileGestureNotes": "Tap gear, tap slot; no fine dragging.",
+      "futureModuleType": "object_manipulation",
+      "implementationNotes": "Inventory compare and placement.",
+      "assetRequirements": ["bg_gear_library", "asset_moon_gear"],
+      "agentPrompt": "Design a gear-assembly hook for the clocktower workshop branch.",
+      "notes": "Mechanical branch hook."
+    },
+    {
+      "id": "moon-dial-rotation",
+      "type": "puzzle",
+      "title": "Rotate the Moon Dial",
+      "module": "future-moon-dial-module",
+      "narrativePurpose": "Convert the gear reveal into the final hidden-hour map.",
+      "gameplayPurpose": "Rotate three moon slots until the hidden hour is readable.",
+      "expectedPlayerAction": "Set new, full, and dark moon slots to the map marks.",
+      "requiredInputs": ["slot_rotation", "map_reference"],
+      "successCondition": "All moon slots align.",
+      "failureCondition": "Slots conflict with the bell order.",
+      "successTarget": { "type": "scene", "id": "star-map" },
+      "failureTarget": { "type": "scene", "id": "keeper-warning" },
+      "successEffects": [{ "type": "incrementVariable", "variable": "townMemory", "by": 1 }],
+      "failureEffects": [],
+      "uiLayoutNotes": "Three slot controls with big arrows and map preview.",
+      "mobileGestureNotes": "Large plus/minus buttons, not free rotation.",
+      "futureModuleType": "puzzle",
+      "implementationNotes": "Stateful ring alignment with hint overlay.",
+      "assetRequirements": ["bg_moon_dial", "asset_moon_gear", "asset_inked_map"],
+      "agentPrompt": "Draft a mobile moon-dial puzzle spec with three large controls.",
+      "notes": "Optional late puzzle hook."
+    },
+    {
+      "id": "hidden-hour-choice",
+      "type": "timed_choice",
+      "title": "Restore or Keep the Hour",
+      "module": "future-moral-choice-module",
+      "narrativePurpose": "Let the player decide whether the hidden hour belongs to the town.",
+      "gameplayPurpose": "Choose an ending tone from restored, protected, or failed memory.",
+      "expectedPlayerAction": "Choose to ring the hour or seal it gently.",
+      "requiredInputs": ["ending_choice"],
+      "successCondition": "Player chooses restoration with context.",
+      "failureCondition": "Player chooses secrecy or runs out of time.",
+      "successTarget": { "type": "ending", "id": "tower-restored" },
+      "failureTarget": { "type": "ending", "id": "secret-kept" },
+      "successEffects": [{ "type": "incrementVariable", "variable": "townMemory", "by": 2 }],
+      "failureEffects": [],
+      "uiLayoutNotes": "Two large ending cards over the hidden-hour art.",
+      "mobileGestureNotes": "Tap large decision card; confirm second tap.",
+      "futureModuleType": "timed_choice",
+      "implementationNotes": "Ending choice wrapper for premium build.",
+      "assetRequirements": ["bg_hidden_hour"],
+      "agentPrompt": "Design a two-card hidden-hour ending choice with emotional copy.",
+      "notes": "Ending hook."
     }
   ],
   "scenes": [
     {
       "id": "moonlit-square",
       "title": "Moonlit Square",
-      "background": "An empty old-town square under a clocktower whose hands point to different hours.",
+      "purpose": "Open on the stopped town and introduce the central riddle.",
+      "synopsis": "Ilen returns to a town whose clocktower hands point to different hours.",
+      "location": "moonlit_square",
+      "camera": "wide square, tower looming high, Ilen foreground",
+      "background": "An empty old-town square waits under a clocktower whose hands point to different hours.",
+      "backgroundPrompt": "Empty old-town square at midnight under towering clocktower, wet cobblestones, blue moonlight, brass clock face glowing, cinematic fantasy background, 16:9, no text.",
+      "musicMood": "soft chimes and low strings",
+      "soundMood": "wind over stone, distant bell breath",
+      "transition": "fade-in",
+      "layoutNotes": { "mobileLandscape": "Wide tower art with dialogue bottom and clue chips right.", "mobilePortrait": "Tower art above stacked dialogue.", "tablet": "Stage left with metadata rail.", "desktop": "Full-width cinematic stage." },
+      "assetIds": ["bg_moonlit_square"],
       "mood": ["mysterious", "windy", "expectant"],
       "blocks": [
-        {
-          "type": "narration",
-          "text": "Every window in the square is dark except the clocktower face, which burns blue at midnight."
-        },
-        {
-          "type": "dialogue",
-          "speaker": "Ilen",
-          "text": "The town stopped at twelve. The riddle says the tower starts again when someone remembers the missing hour."
-        }
+        { "type": "narration", "tone": "wonder", "animation": "fade-in", "text": "Every window in the square is dark except the clocktower face, which burns blue at midnight." },
+        { "type": "dialogue", "speaker": "Ilen Var", "characterId": "ilen_var", "emotion": "curious", "stance": "holding_winder", "position": "lower-left", "text": "The town stopped at twelve. The riddle says the tower starts again when someone remembers the missing hour." },
+        { "type": "gameplay_hook", "hookId": "square-time-scan" }
       ],
       "choices": [
-        {
-          "id": "search-fountain",
-          "label": "Search the dry fountain",
-          "target": { "type": "scene", "id": "fountain-cache" },
-          "effects": [{ "type": "addItem", "itemId": "brass-winder" }]
-        },
-        {
-          "id": "enter-clocktower",
-          "label": "Enter the clocktower",
-          "target": { "type": "scene", "id": "tower-stairs" }
-        }
+        { "id": "search-fountain", "label": "Search the dry fountain", "tone": "curious", "target": { "type": "scene", "id": "fountain-cache" }, "effects": [{ "type": "addItem", "itemId": "brass-winder" }] },
+        { "id": "ask-archivist", "label": "Climb to the archivist balcony", "tone": "careful", "target": { "type": "scene", "id": "archivist-balcony" } },
+        { "id": "enter-clocktower", "label": "Enter the clocktower", "tone": "bold", "target": { "type": "scene", "id": "tower-stairs" } }
       ]
     },
     {
       "id": "fountain-cache",
       "title": "Fountain Cache",
-      "background": "A cracked fountain basin filled with dry leaves and a hidden brass glint.",
+      "purpose": "Give the first object and map route.",
+      "synopsis": "Ilen finds the brass winder and a route clue beneath dry leaves.",
+      "location": "dry_fountain",
+      "camera": "close fountain basin, brass glint under leaves",
+      "background": "A cracked fountain basin holds dry leaves and a hidden brass glint.",
+      "backgroundPrompt": "Cracked dry fountain in moonlit town square, leaves, hidden brass glint, cinematic fantasy puzzle scene, 16:9, no text.",
+      "musicMood": "plucked strings",
+      "soundMood": "leaves scraping stone",
+      "transition": "camera-pan",
+      "layoutNotes": { "mobileLandscape": "Object hotspot center, choices below.", "mobilePortrait": "Object art then item drawer." },
+      "assetIds": ["bg_fountain_cache", "asset_brass_winder", "asset_inked_map"],
       "mood": ["curious", "delicate"],
       "blocks": [
-        {
-          "type": "narration",
-          "text": "Under the leaves rests a brass winder, warm despite the cold square."
-        },
-        {
-          "type": "dialogue",
-          "speaker": "Ilen",
-          "text": "A key without a lock means the lock is pretending to be something else."
-        }
+        { "type": "narration", "text": "Under the leaves rests a brass winder, warm despite the cold square." },
+        { "type": "dialogue", "speaker": "Ilen Var", "characterId": "ilen_var", "emotion": "serious", "stance": "holding_winder", "position": "lower-left", "text": "A key without a lock means the lock is pretending to be something else." },
+        { "type": "gameplay_hook", "hookId": "fountain-cache-inspection" }
       ],
       "choices": [
-        {
-          "id": "map-the-tower",
-          "label": "Sketch the tower markings",
-          "target": { "type": "scene", "id": "tower-stairs" },
-          "effects": [{ "type": "addItem", "itemId": "inked-map" }]
-        }
+        { "id": "map-the-tower", "label": "Sketch the tower markings", "target": { "type": "scene", "id": "tower-stairs" }, "effects": [{ "type": "addItem", "itemId": "inked-map" }] },
+        { "id": "show-winder-to-maes", "label": "Show the winder to Maes", "target": { "type": "scene", "id": "archivist-balcony" } }
+      ]
+    },
+    {
+      "id": "archivist-balcony",
+      "title": "Archivist Balcony",
+      "purpose": "Explain the map and seed the hidden-hour ethics.",
+      "synopsis": "Maes reveals the tower map keeps adding a thirteenth stair.",
+      "location": "archivist_balcony",
+      "camera": "balcony ledger foreground, square below",
+      "background": "Candlelit ledgers flutter on a balcony overlooking the frozen town.",
+      "backgroundPrompt": "Clocktower archivist balcony with ledgers, candlelight, blue moonlit square below, cinematic fantasy, 16:9, no text.",
+      "musicMood": "warm low strings",
+      "soundMood": "paper, wind, distant chime",
+      "transition": "slide-in-right",
+      "layoutNotes": { "mobileLandscape": "Maes portrait right, map evidence center.", "mobilePortrait": "Portrait, map, dialogue stack." },
+      "assetIds": ["bg_archivist_balcony", "asset_inked_map"],
+      "mood": ["warm", "uncertain"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Maes Quill", "characterId": "maes_quill", "emotion": "thinking", "stance": "pointing_to_map", "position": "center-right", "animation": "slide-in-right", "text": "The tower never had thirteen stairs to a landing. Tonight the map insists it did." },
+        { "type": "narration", "text": "The ink mark sits where no corridor should be, bright as a new bruise." }
+      ],
+      "choices": [
+        { "id": "take-map-from-maes", "label": "Take Maes's tower map", "target": { "type": "scene", "id": "tower-stairs" }, "effects": [{ "type": "addItem", "itemId": "inked-map" }] },
+        { "id": "ask-about-orrin", "label": "Ask why Orrin sealed the tower", "target": { "type": "scene", "id": "keeper-warning" } }
       ]
     },
     {
       "id": "tower-stairs",
       "title": "Tower Stairs",
-      "background": "A spiral stairwell with bell ropes descending like black threads.",
+      "purpose": "Navigate the ascent and branch into lantern or bell routes.",
+      "synopsis": "The stairwell counts upward while the shadows count down.",
+      "location": "clocktower_stairs",
+      "camera": "vertical stairs, ropes descending through frame",
+      "background": "A spiral stairwell rises past bell ropes descending like black threads.",
+      "backgroundPrompt": "Ancient clocktower spiral stairwell, bell ropes descending, moon dust, brass shadows, cinematic fantasy background, 16:9, no text.",
+      "musicMood": "ascending bell harmonics",
+      "soundMood": "rope creak, stone steps",
+      "transition": "flash-cut",
+      "layoutNotes": { "mobileLandscape": "Stair art left, route choices and hook right.", "mobilePortrait": "Tall stair art then controls." },
+      "assetIds": ["bg_tower_stairs", "asset_inked_map", "asset_bell_chalk"],
       "mood": ["vertical", "hushed"],
       "blocks": [
-        {
-          "type": "narration",
-          "text": "The steps count upward, but the tower shadows count down."
-        },
-        {
-          "type": "dialogue",
-          "speaker": "Ilen",
-          "text": "Listen. One bell is late, one is early, and one is lying."
-        }
+        { "type": "narration", "text": "The steps count upward, but the tower shadows count down." },
+        { "type": "dialogue", "speaker": "Ilen Var", "characterId": "ilen_var", "emotion": "curious", "stance": "reading_map", "position": "lower-left", "text": "Listen. One bell is late, one is early, and one is lying." },
+        { "type": "gameplay_hook", "hookId": "tower-rope-listen" }
       ],
       "choices": [
-        {
-          "id": "take-blue-lantern",
-          "label": "Take the blue lantern from the hook",
-          "target": { "type": "scene", "id": "bell-chamber" },
-          "effects": [
-            { "type": "addItem", "itemId": "blue-lantern" },
-            { "type": "setVariable", "variable": "lanternLit", "value": true }
-          ]
-        },
-        {
-          "id": "climb-with-map",
-          "label": "Follow the inked map upward",
-          "target": { "type": "scene", "id": "bell-chamber" },
-          "conditions": [{ "type": "hasItem", "itemId": "inked-map" }]
-        },
-        {
-          "id": "climb-blind",
-          "label": "Climb by sound alone",
-          "target": { "type": "scene", "id": "bell-chamber" }
-        }
+        { "id": "take-blue-lantern", "label": "Take the blue lantern from the hook", "target": { "type": "scene", "id": "bell-chamber" }, "effects": [{ "type": "addItem", "itemId": "blue-lantern" }, { "type": "setVariable", "variable": "lanternLit", "value": true }] },
+        { "id": "climb-with-map", "label": "Follow the inked map upward", "target": { "type": "scene", "id": "lantern-gallery" }, "conditions": [{ "type": "hasItem", "itemId": "inked-map" }] },
+        { "id": "climb-blind", "label": "Climb by sound alone", "target": { "type": "scene", "id": "bell-chamber" } }
+      ]
+    },
+    {
+      "id": "lantern-gallery",
+      "title": "Lantern Gallery",
+      "purpose": "Add Sora and the blue lantern manipulation hook.",
+      "synopsis": "Sora shows Ilen how lantern light reveals honest hours.",
+      "location": "lantern_gallery",
+      "camera": "blue lantern rows framing Sora",
+      "background": "A suspended walkway glows with blue lanterns, each one brightening near a true hour.",
+      "backgroundPrompt": "Clocktower lantern gallery with rows of blue glass lanterns, brass walkway, moonlight, cinematic fantasy, 16:9, no text.",
+      "musicMood": "glass tones",
+      "soundMood": "lantern hum, chain sway",
+      "transition": "fade-in",
+      "layoutNotes": { "mobileLandscape": "Lantern object left, Sora portrait right.", "mobilePortrait": "Object controls under dialogue." },
+      "assetIds": ["bg_lantern_gallery", "asset_blue_lantern"],
+      "mood": ["glowing", "playful"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Sora Lune", "characterId": "sora_lune", "emotion": "confident", "stance": "holding_lantern", "position": "upper-right", "animation": "subtle-breathing", "text": "Point it at a lie and it goes dark. Point it at a true hour and it sings." },
+        { "type": "gameplay_hook", "hookId": "lantern-focus" }
+      ],
+      "choices": [
+        { "id": "carry-lantern-to-bells", "label": "Carry the focused lantern to the bells", "target": { "type": "scene", "id": "bell-chamber" }, "effects": [{ "type": "addItem", "itemId": "blue-lantern" }, { "type": "setVariable", "variable": "lanternLit", "value": true }] },
+        { "id": "visit-gear-library", "label": "Look for the missing gear first", "target": { "type": "scene", "id": "gear-library" } }
       ]
     },
     {
       "id": "bell-chamber",
       "title": "Bell Chamber",
+      "purpose": "Host the main alignment hook.",
+      "synopsis": "Three silent bells hang over a clockwork floor etched with moons and hour marks.",
+      "location": "bell_chamber",
+      "camera": "floor rings below huge bells",
       "background": "Three silent bells hang over a clockwork floor etched with moons and hour marks.",
+      "backgroundPrompt": "Grand clocktower bell chamber, three silent bells, circular brass floor etched with moons and hour marks, cinematic puzzle background, 16:9, no text.",
+      "musicMood": "held breath before chime",
+      "soundMood": "brass settling, distant wind",
+      "transition": "dramatic-zoom",
+      "layoutNotes": { "mobileLandscape": "Ring puzzle center with inventory hints bottom.", "mobilePortrait": "Ring controls stacked under chamber art." },
+      "assetIds": ["bg_bell_chamber", "asset_brass_winder", "asset_inked_map", "asset_blue_lantern"],
       "mood": ["ornate", "dangerous", "wonder"],
       "blocks": [
-        {
-          "type": "narration",
-          "text": "The brass winder fits into the floor, not the clock. The whole chamber waits to turn."
-        },
-        {
-          "type": "gameplay_hook",
-          "hook": {
-            "id": "align-bells",
-            "type": "puzzle",
-            "module": "future-clockwork-alignment-module",
-            "successTarget": { "type": "scene", "id": "hidden-hour" },
-            "failureTarget": { "type": "scene", "id": "wrong-chime" },
-            "successEffects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": 3 }],
-            "failureEffects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": -1 }],
-            "notes": "Future module can mount a rotational ring puzzle where the player aligns bell tones with the missing hour."
-          }
-        }
+        { "type": "narration", "text": "The brass winder fits into the floor, not the clock. The whole chamber waits to turn." },
+        { "type": "dialogue", "speaker": "Keeper Orrin", "characterId": "keeper_orrin", "emotion": "serious", "stance": "blocking_door", "position": "center-back", "text": "If you wake what was hidden, wake it for the town. Not for yourself." },
+        { "type": "gameplay_hook", "hookId": "align-bells" }
       ],
       "choices": [
-        {
-          "id": "solve-with-winder",
-          "label": "Set the winder into the clockwork floor",
-          "target": { "type": "scene", "id": "hidden-hour" },
-          "conditions": [{ "type": "hasItem", "itemId": "brass-winder" }],
-          "effects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": 1 }]
-        },
-        {
-          "id": "pull-random-rope",
-          "label": "Pull the nearest bell rope",
-          "target": { "type": "scene", "id": "wrong-chime" }
-        }
+        { "id": "solve-with-winder", "label": "Set the winder into the clockwork floor", "target": { "type": "scene", "id": "hidden-hour" }, "conditions": [{ "type": "hasItem", "itemId": "brass-winder" }], "effects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": 1 }] },
+        { "id": "pull-random-rope", "label": "Pull the nearest bell rope", "target": { "type": "scene", "id": "wrong-chime" } },
+        { "id": "inspect-missing-gear", "label": "Inspect the missing moon gear", "target": { "type": "scene", "id": "gear-library" } }
       ]
     },
     {
       "id": "wrong-chime",
       "title": "Wrong Chime",
+      "purpose": "Failure branch with retry and ending pressure.",
+      "synopsis": "The tower rejects the attempt with a chime that races down the stairs.",
+      "location": "bell_chamber",
+      "camera": "dust falling from bell mouths",
       "background": "The chamber rings once, far too loud, and dust falls like gray rain.",
+      "backgroundPrompt": "Clocktower bell chamber shaking after wrong chime, dust falling, blue moonlight, cinematic fantasy, 16:9, no text.",
+      "musicMood": "sharp bell hit",
+      "soundMood": "wrong chime, running shadows",
+      "transition": "screen-shake",
+      "layoutNotes": { "mobileLandscape": "Failure text center with retry choices bottom.", "mobilePortrait": "Failure card above choices." },
+      "assetIds": ["bg_bell_chamber"],
       "mood": ["alarmed", "unstable"],
       "blocks": [
-        {
-          "type": "narration",
-          "text": "The tower accepts the attempt, then rejects it with a chime that sends shadows racing downstairs."
-        }
+        { "type": "narration", "animation": "screen-shake", "text": "The tower accepts the attempt, then rejects it with a chime that sends shadows racing downstairs." },
+        { "type": "dialogue", "speaker": "Sora Lune", "characterId": "sora_lune", "emotion": "afraid", "stance": "listening_to_bell", "position": "upper-right", "text": "That was not midnight. That was the tower warning us." }
       ],
       "choices": [
-        {
-          "id": "retry-with-map",
-          "label": "Use the map to reset the bells",
-          "target": { "type": "scene", "id": "bell-chamber" },
-          "conditions": [{ "type": "hasItem", "itemId": "inked-map" }]
-        },
-        {
-          "id": "escape-before-collapse",
-          "label": "Escape before the hour collapses",
-          "target": { "type": "ending", "id": "square-unchanged" }
-        }
+        { "id": "retry-with-map", "label": "Use the map to reset the bells", "target": { "type": "scene", "id": "bell-chamber" }, "conditions": [{ "type": "hasItem", "itemId": "inked-map" }] },
+        { "id": "ask-orrin-after-chime", "label": "Ask Orrin what the chime means", "target": { "type": "scene", "id": "keeper-warning" } },
+        { "id": "escape-before-collapse", "label": "Escape before the hour collapses", "target": { "type": "ending", "id": "square-unchanged" } }
       ]
     },
     {
       "id": "hidden-hour",
       "title": "Hidden Hour",
+      "purpose": "Reveal the core mystery and route to endings.",
+      "synopsis": "A thirteenth hour opens behind the clock face.",
+      "location": "hidden_hour",
+      "camera": "Ilen and lantern before suspended rain",
       "background": "A thirteenth hour opens behind the clock face, full of soft blue dust and suspended rain.",
+      "backgroundPrompt": "Secret thirteenth hour chamber behind clock face, suspended rain, blue dust, brass stars, cinematic fantasy reveal, 16:9, no text.",
+      "musicMood": "quiet awe",
+      "soundMood": "rain held in air, small bell tones",
+      "transition": "dramatic-zoom",
+      "layoutNotes": { "mobileLandscape": "Hidden chamber art full width with decision hook bottom.", "mobilePortrait": "Reveal art above two ending cards." },
+      "assetIds": ["bg_hidden_hour", "asset_blue_lantern"],
       "mood": ["revelatory", "quiet"],
       "blocks": [
-        {
-          "type": "dialogue",
-          "speaker": "Ilen",
-          "text": "It was not a missing hour. It was a hidden one."
-        },
-        {
-          "type": "narration",
-          "text": "The tower begins to move, not forward, but honestly."
-        }
+        { "type": "dialogue", "speaker": "Ilen Var", "characterId": "ilen_var", "emotion": "wonder", "stance": "raising_lantern", "position": "lower-left", "animation": "dramatic-zoom", "text": "It was not a missing hour. It was a hidden one." },
+        { "type": "narration", "text": "The tower begins to move, not forward, but honestly." },
+        { "type": "gameplay_hook", "hookId": "hidden-hour-choice" }
       ],
       "choices": [
-        {
-          "id": "restore-clock",
-          "label": "Let the square hear the hidden hour",
-          "target": { "type": "ending", "id": "tower-restored" }
-        },
-        {
-          "id": "keep-secret-hour",
-          "label": "Close the chamber and keep the hour safe",
-          "target": { "type": "ending", "id": "secret-kept" },
-          "conditions": [{ "type": "hasItem", "itemId": "blue-lantern" }]
-        }
+        { "id": "restore-clock", "label": "Let the square hear the hidden hour", "target": { "type": "ending", "id": "tower-restored" } },
+        { "id": "keep-secret-hour", "label": "Close the chamber and keep the hour safe", "target": { "type": "ending", "id": "secret-kept" }, "conditions": [{ "type": "hasItem", "itemId": "blue-lantern" }] },
+        { "id": "read-star-map", "label": "Read the star map before choosing", "target": { "type": "scene", "id": "star-map" } }
+      ]
+    },
+    {
+      "id": "gear-library",
+      "title": "Gear Library",
+      "purpose": "Optional branch that enriches the object puzzle.",
+      "synopsis": "Vell reveals the tower is missing a moon gear with thirteen teeth.",
+      "location": "gear_library",
+      "camera": "Vell at repair bench, gear shelves behind",
+      "background": "Shelves of brass gears surround a repair bench dusted with moonlight.",
+      "backgroundPrompt": "Clocktower gear library, shelves of brass gears, repair ledgers, moonlight shafts, cinematic fantasy workshop, 16:9, no text.",
+      "musicMood": "mechanical ticking",
+      "soundMood": "springs, metal clicks",
+      "transition": "camera-pan",
+      "layoutNotes": { "mobileLandscape": "Gear shelf left, Vell dialogue and hook right.", "mobilePortrait": "Gear rows under character card." },
+      "assetIds": ["bg_gear_library", "asset_moon_gear"],
+      "mood": ["mechanical", "confessional"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Vell Brass", "characterId": "vell_brass", "emotion": "ashamed", "stance": "holding_gear", "position": "lower-right", "text": "I took the thirteenth gear out because the town kept using the hour to unmake goodbyes." },
+        { "type": "gameplay_hook", "hookId": "gear-library-assembly" }
+      ],
+      "choices": [
+        { "id": "take-moon-gear", "label": "Take the thirteen-tooth moon gear", "target": { "type": "scene", "id": "moon-dial" }, "effects": [{ "type": "addItem", "itemId": "moon-gear" }] },
+        { "id": "return-to-bell-chamber-from-gears", "label": "Return to the bell chamber", "target": { "type": "scene", "id": "bell-chamber" } }
+      ]
+    },
+    {
+      "id": "moon-dial",
+      "title": "Moon Dial",
+      "purpose": "Turn the gear branch into a final clue.",
+      "synopsis": "The moon gear unlocks a dial that shows the hidden hour's safe path.",
+      "location": "moon_dial",
+      "camera": "three moon slots viewed from above",
+      "background": "A brass dial waits with three moon slots and one empty notch.",
+      "backgroundPrompt": "Clocktower moon dial mechanism with thirteen slots, brass and blue moonlight, cinematic puzzle closeup, 16:9, no text.",
+      "musicMood": "precise ticking",
+      "soundMood": "gear clicks, lantern hum",
+      "transition": "tool-ready",
+      "layoutNotes": { "mobileLandscape": "Three dial controls center, map preview right.", "mobilePortrait": "Dial controls stacked." },
+      "assetIds": ["bg_moon_dial", "asset_moon_gear", "asset_inked_map"],
+      "mood": ["precise", "arcane"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Vell Brass", "characterId": "vell_brass", "emotion": "confident", "stance": "adjusting_clockwork", "position": "lower-right", "animation": "tool-ready", "text": "Do not force it. The dial wants the moon as it was, as it is, and as it will be." },
+        { "type": "gameplay_hook", "hookId": "moon-dial-rotation" }
+      ],
+      "choices": [
+        { "id": "open-star-map", "label": "Open the brass star map", "target": { "type": "scene", "id": "star-map" } },
+        { "id": "return-to-bells-with-gear", "label": "Carry the moon gear to the bells", "target": { "type": "scene", "id": "bell-chamber" } }
+      ]
+    },
+    {
+      "id": "keeper-warning",
+      "title": "Keeper's Warning",
+      "purpose": "Expose the moral stakes and recover from failed puzzles.",
+      "synopsis": "Orrin warns that restoring the hour without care can trap the town in regret.",
+      "location": "clocktower_stairs",
+      "camera": "Orrin blocking a blue-lit door",
+      "background": "Keeper Orrin blocks the stair with keys that do not cast shadows.",
+      "backgroundPrompt": "Stern clocktower guardian blocking blue-lit stair door, brass keys, moonlight, cinematic fantasy, 16:9, no text.",
+      "musicMood": "low protective chord",
+      "soundMood": "keys, distant muffled chime",
+      "transition": "slide-in-left",
+      "layoutNotes": { "mobileLandscape": "Orrin center with two recovery choices bottom.", "mobilePortrait": "Warning card and choices." },
+      "assetIds": ["bg_tower_stairs"],
+      "mood": ["stern", "protective"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Keeper Orrin", "characterId": "keeper_orrin", "emotion": "sad", "stance": "holding_keys", "position": "center-back", "animation": "fade-in", "text": "The hidden hour gave everyone one more minute with what they had lost. Then no one could leave that minute." }
+      ],
+      "choices": [
+        { "id": "promise-restoration-not-possession", "label": "Promise to restore, not possess", "target": { "type": "scene", "id": "bell-chamber" }, "effects": [{ "type": "incrementVariable", "variable": "townMemory", "by": 1 }] },
+        { "id": "seek-gear-truth", "label": "Ask Vell what was removed", "target": { "type": "scene", "id": "gear-library" } }
+      ]
+    },
+    {
+      "id": "star-map",
+      "title": "Star Map",
+      "purpose": "Late reveal branch that clarifies the best ending.",
+      "synopsis": "A brass star map shows where the hidden hour should ring.",
+      "location": "hidden_hour",
+      "camera": "star map unfolding over suspended rain",
+      "background": "A brass star map unfolds over the hidden hour, each point a window in the town.",
+      "backgroundPrompt": "Brass star map unfolding over blue hidden-hour chamber, suspended rain, cinematic fantasy, 16:9, no text.",
+      "musicMood": "hopeful clockwork",
+      "soundMood": "tiny brass clicks, held rain",
+      "transition": "pulse-alert",
+      "layoutNotes": { "mobileLandscape": "Star map center, ending choices below.", "mobilePortrait": "Map art above decision cards." },
+      "assetIds": ["bg_star_map", "asset_inked_map"],
+      "mood": ["hopeful", "delicate"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Maes Quill", "characterId": "maes_quill", "emotion": "relieved", "stance": "holding_ledger", "position": "center-right", "text": "It does not point to the tower. It points to every home that forgot how to begin again." },
+        { "type": "narration", "text": "The map is not a route. It is permission." }
+      ],
+      "choices": [
+        { "id": "restore-after-map", "label": "Ring the hour for the whole town", "target": { "type": "ending", "id": "tower-restored" } },
+        { "id": "seal-after-map", "label": "Seal the hour with its story intact", "target": { "type": "ending", "id": "secret-kept" } }
       ]
     }
   ],
@@ -229,19 +920,22 @@
       "id": "tower-restored",
       "title": "The Tower Restored",
       "tone": "wonder",
-      "summary": "The bells align and the town hears the hour it forgot, waking into motion under blue dawn."
+      "summary": "The bells align and the town hears the hour it forgot, waking into motion under blue dawn.",
+      "cinematicNotes": "The clock hands meet, then separate into honest time as windows light one by one."
     },
     {
       "id": "secret-kept",
       "title": "The Secret Kept",
       "tone": "protective mystery",
-      "summary": "The tower keeps its hidden hour, and only the lantern remembers how close the town came to waking."
+      "summary": "The tower keeps its hidden hour, and only the lantern remembers how close the town came to waking.",
+      "cinematicNotes": "Ilen lowers the lantern as the chamber folds itself back behind the clock face."
     },
     {
       "id": "square-unchanged",
       "title": "Square Unchanged",
       "tone": "haunted setback",
-      "summary": "The tower settles back into silence, but the wrong chime leaves a new crack in the moonlit square."
+      "summary": "The tower settles back into silence, but the wrong chime leaves a new crack in the moonlit square.",
+      "cinematicNotes": "A single blue line crosses the dry fountain, promising another attempt."
     }
   ]
 }

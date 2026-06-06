@@ -29,6 +29,10 @@ function collectHookBlocks(game: GameDefinition) {
   );
 }
 
+function hookFromBlock(game: GameDefinition, block: GameplayHookBlock) {
+  return block.hook ?? game.gameplayHooks.find((hook) => hook.id === block.hookId);
+}
+
 function parsedGameById(id: string) {
   const gameFile = loadContentGames().find(({ data }) => data.metadata.id === id);
   if (!gameFile) {
@@ -77,9 +81,12 @@ describe("demo content library", () => {
       expect(parsed.game.endings.length).toBeGreaterThanOrEqual(1);
       expect(hookBlocks.length).toBeGreaterThanOrEqual(1);
 
-      const hook = hookBlocks[0].hook;
+      const hook = hookFromBlock(parsed.game, hookBlocks[0]);
+      if (!hook) {
+        throw new Error(`Expected first hook block in ${parsed.game.metadata.id} to resolve to a gameplay hook.`);
+      }
       const sceneWithHook = parsed.game.scenes.find((candidate) =>
-        candidate.blocks.some((block) => block.type === "gameplay_hook" && block.hook.id === hook.id)
+        candidate.blocks.some((block) => block.type === "gameplay_hook" && (block.hook?.id === hook.id || block.hookId === hook.id))
       );
       if (!sceneWithHook) {
         throw new Error(`Expected hook ${hook.id} to belong to a scene.`);
@@ -116,5 +123,26 @@ describe("demo content library", () => {
     clocktowerState = resolveGameplayHook(clocktowerState, "align-bells", "success");
     clocktowerState = choose(clocktowerState, "restore-clock");
     expect(clocktowerState.endingId).toBe("tower-restored");
+  });
+
+  it("upgrades every prototype into a rich studio project vertical slice", () => {
+    const requirements = {
+      "code-blue-midnight-shift": { scenes: 12, characters: 6, hooks: 8, endings: 3 },
+      "the-last-testimony": { scenes: 14, characters: 6, hooks: 8, endings: 3 },
+      "the-clocktower-riddle": { scenes: 12, characters: 5, hooks: 8, endings: 3 }
+    };
+
+    for (const { data } of loadContentGames()) {
+      const requirement = requirements[data.metadata.id as keyof typeof requirements];
+      expect(requirement).toBeDefined();
+      expect(data.storyBible?.premise.length).toBeGreaterThan(20);
+      expect(data.characters?.length).toBeGreaterThanOrEqual(requirement.characters);
+      expect(data.scenes.length).toBeGreaterThanOrEqual(requirement.scenes);
+      expect(data.gameplayHooks?.length).toBeGreaterThanOrEqual(requirement.hooks);
+      expect(data.assets?.filter((asset) => asset.type === "background").length).toBeGreaterThanOrEqual(6);
+      expect(data.endings.length).toBeGreaterThanOrEqual(requirement.endings);
+      expect(data.scenes.every((scene) => scene.layoutNotes?.mobileLandscape && scene.backgroundPrompt)).toBe(true);
+      expect(data.characters?.every((character) => character.variants.length > 0)).toBe(true);
+    }
   });
 });

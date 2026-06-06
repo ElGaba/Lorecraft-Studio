@@ -11,9 +11,32 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
   await page.goto("/");
 
   await expect(page.getByRole("heading", { name: "AdventureKit" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Studio" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Scene Editor" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Characters" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Assets" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Gameplay Hooks" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Export" })).toBeVisible();
   await expect(page.getByLabel("Prototype")).toContainText("Code Blue: Midnight Shift");
   await expect(page.getByLabel("Prototype")).toContainText("The Last Testimony");
   await expect(page.getByLabel("Prototype")).toContainText("The Clocktower Riddle");
+
+  await page.getByRole("button", { name: "Generate/Improve Scene Draft" }).click();
+  await expect(page.getByRole("dialog", { name: "Local Agent Prompt" })).toBeVisible();
+  await expect(page.getByText("improve_scene", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Close prompt" }).click();
+
+  await page.getByRole("button", { name: "Characters" }).click();
+  await expect(page.getByRole("heading", { name: "Character Editor" })).toBeVisible();
+  await page.getByRole("button", { name: "Assets" }).click();
+  await expect(page.getByRole("heading", { name: "Asset Prompt Manager" })).toBeVisible();
+  await page.getByRole("button", { name: "Gameplay Hooks" }).click();
+  await expect(page.getByRole("heading", { name: "Gameplay Hook Manager" })).toBeVisible();
+  await page.getByRole("button", { name: "Export" }).click();
+  await expect(page.getByRole("heading", { name: "Export Package" })).toBeVisible();
+  await expect(page.getByText("story-bible.md")).toBeVisible();
+  await page.getByRole("button", { name: "Scenes", exact: true }).click();
 
   for (const mode of ["Mobile Landscape", "Mobile Portrait", "Tablet", "Desktop"]) {
     await page.getByRole("button", { name: mode }).click();
@@ -21,6 +44,7 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
   }
 
   await page.getByLabel("Prototype").selectOption("code-blue-midnight-shift");
+  await page.getByRole("button", { name: "Play", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Bay Seven Alert" })).toBeVisible();
   await page.getByRole("button", { name: "Pull a clean rhythm strip" }).click();
   await expect(page.getByRole("heading", { name: "rapid-assessment" })).toBeVisible();

@@ -4,6 +4,9 @@ import type {
   conditionSchema,
   contentBlockSchema,
   effectSchema,
+  assetSchema,
+  characterSchema,
+  characterVariantSchema,
   gameSchema,
   gameplayHookBlockSchema,
   gameplayHookSchema,
@@ -22,6 +25,9 @@ export type GameplayHook = z.infer<typeof gameplayHookSchema>;
 export type GameplayHookBlock = z.infer<typeof gameplayHookBlockSchema>;
 export type ContentBlock = z.infer<typeof contentBlockSchema>;
 export type ItemDefinition = z.infer<typeof itemSchema>;
+export type CharacterVariant = z.infer<typeof characterVariantSchema>;
+export type CharacterDefinition = z.infer<typeof characterSchema>;
+export type AssetDefinition = z.infer<typeof assetSchema>;
 export type SceneDefinition = z.infer<typeof sceneSchema>;
 export type GameDefinition = z.infer<typeof gameSchema>;
 

@@ -9,6 +9,7 @@ import {
   resolveGameplayHook
 } from "@adventurekit/core";
 import type {
+  CharacterDefinition,
   Choice,
   ContentBlock,
   GameDefinition,
@@ -42,15 +43,29 @@ function itemMap(items: ItemDefinition[]) {
   return new Map(items.map((item) => [item.id, item]));
 }
 
-function SceneBlock({ block }: { block: ContentBlock }) {
+function characterMap(characters: CharacterDefinition[]) {
+  return new Map(characters.map((character) => [character.id, character]));
+}
+
+function SceneBlock({ block, characters }: { block: ContentBlock; characters: Map<string, CharacterDefinition> }) {
   if (block.type === "narration") {
-    return <p className="ak-narration">{block.text}</p>;
+    return <p className={["ak-narration", block.animation ? `ak-anim-${block.animation}` : ""].filter(Boolean).join(" ")}>{block.text}</p>;
   }
 
   if (block.type === "dialogue") {
+    const character = block.characterId ? characters.get(block.characterId) : undefined;
     return (
-      <div className="ak-dialogue">
+      <div className={["ak-dialogue", block.animation ? `ak-anim-${block.animation}` : ""].filter(Boolean).join(" ")}>
+        <div className="ak-portrait-card" aria-hidden="true">
+          <strong>{(character?.displayName ?? block.speaker).slice(0, 2).toUpperCase()}</strong>
+          <span>{block.emotion ?? "focused"}</span>
+        </div>
         <span className="ak-speaker">{block.speaker}</span>
+        {(block.emotion || block.stance || block.position) && (
+          <span className="ak-performance">
+            {[block.emotion, block.stance, block.position].filter(Boolean).join(" / ")}
+          </span>
+        )}
         <p>{block.text}</p>
       </div>
     );
@@ -87,7 +102,7 @@ function GameplayHookPanel({
       <dl className="ak-hook-details">
         <div>
           <dt>Future module</dt>
-          <dd>{hook.module}</dd>
+          <dd>{hook.futureModuleType ?? hook.module}</dd>
         </div>
         <div>
           <dt>Success target</dt>
@@ -99,7 +114,13 @@ function GameplayHookPanel({
         </div>
       </dl>
 
-      <p className="ak-hook-notes">{hook.notes}</p>
+      <p className="ak-hook-notes">{hook.narrativePurpose ?? hook.notes}</p>
+      {(hook.expectedPlayerAction || hook.requiredInputs?.length) && (
+        <div className="ak-hook-play-spec">
+          {hook.expectedPlayerAction && <span>{hook.expectedPlayerAction}</span>}
+          {hook.requiredInputs?.map((input) => <span key={input}>{input}</span>)}
+        </div>
+      )}
 
       <div className="ak-hook-actions">
         <button type="button" onClick={() => onResolve(hook.id, "success")}>
@@ -188,7 +209,8 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
   const ending = getCurrentEnding(state);
   const choices = getAvailableChoices(state);
   const items = useMemo(() => itemMap(game.items), [game.items]);
-  const hooks = getSceneGameplayHooks(scene);
+  const characters = useMemo(() => characterMap(game.characters), [game.characters]);
+  const hooks = getSceneGameplayHooks(scene, game);
 
   function handleChoice(choiceId: string) {
     setState((current) => choose(current, choiceId));
@@ -200,6 +222,13 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
 
   function restart() {
     setState(createInitialState(game));
+  }
+
+  function hookForBlock(block: ContentBlock) {
+    if (block.type !== "gameplay_hook") {
+      return undefined;
+    }
+    return block.hook ?? hooks.find((hook) => hook.id === block.hookId);
   }
 
   return (
@@ -225,19 +254,28 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
             <div className="ak-ending">
               <span>{ending.tone}</span>
               <p>{ending.summary}</p>
+              {ending.cinematicNotes && <small>{ending.cinematicNotes}</small>}
               <button type="button" onClick={restart}>Restart Prototype</button>
             </div>
           ) : (
             <>
               <p className="ak-background">{scene.background}</p>
+              {(scene.backgroundPrompt || scene.camera || scene.transition) && (
+                <div className="ak-cinematic-notes">
+                  {scene.camera && <span>Camera: {scene.camera}</span>}
+                  {scene.transition && <span>Transition: {scene.transition}</span>}
+                  {scene.backgroundPrompt && <span>Prompt ready</span>}
+                </div>
+              )}
               <div className="ak-script">
-                {scene.blocks.map((block, index) => (
-                  block.type === "gameplay_hook" ? (
-                    <GameplayHookPanel key={`${block.hook.id}-${index}`} hook={block.hook} onResolve={handleHook} />
+                {scene.blocks.map((block, index) => {
+                  const hook = hookForBlock(block);
+                  return block.type === "gameplay_hook" ? (
+                    hook ? <GameplayHookPanel key={`${hook.id}-${index}`} hook={hook} onResolve={handleHook} /> : null
                   ) : (
-                    <SceneBlock key={`${block.type}-${index}`} block={block} />
-                  )
-                ))}
+                    <SceneBlock key={`${block.type}-${index}`} block={block} characters={characters} />
+                  );
+                })}
               </div>
               <ChoiceList choices={choices} onChoose={handleChoice} />
             </>

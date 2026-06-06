@@ -1,43 +1,52 @@
 # Gameplay Hooks
 
-Gameplay hooks let AdventureKit stay playable before full gameplay modules exist. A hook is a declarative block in a cinematic scene. The React runtime renders a polished placeholder and exposes demo buttons for success and failure.
+Gameplay hooks are first-class Studio objects and playable runtime placeholders. They let a project describe future interaction modules without blocking the narrative prototype.
 
-## Hook Shape
+## Top-Level Hook
 
 ```json
 {
-  "type": "gameplay_hook",
-  "hook": {
-    "id": "present-contradiction",
-    "type": "evidence_presentation",
-    "module": "future-contradiction-presentation-module",
-    "successTarget": { "type": "scene", "id": "witness-cracks" },
-    "failureTarget": { "type": "scene", "id": "objection-sustained" },
-    "successEffects": [{ "type": "incrementVariable", "variable": "witnessPressure", "by": 2 }],
-    "failureEffects": [{ "type": "incrementVariable", "variable": "judgePatience", "by": -1 }],
-    "notes": "Future module can let players select evidence and point to the exact testimony line."
-  }
+  "id": "present-contradiction",
+  "type": "evidence_presentation",
+  "title": "Present the Contradiction",
+  "module": "future-contradiction-presentation-module",
+  "narrativePurpose": "Mara must prove the witness's final answer cannot be true.",
+  "gameplayPurpose": "Select testimony and present evidence.",
+  "expectedPlayerAction": "Select the window statement and present the crime scene photo.",
+  "requiredInputs": ["testimony_statement", "evidence_selection"],
+  "successCondition": "Statement four plus crime scene photo.",
+  "failureCondition": "Wrong statement or irrelevant evidence.",
+  "successTarget": { "type": "scene", "id": "witness-cracks" },
+  "failureTarget": { "type": "scene", "id": "objection-sustained" },
+  "uiLayoutNotes": "Statement cards center, evidence tray right.",
+  "mobileGestureNotes": "Tap statement, tap evidence, press present.",
+  "futureModuleType": "contradiction",
+  "implementationNotes": "Core contradiction module candidate.",
+  "assetRequirements": ["asset_window_photo"],
+  "agentPrompt": "Design contradiction gameplay for an impossible open window testimony.",
+  "notes": "Primary evidence hook."
 }
 ```
 
+## Scene Block
+
+Scenes mount a hook by id:
+
+```json
+{ "type": "gameplay_hook", "hookId": "present-contradiction" }
+```
+
+Inline hooks are still supported for compatibility, but top-level hooks are preferred because Studio can list, validate, export, and reuse them.
+
 ## Runtime Display
 
-Each hook shows:
-
-- hook id
-- hook type
-- intended future module
-- success target scene or ending
-- failure target scene or ending
-- short design notes
-- `Simulate Success`
-- `Simulate Failure`
+Each hook shows the id, type, future module, success/failure targets, narrative purpose, expected action, required inputs, and buttons to simulate success or failure.
 
 The core engine resolves hook outcomes through `resolveGameplayHook(state, hookId, outcome)`.
 
-## Future Module Attachment
+## Module Attachment
 
-`packages/phaser-bridge/src/index.ts` defines the first adapter shape:
+`packages/phaser-bridge/src/index.ts` defines the adapter shape:
 
 ```ts
 interface GameplayModuleAdapter {
@@ -47,12 +56,8 @@ interface GameplayModuleAdapter {
 }
 ```
 
-A future module should:
+A future module should match one or more hook types, mount into a runtime-owned element, read serializable runtime state, call `resolve("success")` or `resolve("failure")`, and clean up renderer resources when unmounted.
 
-1. Match one or more hook `type` values.
-2. Mount into the element owned by the runtime.
-3. Read the hook and runtime state from the context.
-4. Call `resolve("success")` or `resolve("failure")`.
-5. Clean up renderer resources when unmounted.
+## Validation Rules
 
-The hook remains content-authored JSON. Runtime code should not need scene-specific changes.
+Validation catches missing hook ids, broken success/failure targets, missing asset requirements, invalid item effects, missing Studio layout notes, and missing agent prompts.

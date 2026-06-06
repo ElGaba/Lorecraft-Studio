@@ -1,5 +1,5 @@
 import { gameSchema } from "./schema";
-import type { Effect, GameDefinition, Target, ValidationError, ValidationResult } from "./types";
+import type { Effect, GameDefinition, GameplayHook, Target, ValidationError, ValidationResult } from "./types";
 
 function pathToString(path: Array<string | number>) {
   return path.reduce<string>((formatted, segment) => {
@@ -55,22 +55,119 @@ function validateEffect(source: string, path: string, effect: Effect, itemIds: S
   return [];
 }
 
+function validateHookTargets(
+  source: string,
+  path: string,
+  hook: GameplayHook,
+  sceneIds: Set<string>,
+  endingIds: Set<string>,
+  assetIds: Set<string>,
+  itemIds: Set<string>
+) {
+  const errors: ValidationError[] = [];
+
+  errors.push(
+    ...validateTarget(source, `${path}.successTarget.id`, hook.successTarget, sceneIds, endingIds),
+    ...validateTarget(source, `${path}.failureTarget.id`, hook.failureTarget, sceneIds, endingIds)
+  );
+
+  hook.assetRequirements?.forEach((assetId, assetIndex) => {
+    if (!assetIds.has(assetId)) {
+      errors.push(error(source, `${path}.assetRequirements[${assetIndex}]`, `Asset "${assetId}" does not exist.`));
+    }
+  });
+
+  hook.successEffects?.forEach((effect, effectIndex) => {
+    errors.push(...validateEffect(source, `${path}.successEffects[${effectIndex}]`, effect, itemIds));
+  });
+
+  hook.failureEffects?.forEach((effect, effectIndex) => {
+    errors.push(...validateEffect(source, `${path}.failureEffects[${effectIndex}]`, effect, itemIds));
+  });
+
+  return errors;
+}
+
 function crossValidate(game: GameDefinition, source: string) {
   const errors: ValidationError[] = [];
   const sceneIds = new Set(game.scenes.map((scene) => scene.id));
   const endingIds = new Set(game.endings.map((ending) => ending.id));
   const itemIds = new Set(game.items.map((item) => item.id));
+  const characterIds = new Set(game.characters.map((character) => character.id));
+  const assetIds = new Set(game.assets.map((asset) => asset.id));
+  const topLevelHookIds = new Set(game.gameplayHooks.map((hook) => hook.id));
   const hookIds = new Set<string>();
+  const isStudioProject = Boolean(game.storyBible || game.characters.length > 0 || game.assets.length > 0 || game.gameplayHooks.length > 0);
 
   errors.push(...ensureUniqueIds(source, "scenes", game.scenes.map((scene) => scene.id)));
   errors.push(...ensureUniqueIds(source, "endings", game.endings.map((ending) => ending.id)));
   errors.push(...ensureUniqueIds(source, "items", game.items.map((item) => item.id)));
+  errors.push(...ensureUniqueIds(source, "characters", game.characters.map((character) => character.id)));
+  errors.push(...ensureUniqueIds(source, "assets", game.assets.map((asset) => asset.id)));
+  errors.push(...ensureUniqueIds(source, "gameplayHooks", game.gameplayHooks.map((hook) => hook.id)));
 
   if (!sceneIds.has(game.startScene)) {
     errors.push(error(source, "startScene", `Start scene "${game.startScene}" does not exist.`));
   }
 
+  game.storyBible?.mainCast.forEach((characterId, characterIndex) => {
+    if (!characterIds.has(characterId)) {
+      errors.push(error(source, `storyBible.mainCast[${characterIndex}]`, `Character "${characterId}" does not exist.`));
+    }
+  });
+
+  game.assets.forEach((asset, assetIndex) => {
+    asset.linkedSceneIds?.forEach((sceneId, sceneIndex) => {
+      if (!sceneIds.has(sceneId)) {
+        errors.push(error(source, `assets[${assetIndex}].linkedSceneIds[${sceneIndex}]`, `Scene "${sceneId}" does not exist.`));
+      }
+    });
+
+    asset.linkedCharacterIds?.forEach((characterId, characterIndex) => {
+      if (!characterIds.has(characterId)) {
+        errors.push(error(source, `assets[${assetIndex}].linkedCharacterIds[${characterIndex}]`, `Character "${characterId}" does not exist.`));
+      }
+    });
+  });
+
+  game.items.forEach((item, itemIndex) => {
+    if (item.imageAssetId && !assetIds.has(item.imageAssetId)) {
+      errors.push(error(source, `items[${itemIndex}].imageAssetId`, `Asset "${item.imageAssetId}" does not exist.`));
+    }
+  });
+
+  game.gameplayHooks.forEach((hook, hookIndex) => {
+    const hookPath = `gameplayHooks[${hookIndex}]`;
+    errors.push(...validateHookTargets(source, hookPath, hook, sceneIds, endingIds, assetIds, itemIds));
+
+    if (isStudioProject) {
+      if (!hook.uiLayoutNotes) {
+        errors.push(error(source, `${hookPath}.uiLayoutNotes`, `Gameplay hook "${hook.id}" is missing UI layout notes.`));
+      }
+
+      if (!hook.agentPrompt) {
+        errors.push(error(source, `${hookPath}.agentPrompt`, `Gameplay hook "${hook.id}" is missing an agent prompt.`));
+      }
+    }
+  });
+
   game.scenes.forEach((scene, sceneIndex) => {
+    if (isStudioProject) {
+      if (!scene.layoutNotes?.mobileLandscape) {
+        errors.push(error(source, `scenes[${sceneIndex}].layoutNotes.mobileLandscape`, `Scene "${scene.id}" is missing mobile landscape layout notes.`));
+      }
+
+      if (!scene.backgroundPrompt) {
+        errors.push(error(source, `scenes[${sceneIndex}].backgroundPrompt`, `Scene "${scene.id}" is missing a background image prompt.`));
+      }
+    }
+
+    scene.assetIds?.forEach((assetId, assetIndex) => {
+      if (!assetIds.has(assetId)) {
+        errors.push(error(source, `scenes[${sceneIndex}].assetIds[${assetIndex}]`, `Asset "${assetId}" does not exist.`));
+      }
+    });
+
     scene.choices?.forEach((choice, choiceIndex) => {
       const choicePath = `scenes[${sceneIndex}].choices[${choiceIndex}]`;
       errors.push(
@@ -91,28 +188,30 @@ function crossValidate(game: GameDefinition, source: string) {
     });
 
     scene.blocks.forEach((block, blockIndex) => {
+      if (block.type === "dialogue" && block.characterId && !characterIds.has(block.characterId)) {
+        errors.push(error(source, `scenes[${sceneIndex}].blocks[${blockIndex}].characterId`, `Character "${block.characterId}" does not exist.`));
+      }
+
       if (block.type !== "gameplay_hook") {
         return;
       }
 
       const hookPath = `scenes[${sceneIndex}].blocks[${blockIndex}].hook`;
+
+      if (block.hookId && !topLevelHookIds.has(block.hookId)) {
+        errors.push(error(source, `scenes[${sceneIndex}].blocks[${blockIndex}].hookId`, `Gameplay hook "${block.hookId}" does not exist.`));
+      }
+
+      if (!block.hook) {
+        return;
+      }
+
       if (hookIds.has(block.hook.id)) {
-        errors.push(error(source, `${hookPath}.id`, `Duplicate gameplay hook id "${block.hook.id}".`));
+        errors.push(error(source, `${hookPath}.id`, `Duplicate inline gameplay hook id "${block.hook.id}".`));
       }
       hookIds.add(block.hook.id);
 
-      errors.push(
-        ...validateTarget(source, `${hookPath}.successTarget.id`, block.hook.successTarget, sceneIds, endingIds),
-        ...validateTarget(source, `${hookPath}.failureTarget.id`, block.hook.failureTarget, sceneIds, endingIds)
-      );
-
-      block.hook.successEffects?.forEach((effect, effectIndex) => {
-        errors.push(...validateEffect(source, `${hookPath}.successEffects[${effectIndex}]`, effect, itemIds));
-      });
-
-      block.hook.failureEffects?.forEach((effect, effectIndex) => {
-        errors.push(...validateEffect(source, `${hookPath}.failureEffects[${effectIndex}]`, effect, itemIds));
-      });
+      errors.push(...validateHookTargets(source, hookPath, block.hook, sceneIds, endingIds, assetIds, itemIds));
     });
   });
 

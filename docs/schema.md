@@ -16,6 +16,10 @@ interface GameDefinition {
   startScene: string;
   variables: Record<string, string | number | boolean | null>;
   items: ItemDefinition[];
+  storyBible?: StoryBible;
+  characters: CharacterDefinition[];
+  assets: AssetDefinition[];
+  gameplayHooks: GameplayHook[];
   scenes: SceneDefinition[];
   endings: EndingDefinition[];
 }
@@ -29,14 +33,26 @@ Scenes drive cinematic flow:
 interface SceneDefinition {
   id: string;
   title: string;
+  purpose?: string;
+  synopsis?: string;
+  location?: string;
+  camera?: string;
   background: string;
+  backgroundPrompt?: string;
+  layoutNotes?: {
+    mobileLandscape: string;
+    mobilePortrait?: string;
+    tablet?: string;
+    desktop?: string;
+  };
+  assetIds?: string[];
   mood: string[];
   blocks: ContentBlock[];
   choices?: Choice[];
 }
 ```
 
-`background` is a descriptor for code-native placeholder visuals. `mood` gives the runtime and future renderers atmospheric tags.
+`background` is the in-runtime scene descriptor. `backgroundPrompt` is the image-generation prompt for the eventual background asset. Studio projects must include `layoutNotes.mobileLandscape` and a `backgroundPrompt` for every scene.
 
 ## Blocks
 
@@ -53,16 +69,20 @@ Supported block types:
 ```json
 {
   "type": "gameplay_hook",
-  "hook": {
-    "id": "rapid-assessment",
-    "type": "procedure_interaction",
-    "module": "future-rapid-assessment-module",
-    "successTarget": { "type": "scene", "id": "safe-handoff" },
-    "failureTarget": { "type": "ending", "id": "hard-lesson" },
-    "notes": "Future module can sequence airway, rhythm confirmation, and escalation."
-  }
+  "hookId": "rapid-assessment"
 }
 ```
+
+Hook blocks can reference a top-level `gameplayHooks` entry with `hookId` or carry a legacy inline `hook`.
+
+## Studio Objects
+
+Studio projects can include:
+
+- `storyBible`: premise, tone, visual direction, pacing rules, cast, locations, boundaries, and module plan.
+- `characters`: role, biography, visual description, base portrait prompt, emotions, stances, positions, and variants.
+- `assets`: backgrounds, character portraits, CG, overlays, evidence, and hook concepts with prompt, status, linked scenes, and linked characters.
+- `gameplayHooks`: first-class gameplay module specs with narrative purpose, player inputs, success/failure targets, layout notes, mobile notes, implementation notes, asset requirements, and agent prompt.
 
 ## Choices
 
@@ -117,5 +137,8 @@ Supported effects:
 - missing choice targets
 - missing hook targets
 - item references in effects and conditions
+- broken character, asset, story bible, hook, and item image references
+- missing Studio scene prompts and mobile landscape layout notes
+- missing Studio hook layout notes and agent prompts
 
 Use `formatValidationErrors(errors)` to display understandable validation output.

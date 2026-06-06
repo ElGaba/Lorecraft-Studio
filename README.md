@@ -1,6 +1,6 @@
 # AdventureKit
 
-AdventureKit is an open-source TypeScript toolkit for building cinematic narrative and adventure game prototypes that run on mobile web, tablet, and desktop. It is designed for agent-first authoring: an AI agent or developer can add a structured `game.json` file, let the runtime validate it, and immediately play the prototype in the studio demo.
+AdventureKit is an open-source TypeScript toolkit for building cinematic narrative and adventure game prototypes that run on mobile web, tablet, and desktop. It now includes AdventureKit Studio: a local, mobile-first authoring surface for scenes, characters, asset prompts, story bibles, gameplay hook specs, export packages, and playable previews.
 
 The first version focuses on cinematic scene flow, dialogue, narration, choices, inventory/evidence, endings, and declarative gameplay hook zones. Gameplay hooks are polished placeholders where future modules can mount procedure interactions, evidence presentation, inspection scenes, puzzles, or object manipulation sequences.
 
@@ -8,15 +8,15 @@ The first version focuses on cinematic scene flow, dialogue, narration, choices,
 
 Narrative game prototypes often mix story data, branching logic, rendering, and one-off UI code. AdventureKit separates those concerns:
 
-- `packages/core` validates game files and runs deterministic scene flow.
-- `packages/react-runtime` renders a playable cinematic prototype.
+- `packages/core` validates rich Studio game files, exports production packages, and runs deterministic scene flow.
+- `packages/react-runtime` renders a playable cinematic prototype with portraits, evidence, hook panels, animation presets, and endings.
 - `packages/phaser-bridge` defines a placeholder adapter shape for future gameplay modules.
 - `content/*/game.json` contains agent-authored playable games.
-- `apps/studio-demo` loads content files automatically and previews device layouts.
+- `apps/studio-demo` loads content files automatically and provides Studio and Play modes.
 
 ## Why It Is Agent-Friendly
 
-Agents can create a new prototype by writing one JSON file under `content/<prototype-name>/game.json`. The runtime code does not need to change. Validation reports source paths, schema issues, missing scene targets, missing ending targets, duplicate ids, and invalid item references.
+Agents can create a new prototype by writing one JSON file under `content/<prototype-name>/game.json`. The runtime code does not need to change. Validation reports source paths, schema issues, missing scene targets, missing ending targets, duplicate ids, invalid character/asset/hook references, missing Studio prompts, and missing mobile layout notes.
 
 ## Install And Run
 
@@ -25,7 +25,7 @@ npm install
 npm run dev
 ```
 
-The demo starts from `apps/studio-demo` and loads all valid files matching `content/*/game.json`.
+The demo starts from `apps/studio-demo` and loads all valid files matching `content/*/game.json`. The first screen opens in Studio mode. Use Play mode to run the selected project.
 
 Useful checks:
 
@@ -33,15 +33,16 @@ Useful checks:
 npm test
 npm run typecheck
 npm run build
+npm run smoke
 ```
 
 ## Demo Prototypes
 
-The studio includes three complete playable examples:
+The studio includes three rich vertical slices:
 
-- `Code Blue: Midnight Shift`: procedure drama with urgent branching and two procedure hooks.
-- `The Last Testimony`: investigation/courtroom flow with evidence and contradiction presentation.
-- `The Clocktower Riddle`: puzzle adventure with item discovery and a clockwork puzzle hook.
+- `Code Blue: Midnight Shift`: emergency thriller with 6 characters, 13 scenes, 8 hook specs, asset prompts, and 4 outcomes.
+- `The Last Testimony`: courtroom mystery with 6 characters, 17 scenes, 8 hook specs, evidence assets, and 3 outcomes.
+- `The Clocktower Riddle`: puzzle adventure with 5 characters, 12 scenes, 8 hook specs, item assets, and 3 outcomes.
 
 ## Create A New Game File
 
@@ -92,6 +93,20 @@ The file needs metadata, a `startScene`, scenes, endings, and optional variables
 }
 ```
 
+## Studio Features
+
+Studio mode includes:
+
+- project dashboard and prototype selector
+- scene editor with local-agent buttons and validation
+- character editor with emotions, stances, and variants
+- asset prompt manager for backgrounds, portraits, CG, overlays, evidence, and hook concepts
+- story bible editor
+- gameplay hook manager
+- responsive preview modes
+- export package viewer
+- local agent bridge fallback prompt modal
+
 ## Schema
 
 The Zod schema lives in `packages/core/src/schema.ts`. It supports:
@@ -100,12 +115,14 @@ The Zod schema lives in `packages/core/src/schema.ts`. It supports:
 - start scene
 - scenes
 - cinematic narration
-- dialogue lines and speaker names
+- dialogue lines, character ids, emotion, stance, and position
 - scene background descriptors
+- background prompts and layout notes
 - mood descriptors
 - choices and conditional choices
 - variables and variable updates
 - inventory/evidence/items
+- story bible, characters, assets, and top-level gameplay hooks
 - endings
 - `gameplay_hook` blocks
 
@@ -130,13 +147,22 @@ The studio demo includes preview controls for:
 
 The primary layout is mobile landscape with a 16:9 cinematic stage. Portrait mode stacks the runtime and keeps controls touch-safe.
 
-More detail: `docs/responsive-design.md`.
+More detail: `docs/responsive-design.md` and `docs/mobile-first-design.md`.
+
+## Documentation
+
+- `docs/studio.md`
+- `docs/agent-bridge.md`
+- `docs/asset-pipeline.md`
+- `docs/character-system.md`
+- `docs/animation-system.md`
+- `docs/gameplay-hooks.md`
+- `docs/mobile-first-design.md`
+- `docs/export-format.md`
 
 ## Roadmap
 
 - Add a CLI content validator.
 - Add a richer gameplay module registry.
-- Add optional Playwright responsive smoke tests.
 - Add save/load snapshots for longer prototypes.
-- Add authoring helpers that generate schema-safe scene graphs.
 - Add real Phaser modules for procedure, puzzle, inspection, and evidence presentation hooks.

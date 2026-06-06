@@ -144,19 +144,34 @@ export function choose(state: RuntimeState, choiceId: string): RuntimeState {
 
 function findGameplayHook(state: RuntimeState, hookId: string): GameplayHook {
   const scene = getCurrentScene(state);
-  const hookBlock = scene.blocks.find((block) => block.type === "gameplay_hook" && block.hook.id === hookId);
+  const hookBlock = scene.blocks.find((block) => block.type === "gameplay_hook" && (block.hook?.id === hookId || block.hookId === hookId));
 
   if (!hookBlock || hookBlock.type !== "gameplay_hook") {
     throw new Error(`Gameplay hook "${hookId}" is not available from scene "${state.currentSceneId}".`);
   }
 
-  return hookBlock.hook;
+  if (hookBlock.hook) {
+    return hookBlock.hook;
+  }
+
+  const hook = state.game.gameplayHooks.find((candidate) => candidate.id === hookBlock.hookId);
+  if (!hook) {
+    throw new Error(`Gameplay hook "${hookId}" does not exist in ${state.game.metadata.title}.`);
+  }
+
+  return hook;
 }
 
-export function getSceneGameplayHooks(scene: SceneDefinition): GameplayHook[] {
+export function getSceneGameplayHooks(scene: SceneDefinition, game?: GameDefinition): GameplayHook[] {
   return scene.blocks
     .filter((block) => block.type === "gameplay_hook")
-    .map((block) => block.hook);
+    .map((block) => {
+      if (block.hook) {
+        return block.hook;
+      }
+      return game?.gameplayHooks.find((hook) => hook.id === block.hookId);
+    })
+    .filter((hook): hook is GameplayHook => Boolean(hook));
 }
 
 export function resolveGameplayHook(
