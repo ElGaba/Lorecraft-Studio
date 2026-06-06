@@ -41,7 +41,7 @@
       "motivations": "Save Elias and keep the court honest.",
       "visualDescription": "Dark suit, rain-damp collar, file held like a blade.",
       "baseImagePrompt": "Noir defense attorney in predawn courtroom, cold rain light, cinematic portrait.",
-      "portraitUrl": "",
+      "portraitUrl": "/story-assets/last-testimony/mara-vey-presenting.png",
       "emotions": ["neutral", "serious", "confident", "thinking", "presenting evidence"],
       "stances": ["reading_file", "presenting_evidence", "pointing_to_photo"],
       "screenPositions": ["lower-left", "center-left"],
@@ -53,7 +53,7 @@
           "stanceId": "presenting_evidence",
           "description": "Mara lands a contradiction.",
           "imagePrompt": "Defense attorney presenting evidence in noir courtroom, rainlit windows.",
-          "imageUrl": "",
+          "imageUrl": "/story-assets/last-testimony/mara-vey-presenting.png",
           "animation": "evidence-slam",
           "usageNotes": "Use for proof reveals."
         }
@@ -70,7 +70,7 @@
       "motivations": "Survive the courtroom without admitting fear.",
       "visualDescription": "Pale coat, wet cuffs, fingers tight on witness rail.",
       "baseImagePrompt": "Exhausted witness at courtroom stand, rain window behind, noir lighting.",
-      "portraitUrl": "",
+      "portraitUrl": "/story-assets/last-testimony/lyra-mont-testifying.png",
       "emotions": ["afraid", "serious", "surprised", "breakdown"],
       "stances": ["testifying", "recoiling", "hands_on_rail"],
       "screenPositions": ["upper-right", "center"],
@@ -82,7 +82,7 @@
           "stanceId": "recoiling",
           "description": "Lyra realizes the testimony cannot stand.",
           "imagePrompt": "Shocked courtroom witness recoiling, rain-streaked window, noir legal thriller.",
-          "imageUrl": "",
+          "imageUrl": "/story-assets/last-testimony/lyra-mont-testifying.png",
           "animation": "tense-shake",
           "usageNotes": "Use after contradiction."
         }
@@ -271,7 +271,7 @@
       "negativePrompt": "logo, text, cheerful lighting",
       "aspectRatio": "16:9",
       "targetDeviceUsage": "testimony mode",
-      "url": "",
+      "url": "/story-assets/last-testimony/courtroom-predawn.png",
       "linkedSceneIds": ["witness-stand", "final_testimony_review"],
       "linkedCharacterIds": ["lyra_mont"],
       "status": "needed"
@@ -355,7 +355,7 @@
       "negativePrompt": "real crime photo, gore, watermark",
       "aspectRatio": "4:3",
       "targetDeviceUsage": "evidence card and inspection",
-      "url": "",
+      "url": "/story-assets/last-testimony/witness-stand-concept.png",
       "linkedSceneIds": ["witness-stand", "witness-cracks"],
       "linkedCharacterIds": [],
       "status": "needed"
@@ -765,6 +765,7 @@
       "location": "witness_stand",
       "camera": "witness upper right, Mara lower left, judge centered",
       "background": "A courtroom washed in gray daylight, every surface too polished for comfort.",
+      "backgroundImage": "/story-assets/last-testimony/courtroom-predawn.png",
       "backgroundPrompt": "Noir courtroom witness stand in gray dawn, rain windows, polished wood, 16:9, no text.",
       "musicMood": "restrained legal suspense",
       "soundMood": "courtroom silence",
@@ -773,7 +774,8 @@
       "assetIds": ["bg_witness_stand_close_rain_window"],
       "mood": ["formal", "dangerous"],
       "blocks": [
-        { "type": "dialogue", "speaker": "Lyra Mont", "characterId": "lyra_mont", "emotion": "afraid", "stance": "hands_on_rail", "position": "upper-right", "text": "I left through the front doors before the alarm. I never went below the lobby." },
+        { "type": "dialogue", "speaker": "Mara Vey", "characterId": "mara_vey", "emotion": "confident", "stance": "presenting_evidence", "position": "lower-left", "animation": "evidence-slam", "text": "The court record says otherwise. Let's test the exact minute you say never happened." },
+        { "type": "dialogue", "speaker": "Lyra Mont", "characterId": "lyra_mont", "emotion": "afraid", "stance": "hands_on_rail", "position": "upper-right", "animation": "tense-shake", "text": "I left through the front doors before the alarm. I never went below the lobby." },
         { "type": "gameplay_hook", "hookId": "present-contradiction" }
       ],
       "choices": [

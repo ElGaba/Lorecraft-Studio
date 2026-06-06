@@ -62,3 +62,20 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
 
   expect(consoleErrors).toEqual([]);
 });
+
+test("the last testimony presents an image-backed courtroom visual novel scene", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByLabel("Prototype").selectOption("the-last-testimony");
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
+  await page.getByRole("button", { name: "Return to court with the keycard" }).click();
+
+  await expect(page.getByRole("heading", { name: "Witness Stand" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Scene background: Witness Stand" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Mara Vey" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Lyra Mont" })).toBeVisible();
+  await expect(page.getByText("Court Record", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Present Evidence" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Press Witness" })).toBeVisible();
+});

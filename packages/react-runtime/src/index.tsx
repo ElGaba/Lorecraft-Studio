@@ -9,13 +9,15 @@ import {
   resolveGameplayHook
 } from "@adventurekit/core";
 import type {
+  AssetDefinition,
   CharacterDefinition,
   Choice,
   ContentBlock,
   GameDefinition,
   GameplayHook,
   ItemDefinition,
-  RuntimeState
+  RuntimeState,
+  SceneDefinition
 } from "@adventurekit/core";
 import "./runtime.css";
 
@@ -43,8 +45,105 @@ function itemMap(items: ItemDefinition[]) {
   return new Map(items.map((item) => [item.id, item]));
 }
 
+function assetMap(assets: AssetDefinition[]) {
+  return new Map(assets.map((asset) => [asset.id, asset]));
+}
+
 function characterMap(characters: CharacterDefinition[]) {
   return new Map(characters.map((character) => [character.id, character]));
+}
+
+type DialogueBlock = Extract<ContentBlock, { type: "dialogue" }>;
+
+function characterImage(character: CharacterDefinition | undefined, block?: DialogueBlock) {
+  if (!character) {
+    return "";
+  }
+
+  const exactVariant = block
+    ? character.variants.find((variant) => variant.emotionId === block.emotion && variant.stanceId === block.stance)
+    : undefined;
+  const emotionVariant = block
+    ? character.variants.find((variant) => variant.emotionId === block.emotion)
+    : undefined;
+
+  return exactVariant?.imageUrl ?? emotionVariant?.imageUrl ?? character.portraitUrl ?? "";
+}
+
+function positionClass(position: string | undefined) {
+  if (position?.includes("right")) {
+    return "is-right";
+  }
+  if (position?.includes("center")) {
+    return "is-center";
+  }
+  return "is-left";
+}
+
+function sceneBackgroundUrl(scene: SceneDefinition, game: GameDefinition, assets: Map<string, AssetDefinition>) {
+  if (scene.backgroundImage) {
+    return scene.backgroundImage;
+  }
+
+  return scene.assetIds
+    ?.map((assetId) => assets.get(assetId))
+    .find((asset) => asset?.url && ["background", "cg_cutscene"].includes(asset.type))
+    ?.url ?? "";
+}
+
+function sceneDialogueBlocks(scene: SceneDefinition, characters: Map<string, CharacterDefinition>) {
+  const seen = new Set<string>();
+  const blocks: DialogueBlock[] = [];
+
+  scene.blocks.forEach((block) => {
+    if (block.type !== "dialogue" || !block.characterId || seen.has(block.characterId)) {
+      return;
+    }
+
+    const character = characters.get(block.characterId);
+    if (!characterImage(character, block)) {
+      return;
+    }
+
+    seen.add(block.characterId);
+    blocks.push(block);
+  });
+
+  return blocks;
+}
+
+function SceneCharacterLayer({
+  scene,
+  characters
+}: {
+  scene: SceneDefinition;
+  characters: Map<string, CharacterDefinition>;
+}) {
+  const blocks = sceneDialogueBlocks(scene, characters);
+  if (blocks.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="ak-character-layer" aria-label="Scene characters">
+      {blocks.map((block) => {
+        const character = block.characterId ? characters.get(block.characterId) : undefined;
+        const imageUrl = characterImage(character, block);
+        if (!character || !imageUrl) {
+          return null;
+        }
+
+        return (
+          <img
+            key={character.id}
+            className={["ak-character-sprite", positionClass(block.position), block.animation ? `ak-anim-${block.animation}` : ""].filter(Boolean).join(" ")}
+            src={imageUrl}
+            alt={character.displayName}
+          />
+        );
+      })}
+    </div>
+  );
 }
 
 function SceneBlock({ block, characters }: { block: ContentBlock; characters: Map<string, CharacterDefinition> }) {
@@ -54,10 +153,15 @@ function SceneBlock({ block, characters }: { block: ContentBlock; characters: Ma
 
   if (block.type === "dialogue") {
     const character = block.characterId ? characters.get(block.characterId) : undefined;
+    const imageUrl = characterImage(character, block);
     return (
       <div className={["ak-dialogue", block.animation ? `ak-anim-${block.animation}` : ""].filter(Boolean).join(" ")}>
         <div className="ak-portrait-card" aria-hidden="true">
-          <strong>{(character?.displayName ?? block.speaker).slice(0, 2).toUpperCase()}</strong>
+          {imageUrl ? (
+            <img src={imageUrl} alt="" />
+          ) : (
+            <strong>{(character?.displayName ?? block.speaker).slice(0, 2).toUpperCase()}</strong>
+          )}
           <span>{block.emotion ?? "focused"}</span>
         </div>
         <span className="ak-speaker">{block.speaker}</span>
@@ -89,14 +193,32 @@ function GameplayHookPanel({
   hook: GameplayHook;
   onResolve: (hookId: string, outcome: "success" | "failure") => void;
 }) {
+  const isCourtroomHook = hook.type === "evidence_presentation" || hook.type === "contradiction";
+  const hookLabel = isCourtroomHook ? "Cross-Examination" : "Gameplay Hook";
+  const hookTitle = isCourtroomHook ? "Find the contradiction" : hook.id;
+  const hookPrompt = isCourtroomHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : "";
+  const successLabel = isCourtroomHook ? "Present Evidence" : "Simulate Success";
+  const failureLabel = isCourtroomHook ? "Press Witness" : "Simulate Failure";
+
   return (
     <section className="ak-hook" aria-label={`Gameplay hook ${hook.id}`}>
       <div className="ak-hook-header">
         <div>
-          <span className="ak-section-label">Gameplay Hook</span>
-          <h3>{hook.id}</h3>
+          <span className="ak-section-label">{hookLabel}</span>
+          <h3>{hookTitle}</h3>
         </div>
         <span className="ak-hook-type">{hook.type}</span>
+      </div>
+
+      {hookPrompt && <p className="ak-hook-prompt">{hookPrompt}</p>}
+
+      <div className="ak-hook-actions">
+        <button type="button" onClick={() => onResolve(hook.id, "success")}>
+          {successLabel}
+        </button>
+        <button type="button" className="ak-danger" onClick={() => onResolve(hook.id, "failure")}>
+          {failureLabel}
+        </button>
       </div>
 
       <dl className="ak-hook-details">
@@ -121,15 +243,6 @@ function GameplayHookPanel({
           {hook.requiredInputs?.map((input) => <span key={input}>{input}</span>)}
         </div>
       )}
-
-      <div className="ak-hook-actions">
-        <button type="button" onClick={() => onResolve(hook.id, "success")}>
-          Simulate Success
-        </button>
-        <button type="button" className="ak-danger" onClick={() => onResolve(hook.id, "failure")}>
-          Simulate Failure
-        </button>
-      </div>
     </section>
   );
 }
@@ -152,10 +265,12 @@ function ChoiceList({ choices, onChoose }: { choices: Choice[]; onChoose: (choic
 
 function InventoryPanel({
   state,
-  items
+  items,
+  assets
 }: {
   state: RuntimeState;
   items: Map<string, ItemDefinition>;
+  assets: Map<string, AssetDefinition>;
 }) {
   if (state.game.items.length === 0) {
     return null;
@@ -166,7 +281,7 @@ function InventoryPanel({
   return (
     <aside className="ak-inventory" aria-label="Inventory and evidence">
       <div className="ak-panel-heading">
-        <span className="ak-section-label">Evidence</span>
+        <span className="ak-section-label">Court Record</span>
         <strong>{ownedItems.length}</strong>
       </div>
       {ownedItems.length === 0 ? (
@@ -174,7 +289,10 @@ function InventoryPanel({
       ) : (
         <ul>
           {ownedItems.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} className={item.imageAssetId && assets.get(item.imageAssetId)?.url ? "has-image" : ""}>
+              {item.imageAssetId && assets.get(item.imageAssetId)?.url && (
+                <img src={assets.get(item.imageAssetId)?.url} alt="" />
+              )}
               <span>{item.kind}</span>
               <strong>{item.name}</strong>
               <p>{item.description}</p>
@@ -209,8 +327,10 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
   const ending = getCurrentEnding(state);
   const choices = getAvailableChoices(state);
   const items = useMemo(() => itemMap(game.items), [game.items]);
+  const assets = useMemo(() => assetMap(game.assets), [game.assets]);
   const characters = useMemo(() => characterMap(game.characters), [game.characters]);
   const hooks = getSceneGameplayHooks(scene, game);
+  const backgroundUrl = ending ? "" : sceneBackgroundUrl(scene, game, assets);
 
   function handleChoice(choiceId: string) {
     setState((current) => choose(current, choiceId));
@@ -233,9 +353,14 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
 
   return (
     <div className={["ak-runtime", className].filter(Boolean).join(" ")}>
-      <div className="ak-stage">
-        <div className="ak-scene-backdrop" aria-hidden="true" />
-        <section className="ak-scene" key={ending?.id ?? scene.id}>
+      <div className={["ak-stage", backgroundUrl ? "has-art" : ""].filter(Boolean).join(" ")}>
+        {backgroundUrl ? (
+          <img className="ak-scene-image" src={backgroundUrl} alt={`Scene background: ${scene.title}`} />
+        ) : (
+          <div className="ak-scene-backdrop" aria-hidden="true" />
+        )}
+        {!ending && <SceneCharacterLayer scene={scene} characters={characters} />}
+        <section className={["ak-scene", backgroundUrl ? "has-art" : ""].filter(Boolean).join(" ")} key={ending?.id ?? scene.id}>
           <header className="ak-scene-header">
             <div>
               <span className="ak-section-label">{game.metadata.genre}</span>
@@ -284,7 +409,7 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
       </div>
 
       <div className="ak-side-rail">
-        <InventoryPanel state={state} items={items} />
+        <InventoryPanel state={state} items={items} assets={assets} />
         <VariableReadout state={state} />
         {hooks.length > 0 && (
           <div className="ak-hook-index" aria-label="Active gameplay hooks">
