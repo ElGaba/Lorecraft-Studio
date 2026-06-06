@@ -92,6 +92,29 @@ test("the last testimony launches as a dedicated chapter playthrough", async ({ 
   await expect(page.getByRole("button", { name: "Studio" })).toBeVisible();
 });
 
+test("the last testimony chapter playthrough resumes local progress until restarted", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Play Chapter" }).click();
+  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
+  await expect(page.getByRole("heading", { name: "Basement Log" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Exit Playthrough" }).click();
+  await page.getByRole("button", { name: "Play Chapter" }).click();
+
+  await expect(page.getByRole("heading", { name: "Basement Log" })).toBeVisible();
+  await expect(page.getByText("Saved Progress", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Restart Chapter" }).click();
+  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Exit Playthrough" }).click();
+  await page.getByRole("button", { name: "Play Chapter" }).click();
+
+  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Basement Log" })).not.toBeVisible();
+});
+
 test("the last testimony presents an image-backed courtroom visual novel scene", async ({ page }) => {
   await page.goto("/");
 

@@ -24,15 +24,28 @@ import "./runtime.css";
 export interface AdventureRuntimeProps {
   game: GameDefinition;
   className?: string;
+  initialState?: RuntimeState;
   onStateChange?: (state: RuntimeState) => void;
 }
 
-function useRuntimeState(game: GameDefinition, onStateChange?: (state: RuntimeState) => void) {
-  const [state, setState] = useState(() => createInitialState(game));
+function runtimeStateForGame(game: GameDefinition, initialState?: RuntimeState) {
+  if (initialState?.game.metadata.id === game.metadata.id) {
+    return { ...initialState, game };
+  }
+
+  return createInitialState(game);
+}
+
+function useRuntimeState(
+  game: GameDefinition,
+  initialState?: RuntimeState,
+  onStateChange?: (state: RuntimeState) => void
+) {
+  const [state, setState] = useState(() => runtimeStateForGame(game, initialState));
 
   useEffect(() => {
-    setState(createInitialState(game));
-  }, [game]);
+    setState(runtimeStateForGame(game, initialState));
+  }, [game, initialState]);
 
   useEffect(() => {
     onStateChange?.(state);
@@ -584,8 +597,8 @@ function impactLabel(state: RuntimeState) {
   return isCourtroomHook ? "OBJECTION!" : "";
 }
 
-export function AdventureRuntime({ game, className, onStateChange }: AdventureRuntimeProps) {
-  const [state, setState] = useRuntimeState(game, onStateChange);
+export function AdventureRuntime({ game, className, initialState, onStateChange }: AdventureRuntimeProps) {
+  const [state, setState] = useRuntimeState(game, initialState, onStateChange);
   const [scriptCursor, setScriptCursor] = useState(0);
   const scene = getCurrentScene(state);
   const ending = getCurrentEnding(state);

@@ -42,12 +42,13 @@ From Studio mode, keep **The Last Testimony** selected and press **Play Chapter*
 - chapter title
 - current objective
 - chapter progress
+- local saved-progress status
 - Court Record count
 - Enter Fullscreen
 - Restart Chapter
 - Exit Playthrough
 
-The playthrough is designed around mobile landscape first, with tablet and desktop support.
+Progress is saved locally after the player advances beyond the opening state, so leaving and pressing **Play Chapter** again resumes the chapter. **Restart Chapter** clears that local save and returns to the opening scene. The playthrough is designed around mobile landscape first, with tablet and desktop support.
 
 ## The Last Testimony
 

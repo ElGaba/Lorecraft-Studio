@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   Archive,
@@ -20,6 +20,7 @@ import {
   Workflow
 } from "lucide-react";
 import {
+  createInitialState,
   createExportPackage,
   formatValidationErrors,
   validateGame
@@ -91,6 +92,200 @@ const studioTabs: Array<{
 ];
 
 const flagshipGameId = "the-last-testimony";
+const chapterSaveVersion = 1;
+
+type ChapterProgressSnapshot = {
+  version: typeof chapterSaveVersion;
+  gameId: string;
+  currentSceneId: string;
+  variables: RuntimeState["variables"];
+  inventory: string[];
+  endingId?: string;
+  history: RuntimeState["history"];
+  savedAt: string;
+};
+
+type RestoredChapterProgress = {
+  state: RuntimeState;
+  savedAt: string;
+};
+
+function chapterSaveKey(game: GameDefinition) {
+  return `lorecraft:chapter-progress:${game.metadata.id}:v${chapterSaveVersion}`;
+}
+
+function canUseLocalStorage() {
+  try {
+    return typeof window !== "undefined" && Boolean(window.localStorage);
+  } catch {
+    return false;
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isVariableValue(value: unknown): value is RuntimeState["variables"][string] {
+  return value === null || ["boolean", "number", "string"].includes(typeof value);
+}
+
+function restoredVariables(game: GameDefinition, candidate: unknown) {
+  const variables = { ...createInitialState(game).variables };
+  if (!isRecord(candidate)) {
+    return variables;
+  }
+
+  Object.entries(candidate).forEach(([key, value]) => {
+    if (Object.prototype.hasOwnProperty.call(variables, key) && isVariableValue(value)) {
+      variables[key] = value;
+    }
+  });
+
+  return variables;
+}
+
+function restoredInventory(game: GameDefinition, candidate: unknown) {
+  const itemIds = new Set(game.items.map((item) => item.id));
+  const inventory = new Set(createInitialState(game).inventory);
+  if (!Array.isArray(candidate)) {
+    return Array.from(inventory);
+  }
+
+  candidate.forEach((itemId) => {
+    if (typeof itemId === "string" && itemIds.has(itemId)) {
+      inventory.add(itemId);
+    }
+  });
+
+  return Array.from(inventory);
+}
+
+function restoredHistoryEntry(
+  candidate: unknown,
+  sceneIds: Set<string>,
+  endingIds: Set<string>
+): RuntimeState["history"][number] | undefined {
+  if (!isRecord(candidate) || typeof candidate.fromSceneId !== "string" || !sceneIds.has(candidate.fromSceneId)) {
+    return undefined;
+  }
+  if (typeof candidate.actionId !== "string") {
+    return undefined;
+  }
+  if (candidate.actionType !== "choice" && candidate.actionType !== "gameplay_hook") {
+    return undefined;
+  }
+  if (candidate.toSceneId !== undefined && (typeof candidate.toSceneId !== "string" || !sceneIds.has(candidate.toSceneId))) {
+    return undefined;
+  }
+  if (candidate.endingId !== undefined && (typeof candidate.endingId !== "string" || !endingIds.has(candidate.endingId))) {
+    return undefined;
+  }
+  if (candidate.outcome !== undefined && candidate.outcome !== "success" && candidate.outcome !== "failure") {
+    return undefined;
+  }
+
+  return {
+    fromSceneId: candidate.fromSceneId,
+    toSceneId: typeof candidate.toSceneId === "string" ? candidate.toSceneId : undefined,
+    endingId: typeof candidate.endingId === "string" ? candidate.endingId : undefined,
+    actionId: candidate.actionId,
+    actionType: candidate.actionType,
+    outcome: candidate.outcome === "success" || candidate.outcome === "failure" ? candidate.outcome : undefined
+  };
+}
+
+function restoredHistory(game: GameDefinition, candidate: unknown) {
+  if (!Array.isArray(candidate)) {
+    return [];
+  }
+
+  const sceneIds = new Set(game.scenes.map((scene) => scene.id));
+  const endingIds = new Set(game.endings.map((ending) => ending.id));
+  return candidate
+    .map((entry) => restoredHistoryEntry(entry, sceneIds, endingIds))
+    .filter((entry): entry is RuntimeState["history"][number] => Boolean(entry));
+}
+
+function shouldPersistChapterProgress(state: RuntimeState) {
+  return Boolean(state.endingId || state.history.length > 0 || state.currentSceneId !== state.game.startScene);
+}
+
+function loadChapterProgress(game: GameDefinition): RestoredChapterProgress | undefined {
+  if (!canUseLocalStorage()) {
+    return undefined;
+  }
+
+  try {
+    const saved = window.localStorage.getItem(chapterSaveKey(game));
+    if (!saved) {
+      return undefined;
+    }
+
+    const parsed: unknown = JSON.parse(saved);
+    if (
+      !isRecord(parsed)
+      || parsed.version !== chapterSaveVersion
+      || parsed.gameId !== game.metadata.id
+      || typeof parsed.currentSceneId !== "string"
+      || !game.scenes.some((scene) => scene.id === parsed.currentSceneId)
+    ) {
+      return undefined;
+    }
+
+    const endingId = typeof parsed.endingId === "string" && game.endings.some((ending) => ending.id === parsed.endingId)
+      ? parsed.endingId
+      : undefined;
+    const state: RuntimeState = {
+      ...createInitialState(game),
+      currentSceneId: parsed.currentSceneId,
+      variables: restoredVariables(game, parsed.variables),
+      inventory: restoredInventory(game, parsed.inventory),
+      endingId,
+      history: restoredHistory(game, parsed.history)
+    };
+
+    if (!shouldPersistChapterProgress(state)) {
+      return undefined;
+    }
+
+    return {
+      state,
+      savedAt: typeof parsed.savedAt === "string" ? parsed.savedAt : ""
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+function saveChapterProgress(state: RuntimeState) {
+  if (!canUseLocalStorage() || !shouldPersistChapterProgress(state)) {
+    return undefined;
+  }
+
+  const savedAt = new Date().toISOString();
+  const snapshot: ChapterProgressSnapshot = {
+    version: chapterSaveVersion,
+    gameId: state.game.metadata.id,
+    currentSceneId: state.currentSceneId,
+    variables: state.variables,
+    inventory: state.inventory,
+    endingId: state.endingId,
+    history: state.history,
+    savedAt
+  };
+  window.localStorage.setItem(chapterSaveKey(state.game), JSON.stringify(snapshot));
+
+  return savedAt;
+}
+
+function clearChapterProgress(game: GameDefinition) {
+  if (!canUseLocalStorage()) {
+    return;
+  }
+
+  window.localStorage.removeItem(chapterSaveKey(game));
+}
 
 const sceneAgentActions: Array<{
   action: AgentActionId;
@@ -144,7 +339,9 @@ function ScenePreview({ scene }: { scene: SceneDefinition }) {
 }
 
 function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: () => void }) {
-  const [runtimeState, setRuntimeState] = useState<RuntimeState | undefined>();
+  const [restoredProgress, setRestoredProgress] = useState(() => loadChapterProgress(game));
+  const [runtimeState, setRuntimeState] = useState<RuntimeState | undefined>(() => restoredProgress?.state);
+  const [saveStatusAt, setSaveStatusAt] = useState(restoredProgress?.savedAt);
   const [restartKey, setRestartKey] = useState(0);
   const currentScene = game.scenes.find((scene) => scene.id === runtimeState?.currentSceneId) ?? game.scenes.find((scene) => scene.id === game.startScene) ?? game.scenes[0];
   const currentSceneIndex = currentScene ? game.scenes.findIndex((scene) => scene.id === currentScene.id) : -1;
@@ -153,9 +350,18 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
     ? "Review the chapter outcome."
     : currentScene?.purpose ?? currentScene?.synopsis ?? "Advance the chapter.";
   const evidenceCount = runtimeState?.inventory.length ?? game.items.filter((item) => item.initiallyOwned).length;
+  const hasSavedProgress = Boolean(saveStatusAt && runtimeState && shouldPersistChapterProgress(runtimeState));
+
+  const handleRuntimeStateChange = useCallback((nextState: RuntimeState) => {
+    setRuntimeState(nextState);
+    setSaveStatusAt(saveChapterProgress(nextState));
+  }, []);
 
   function restartChapter() {
+    clearChapterProgress(game);
+    setRestoredProgress(undefined);
     setRuntimeState(undefined);
+    setSaveStatusAt(undefined);
     setRestartKey((current) => current + 1);
   }
 
@@ -167,7 +373,7 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
 
   return (
     <main className="chapter-playthrough-shell">
-      <header className="chapter-hud" aria-label="Chapter playthrough controls">
+      <header className={["chapter-hud", hasSavedProgress ? "has-save-status" : ""].filter(Boolean).join(" ")} aria-label="Chapter playthrough controls">
         <div className="chapter-title-lockup">
           <span>Lorecraft Studio</span>
           <h1>{game.metadata.title}</h1>
@@ -185,6 +391,13 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
           <div aria-hidden="true"><span style={{ width: `${chapterProgress}%` }} /></div>
         </div>
 
+        {hasSavedProgress && (
+          <div className="chapter-hud-panel chapter-save-status" aria-label="Local save status">
+            <span>Saved Progress</span>
+            <strong>{currentScene?.title ?? "Chapter progress"}</strong>
+          </div>
+        )}
+
         <div className="chapter-hud-actions">
           <button type="button" onClick={enterFullscreen}>Enter Fullscreen</button>
           <button type="button" onClick={restartChapter}>Restart Chapter</button>
@@ -194,7 +407,12 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
 
       <section className="chapter-stage-wrap" aria-label="The Last Testimony full-screen playthrough">
         <div className="chapter-stage">
-          <AdventureRuntime key={`${game.metadata.id}-${restartKey}`} game={game} onStateChange={setRuntimeState} />
+          <AdventureRuntime
+            key={`${game.metadata.id}-${restartKey}`}
+            game={game}
+            initialState={restoredProgress?.state}
+            onStateChange={handleRuntimeStateChange}
+          />
         </div>
         <aside className="chapter-evidence-peek" aria-label="Playthrough evidence access">
           <span>Court Record</span>

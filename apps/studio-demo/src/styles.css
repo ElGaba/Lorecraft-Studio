@@ -684,6 +684,10 @@ button {
   padding-bottom: 0.75rem;
 }
 
+.chapter-hud.has-save-status {
+  grid-template-columns: minmax(13rem, 0.8fr) minmax(13rem, 1fr) minmax(9rem, 0.5fr) minmax(10rem, 0.55fr) auto;
+}
+
 .chapter-title-lockup span,
 .chapter-hud-panel span,
 .chapter-progress span,
@@ -719,7 +723,8 @@ button {
 }
 
 .chapter-progress strong,
-.chapter-evidence-peek strong {
+.chapter-evidence-peek strong,
+.chapter-save-status strong {
   color: var(--warm);
   display: block;
   font-size: 1.05rem;
@@ -788,6 +793,10 @@ button {
     grid-template-columns: minmax(0, 1fr) minmax(13rem, 0.8fr);
   }
 
+  .chapter-hud.has-save-status {
+    grid-template-columns: minmax(0, 1fr) minmax(13rem, 0.8fr);
+  }
+
   .chapter-hud-actions {
     justify-content: start;
   }
@@ -849,6 +858,10 @@ button {
   }
 
   .chapter-hud {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter-hud.has-save-status {
     grid-template-columns: 1fr;
   }
 

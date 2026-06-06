@@ -18,17 +18,18 @@ The current shell shows:
 - chapter title
 - current objective
 - chapter progress
+- local saved-progress status
 - Court Record count
 - Enter Fullscreen
 - Restart Chapter
 - Exit Playthrough
 
-`Enter Fullscreen` calls the browser fullscreen API when supported. `Restart Chapter` remounts the runtime from the beginning of the selected chapter. `Exit Playthrough` returns to Studio mode.
+`Enter Fullscreen` calls the browser fullscreen API when supported. `Restart Chapter` clears the local chapter save and remounts the runtime from the beginning of the selected chapter. `Exit Playthrough` returns to Studio mode without clearing progress.
+
+## Local Progress
+
+Chapter progress is saved to browser local storage after the runtime moves beyond the opening state. The save uses a versioned, project-specific key and stores only the current scene, variables, evidence inventory, ending, and history. When `Play Chapter` is opened again, Lorecraft Studio restores that snapshot if it still matches the current project content.
 
 ## Layout Targets
 
 The primary layout target is mobile landscape with a 16:9 cinematic stage. The shell also adapts to tablet and desktop by keeping the stage framed, readable, and touch-safe.
-
-## Next Steps
-
-The acceptance target calls for save/load or local progress persistence. The first implementation establishes the shell and restart flow. A later slice should make runtime state controllable so progress can be saved and restored from local storage.
