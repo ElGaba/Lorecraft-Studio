@@ -330,6 +330,17 @@ function VariableReadout({ state }: { state: RuntimeState }) {
   );
 }
 
+function impactLabel(state: RuntimeState) {
+  const lastEntry = state.history[state.history.length - 1];
+  if (lastEntry?.actionType !== "gameplay_hook" || lastEntry.outcome !== "success") {
+    return "";
+  }
+
+  const hook = state.game.gameplayHooks.find((candidate) => candidate.id === lastEntry.actionId);
+  const isCourtroomHook = hook?.type === "evidence_presentation" || hook?.type === "contradiction";
+  return isCourtroomHook ? "OBJECTION!" : "";
+}
+
 export function AdventureRuntime({ game, className, onStateChange }: AdventureRuntimeProps) {
   const [state, setState] = useRuntimeState(game, onStateChange);
   const [scriptCursor, setScriptCursor] = useState(0);
@@ -341,6 +352,7 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
   const characters = useMemo(() => characterMap(game.characters), [game.characters]);
   const hooks = getSceneGameplayHooks(scene, game);
   const backgroundUrl = ending ? "" : sceneBackgroundUrl(scene, game, assets);
+  const sceneImpactLabel = !ending ? impactLabel(state) : "";
   const isArtScene = Boolean(backgroundUrl) && !ending;
   const artStoryBlocks = isArtScene
     ? scene.blocks.filter((block): block is Extract<ContentBlock, { type: "dialogue" | "narration" }> => block.type === "dialogue" || block.type === "narration")
@@ -395,6 +407,7 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
         ) : (
           <div className="ak-scene-backdrop" aria-hidden="true" />
         )}
+        {sceneImpactLabel && <div className="ak-impact-callout" aria-live="assertive">{sceneImpactLabel}</div>}
         {!ending && <SceneCharacterLayer scene={scene} characters={characters} activeBlock={activeDialogueBlock} />}
         <section className={["ak-scene", backgroundUrl ? "has-art" : ""].filter(Boolean).join(" ")} key={ending?.id ?? scene.id}>
           <header className="ak-scene-header">

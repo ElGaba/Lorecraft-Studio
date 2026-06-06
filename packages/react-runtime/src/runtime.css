@@ -55,6 +55,26 @@
   z-index: 1;
 }
 
+.ak-impact-callout {
+  background:
+    linear-gradient(90deg, rgba(242, 169, 59, 0), rgba(242, 169, 59, 0.96) 12%, rgba(240, 99, 99, 0.98) 82%, rgba(240, 99, 99, 0));
+  color: #fff7d7;
+  font-size: clamp(2.2rem, 8vw, 5.8rem);
+  font-weight: 950;
+  inset: 31% -6% auto;
+  letter-spacing: 0;
+  line-height: 0.95;
+  padding: 0.26em 1.3em;
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  text-shadow: 0 0.16rem 0 #4b0507, 0 0 1.3rem rgba(255, 245, 194, 0.38);
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+  z-index: 4;
+  animation: ak-impact-slam 720ms cubic-bezier(.16, .86, .22, 1);
+}
+
 .ak-scene-backdrop {
   position: absolute;
   inset: 0;
@@ -523,6 +543,12 @@
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+@keyframes ak-impact-slam {
+  0% { opacity: 0; transform: rotate(-4deg) scale(1.32) translateY(-0.6rem); }
+  42% { opacity: 1; transform: rotate(-4deg) scale(0.98) translateY(0); }
+  100% { opacity: 1; transform: rotate(-4deg) scale(1) translateY(0); }
+}
+
 @keyframes ak-tool-ready {
   from { opacity: 0.72; transform: translateY(0.28rem) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -683,6 +709,10 @@
   .ak-character-sprite {
     max-height: 58%;
     max-width: 54%;
+  }
+
+  .ak-impact-callout {
+    inset: 30% -16% auto;
   }
 
   .ak-character-sprite.is-left {

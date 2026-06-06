@@ -92,4 +92,10 @@ test("the last testimony presents an image-backed courtroom visual novel scene",
   await expect(page.getByText("present-contradiction")).toBeVisible();
   await expect(page.getByRole("button", { name: "Present Evidence" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Press Witness" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Present Evidence" }).click();
+  await expect(page.getByRole("heading", { name: "Witness Cracks" })).toBeVisible();
+  await expect(page.getByText("OBJECTION!", { exact: true })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Scene background: Witness Cracks" })).toBeVisible();
+  await expect(page.getByText("I only went down because I heard the alarm before it sounded upstairs.")).toBeVisible();
 });

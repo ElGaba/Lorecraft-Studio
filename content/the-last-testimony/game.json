@@ -341,10 +341,10 @@
       "negativePrompt": "text, logo, cartoon",
       "aspectRatio": "16:9",
       "targetDeviceUsage": "revelation mode",
-      "url": "",
+      "url": "/story-assets/last-testimony/witness-cracks-payoff-v2.png",
       "linkedSceneIds": ["witness-cracks", "window_contradiction_revealed"],
       "linkedCharacterIds": ["mara_vey", "lyra_mont"],
-      "status": "needed"
+      "status": "generated"
     },
     {
       "id": "asset_window_photo",
@@ -814,6 +814,7 @@
       "location": "witness_stand",
       "camera": "bead of rain on witness sleeve, close",
       "background": "A bead of rainwater falls from the witness's sleeve onto the rail.",
+      "backgroundImage": "/story-assets/last-testimony/witness-cracks-payoff-v2.png",
       "backgroundPrompt": "Courtroom witness closeup, rainwater on sleeve, shocked expression, noir legal thriller, 16:9.",
       "musicMood": "sudden silence then strings",
       "soundMood": "courtroom gasp",
