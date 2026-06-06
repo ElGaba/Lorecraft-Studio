@@ -1,6 +1,6 @@
-# AdventureKit Schema
+# Lorecraft Studio Schema
 
-The schema is defined with Zod in `packages/core/src/schema.ts` and exported from `@adventurekit/core`. Content files are plain JSON so agents can author prototypes without editing runtime code.
+The schema is defined with Zod in `packages/core/src/schema.ts` and exported from `@adventurekit/core`. Content files are plain JSON so agents can author Lorecraft Studio projects without editing runtime code. The package name remains a compatibility alias during the product rebrand.
 
 ## Top-Level Shape
 

@@ -1,31 +1,30 @@
-# AdventureKit
+# Lorecraft Studio
 
-AdventureKit is an open-source TypeScript toolkit for building cinematic narrative and adventure game prototypes that run on mobile web, tablet, and desktop. It now includes AdventureKit Studio: a local, mobile-first authoring surface for scenes, characters, asset prompts, story bibles, gameplay hook specs, export packages, and playable previews.
+Lorecraft Studio is an agent-friendly creative studio for writing, staging, previewing, and exporting cinematic interactive game stories. It is focused on story bibles, scenes, characters, dialogue, branching narrative, character emotions and stances, scene staging, asset prompts, lightweight animations, gameplay sequence specs, and playable preview.
 
-The first version focuses on cinematic scene flow, dialogue, narration, choices, inventory/evidence, endings, and declarative gameplay hook zones. Gameplay hooks are polished placeholders where future modules can mount procedure interactions, evidence presentation, inspection scenes, puzzles, or object manipulation sequences.
+The current flagship project is **The Last Testimony**, a noir courtroom mystery being upgraded into a polished Chapter 1 vertical slice. The older package names still use `@adventurekit/*` for compatibility while the user-facing product transitions to Lorecraft Studio.
 
-## What It Solves
+## What Lorecraft Studio Is
 
-Narrative game prototypes often mix story data, branching logic, rendering, and one-off UI code. AdventureKit separates those concerns:
+Lorecraft Studio is not positioned primarily as a game engine. It is a local creative production surface for interactive narrative teams and agents. Future systems such as music, image generation, advanced gameplay modules, native/mobile packaging, and export targets are treated as addons.
 
-- `packages/core` validates rich Studio game files, exports production packages, and runs deterministic scene flow.
-- `packages/react-runtime` renders a playable cinematic prototype with portraits, evidence, hook panels, animation presets, and endings.
-- `packages/phaser-bridge` defines a placeholder adapter shape for future gameplay modules.
-- `content/*/game.json` contains agent-authored playable games.
-- `apps/studio-demo` loads content files automatically and provides Studio and Play modes.
+The workspace currently includes:
 
-## Why It Is Agent-Friendly
+- `apps/studio-demo`: the Lorecraft Studio app.
+- `packages/core`: schema validation, deterministic story flow, and export package generation.
+- `packages/react-runtime`: cinematic mobile-first playable runtime.
+- `packages/phaser-bridge`: compatibility placeholder for future gameplay modules.
+- `content/the-last-testimony/game.json`: flagship Chapter 1 project data.
+- `content/*/game.json`: secondary demo projects.
 
-Agents can create a new prototype by writing one JSON file under `content/<prototype-name>/game.json`. The runtime code does not need to change. Validation reports source paths, schema issues, missing scene targets, missing ending targets, duplicate ids, invalid character/asset/hook references, missing Studio prompts, and missing mobile layout notes.
-
-## Install And Run
+## Run The Studio
 
 ```bash
 npm install
 npm run dev
 ```
 
-The demo starts from `apps/studio-demo` and loads all valid files matching `content/*/game.json`. The first screen opens in Studio mode. Use Play mode to run the selected project.
+The app opens as Lorecraft Studio. The Last Testimony is selected first as the flagship project.
 
 Useful checks:
 
@@ -36,121 +35,85 @@ npm run build
 npm run smoke
 ```
 
-## Demo Prototypes
+## Launch Full-Screen Playthrough
 
-The studio includes three rich vertical slices:
+From Studio mode, keep **The Last Testimony** selected and press **Play Chapter**. This opens a dedicated Chapter 1 playthrough shell that hides the editor UI and shows:
 
-- `Code Blue: Midnight Shift`: emergency thriller with 6 characters, 13 scenes, 8 hook specs, asset prompts, and 4 outcomes.
-- `The Last Testimony`: courtroom mystery with 6 characters, 17 scenes, 8 hook specs, evidence assets, and 3 outcomes.
-- `The Clocktower Riddle`: puzzle adventure with 5 characters, 12 scenes, 8 hook specs, item assets, and 3 outcomes.
+- chapter title
+- current objective
+- chapter progress
+- Court Record count
+- Enter Fullscreen
+- Restart Chapter
+- Exit Playthrough
 
-## Create A New Game File
+The playthrough is designed around mobile landscape first, with tablet and desktop support.
 
-Create a folder and add `game.json`:
+## The Last Testimony
 
-```text
-content/my-prototype/game.json
-```
+**Genre:** investigation / courtroom mystery / noir legal thriller.
 
-The file needs metadata, a `startScene`, scenes, endings, and optional variables/items. A minimal scene contains `id`, `title`, `background`, `mood`, `blocks`, and optional `choices`.
+The Last Testimony currently contains the strongest story direction and is the main showcase. It includes courtroom VN scenes, image-backed backgrounds, character sprites, evidence selection, testimony navigation, Press Statement / HOLD IT beats, statement-aware evidence presentation, failure branches, and an OBJECTION payoff.
 
-```json
-{
-  "metadata": {
-    "id": "my-prototype",
-    "title": "My Prototype",
-    "genre": "mystery",
-    "author": "AdventureKit",
-    "summary": "A short playable prototype."
-  },
-  "startScene": "start",
-  "variables": {},
-  "items": [],
-  "scenes": [
-    {
-      "id": "start",
-      "title": "Start",
-      "background": "A quiet room.",
-      "mood": ["curious"],
-      "blocks": [{ "type": "narration", "text": "The story begins." }],
-      "choices": [
-        {
-          "id": "finish",
-          "label": "Finish",
-          "target": { "type": "ending", "id": "complete" }
-        }
-      ]
-    }
-  ],
-  "endings": [
-    {
-      "id": "complete",
-      "title": "Complete",
-      "tone": "resolved",
-      "summary": "The prototype reaches an ending."
-    }
-  ]
-}
-```
+The Chapter 1 target is a complete beginning, middle, climax, and chapter ending with:
 
-## Studio Features
+- a cold open before dawn
+- final testimony setup
+- evidence review
+- contradiction gameplay
+- revelation sequence
+- investigation or reconstruction sequence
+- pressure/interrogation sequence
+- courtroom escalation
+- major twist
+- at least three outcomes
 
-Studio mode includes:
+## Studio Areas
 
-- project dashboard and prototype selector
-- scene editor with local-agent buttons and validation
-- character editor with emotions, stances, and variants
-- asset prompt manager for backgrounds, portraits, CG, overlays, evidence, and hook concepts
-- story bible editor
-- gameplay hook manager
-- responsive preview modes
-- export package viewer
-- local agent bridge fallback prompt modal
+- Scene Editor: purpose, synopsis, camera, background, prompts, mood, assets, and mobile layout notes.
+- Character Editor: role, visual description, base portrait prompt, emotions, stances, and variants.
+- Asset Prompt Manager: prompts for backgrounds, portraits, CGs, overlays, evidence, and hook concepts.
+- Story Bible: premise, tone, play style, visual direction, and writing rules.
+- Gameplay Hook Manager: narrative purpose, expected player action, success/failure targets, and module notes.
+- Export Package: generated production files for handoff.
+- Responsive Preview: mobile landscape, mobile portrait, tablet, and desktop.
 
-## Schema
+## Gameplay Sequences
 
-The Zod schema lives in `packages/core/src/schema.ts`. It supports:
+The current runtime supports a playable courtroom evidence flow:
 
-- game metadata
-- start scene
-- scenes
-- cinematic narration
-- dialogue lines, character ids, emotion, stance, and position
-- scene background descriptors
-- background prompts and layout notes
-- mood descriptors
-- choices and conditional choices
-- variables and variable updates
-- inventory/evidence/items
-- story bible, characters, assets, and top-level gameplay hooks
-- endings
-- `gameplay_hook` blocks
+- testimony statement cards
+- statement navigation
+- Press Statement feedback
+- selectable Court Record evidence
+- correct and incorrect presentation branches
+- animated impact moments
 
-More detail: `docs/schema.md`.
+The next gameplay modules planned for The Last Testimony are inspection hotspots, pressure/interrogation, and reconstruction/timeline ordering.
 
-## Gameplay Hooks
+## Asset Prompts
 
-A gameplay hook is a declarative mount point inside a scene. The React runtime displays it with hook id, hook type, intended future module, success target, failure target, design notes, and buttons to simulate success or failure.
+Characters, scenes, evidence, and cinematic overlays carry image prompts, negative prompts, aspect ratios, intended use, linked scenes/characters, and readiness status. The studio is prepared for image generation integration, but it does not call cloud image generation directly.
 
-Future gameplay modules should attach through the contract in `packages/phaser-bridge/src/index.ts`: receive the hook, current runtime state, a target element, and a `resolve("success" | "failure")` callback.
+## Export
 
-More detail: `docs/gameplay-hooks.md`.
+The export panel currently generates:
 
-## Preview Layouts
+- `game.json`
+- `story-bible.md`
+- `characters.json`
+- `scenes.json`
+- `gameplay-hooks.json`
+- `assets.json`
+- `prompts.md`
+- `implementation-plan.md`
 
-The studio demo includes preview controls for:
-
-- mobile landscape
-- mobile portrait
-- tablet
-- desktop
-
-The primary layout is mobile landscape with a 16:9 cinematic stage. Portrait mode stacks the runtime and keeps controls touch-safe.
-
-More detail: `docs/responsive-design.md` and `docs/mobile-first-design.md`.
+The long-term export target for The Last Testimony adds chapter outline, evidence, variables, animation presets, and gameplay-sequence files.
 
 ## Documentation
 
+- `docs/lorecraft-studio.md`
+- `docs/fullscreen-playthrough.md`
 - `docs/studio.md`
 - `docs/agent-bridge.md`
 - `docs/asset-pipeline.md`
@@ -159,10 +122,14 @@ More detail: `docs/responsive-design.md` and `docs/mobile-first-design.md`.
 - `docs/gameplay-hooks.md`
 - `docs/mobile-first-design.md`
 - `docs/export-format.md`
+- `docs/last-testimony-reference-playbook.md`
 
-## Roadmap
+## Future Addons
 
-- Add a CLI content validator.
-- Add a richer gameplay module registry.
-- Add save/load snapshots for longer prototypes.
-- Add real Phaser modules for procedure, puzzle, inspection, and evidence presentation hooks.
+- music studio
+- image generation integration
+- character art generation
+- gameplay modules
+- visual editor upgrades
+- native/mobile packaging
+- additional export targets

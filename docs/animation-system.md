@@ -1,6 +1,6 @@
 # Animation System
 
-AdventureKit supports named animation presets in scene blocks and character variants.
+Lorecraft Studio supports named animation presets in scene blocks and character variants.
 
 ## Presets
 

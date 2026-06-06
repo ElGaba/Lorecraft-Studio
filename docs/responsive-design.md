@@ -1,6 +1,6 @@
 # Responsive Design
 
-AdventureKit's first runtime is mobile-first. The primary target is mobile landscape, with support for portrait, tablet, and desktop previews.
+Lorecraft Studio's first runtime is mobile-first. The primary target is mobile landscape, with support for portrait, tablet, and desktop previews.
 
 ## Layout Priorities
 

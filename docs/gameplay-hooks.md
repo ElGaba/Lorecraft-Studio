@@ -1,6 +1,6 @@
 # Gameplay Hooks
 
-Gameplay hooks are first-class Studio objects and playable runtime placeholders. They let a project describe future interaction modules without blocking the narrative prototype.
+Gameplay hooks are first-class Studio objects and playable runtime placeholders. They let a project describe future interaction modules without blocking the narrative playthrough.
 
 ## Top-Level Hook
 

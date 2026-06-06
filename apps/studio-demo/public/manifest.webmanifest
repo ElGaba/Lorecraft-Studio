@@ -1,7 +1,7 @@
 {
-  "name": "AdventureKit Studio Demo",
-  "short_name": "AdventureKit",
-  "description": "Mobile-first cinematic narrative prototype engine demo.",
+  "name": "Lorecraft Studio",
+  "short_name": "Lorecraft",
+  "description": "Agent-friendly creative studio for cinematic interactive game stories.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#080b10",

@@ -5,7 +5,7 @@ export function registerServiceWorker() {
 
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch((error: unknown) => {
-      console.warn("AdventureKit service worker registration failed.", error);
+      console.warn("Lorecraft Studio service worker registration failed.", error);
     });
   });
 }

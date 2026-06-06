@@ -6,6 +6,8 @@ const gameModules = import.meta.glob("../../../content/*/game.json", {
   import: "default"
 }) as Record<string, unknown>;
 
+const flagshipGameId = "the-last-testimony";
+
 export interface LoadedGame {
   path: string;
   game: GameDefinition;
@@ -30,7 +32,15 @@ export function loadContentLibrary(): ContentLibrary {
     }
   }
 
-  games.sort((a, b) => a.game.metadata.title.localeCompare(b.game.metadata.title));
+  games.sort((a, b) => {
+    if (a.game.metadata.id === flagshipGameId) {
+      return -1;
+    }
+    if (b.game.metadata.id === flagshipGameId) {
+      return 1;
+    }
+    return a.game.metadata.title.localeCompare(b.game.metadata.title);
+  });
 
   return {
     games,

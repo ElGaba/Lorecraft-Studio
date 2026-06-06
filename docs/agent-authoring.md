@@ -1,6 +1,6 @@
 # Agent Authoring
 
-AdventureKit content is designed for agents that generate structured game files.
+Lorecraft Studio content is designed for agents that generate structured game files.
 
 ## Authoring Flow
 
@@ -19,10 +19,10 @@ AdventureKit content is designed for agents that generate structured game files.
 - Make every choice target a real scene or ending.
 - Use variables for simple state, not hidden prose assumptions.
 - Use items for inventory, evidence, or objects that affect choices.
-- Use gameplay hooks when the prototype needs a future interaction module.
+- Use gameplay hooks when the project needs a future interaction module.
 - Keep hook notes specific enough that another agent can build the module later.
 
-## Adding A Prototype Without Runtime Changes
+## Adding A Project Without Runtime Changes
 
 The studio discovers files with:
 
@@ -30,11 +30,11 @@ The studio discovers files with:
 import.meta.glob("../../../content/*/game.json")
 ```
 
-That means a new `content/<slug>/game.json` is enough. If the file is valid, it appears in the prototype selector. If invalid, the studio displays formatted validation errors with file paths and schema paths.
+That means a new `content/<slug>/game.json` is enough. If the file is valid, it appears in the Project selector. If invalid, the studio displays formatted validation errors with file paths and schema paths.
 
 ## Suggested Scene Pattern
 
-Use this rhythm for a compact playable prototype:
+Use this rhythm for a compact playable project:
 
 - Intro scene with a strong cinematic premise.
 - Investigation or exploration scene that grants an item.

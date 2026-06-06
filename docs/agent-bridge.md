@@ -1,6 +1,6 @@
 # Local Agent Bridge
 
-AdventureKit Studio includes a local agent bridge abstraction in `apps/studio-demo/src/agentBridge.ts`.
+Lorecraft Studio includes a local agent bridge abstraction in `apps/studio-demo/src/agentBridge.ts`.
 
 ## Settings
 

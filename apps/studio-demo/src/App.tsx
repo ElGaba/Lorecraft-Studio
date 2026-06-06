@@ -29,6 +29,7 @@ import type {
   CharacterDefinition,
   GameDefinition,
   GameplayHook,
+  RuntimeState,
   SceneDefinition,
   ValidationError
 } from "@adventurekit/core";
@@ -38,7 +39,7 @@ import type { AgentActionId, AgentBridgeSettings, AgentPromptPayload } from "./a
 import { loadContentLibrary } from "./contentLibrary";
 import "./styles.css";
 
-type AppMode = "studio" | "play";
+type AppMode = "studio" | "play" | "chapter";
 type StudioTab = "scenes" | "characters" | "assets" | "hooks" | "bible" | "export" | "settings";
 type PreviewMode = "mobile-landscape" | "mobile-portrait" | "tablet" | "desktop";
 type IconComponent = typeof Smartphone;
@@ -88,6 +89,8 @@ const studioTabs: Array<{
   { id: "export", label: "Export", Icon: Download },
   { id: "settings", label: "Settings", Icon: Settings }
 ];
+
+const flagshipGameId = "the-last-testimony";
 
 const sceneAgentActions: Array<{
   action: AgentActionId;
@@ -140,10 +143,76 @@ function ScenePreview({ scene }: { scene: SceneDefinition }) {
   );
 }
 
+function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: () => void }) {
+  const [runtimeState, setRuntimeState] = useState<RuntimeState | undefined>();
+  const [restartKey, setRestartKey] = useState(0);
+  const currentScene = game.scenes.find((scene) => scene.id === runtimeState?.currentSceneId) ?? game.scenes.find((scene) => scene.id === game.startScene) ?? game.scenes[0];
+  const currentSceneIndex = currentScene ? game.scenes.findIndex((scene) => scene.id === currentScene.id) : -1;
+  const chapterProgress = currentSceneIndex >= 0 ? Math.round(((currentSceneIndex + 1) / game.scenes.length) * 100) : 0;
+  const objective = runtimeState?.endingId
+    ? "Review the chapter outcome."
+    : currentScene?.purpose ?? currentScene?.synopsis ?? "Advance the chapter.";
+  const evidenceCount = runtimeState?.inventory.length ?? game.items.filter((item) => item.initiallyOwned).length;
+
+  function restartChapter() {
+    setRuntimeState(undefined);
+    setRestartKey((current) => current + 1);
+  }
+
+  async function enterFullscreen() {
+    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+      await document.documentElement.requestFullscreen();
+    }
+  }
+
+  return (
+    <main className="chapter-playthrough-shell">
+      <header className="chapter-hud" aria-label="Chapter playthrough controls">
+        <div className="chapter-title-lockup">
+          <span>Lorecraft Studio</span>
+          <h1>{game.metadata.title}</h1>
+          <p>Chapter 1 Playthrough</p>
+        </div>
+
+        <div className="chapter-hud-panel" aria-label="Current chapter objective">
+          <span>Objective</span>
+          <strong>{objective}</strong>
+        </div>
+
+        <div className="chapter-progress" aria-label="Chapter progress">
+          <span>Progress</span>
+          <strong>{chapterProgress}%</strong>
+          <div aria-hidden="true"><span style={{ width: `${chapterProgress}%` }} /></div>
+        </div>
+
+        <div className="chapter-hud-actions">
+          <button type="button" onClick={enterFullscreen}>Enter Fullscreen</button>
+          <button type="button" onClick={restartChapter}>Restart Chapter</button>
+          <button type="button" onClick={onExit}>Exit Playthrough</button>
+        </div>
+      </header>
+
+      <section className="chapter-stage-wrap" aria-label="The Last Testimony full-screen playthrough">
+        <div className="chapter-stage">
+          <AdventureRuntime key={`${game.metadata.id}-${restartKey}`} game={game} onStateChange={setRuntimeState} />
+        </div>
+        <aside className="chapter-evidence-peek" aria-label="Playthrough evidence access">
+          <span>Court Record</span>
+          <strong>{evidenceCount}</strong>
+        </aside>
+      </section>
+    </main>
+  );
+}
+
 function App() {
   const library = useMemo(() => loadContentLibrary(), []);
   const [draftGames, setDraftGames] = useState(() => initialGameMap(library.games));
-  const [selectedGameId, setSelectedGameId] = useState(() => library.games[0]?.game.metadata.id ?? "");
+  const [selectedGameId, setSelectedGameId] = useState(() => (
+    library.games.find(({ game }) => game.metadata.id === flagshipGameId)?.game.metadata.id
+      ?? library.games[0]?.game.metadata.id
+      ?? ""
+  ));
   const [mode, setMode] = useState<AppMode>("studio");
   const [activeTab, setActiveTab] = useState<StudioTab>("scenes");
   const [previewMode, setPreviewMode] = useState<PreviewMode>("mobile-landscape");
@@ -671,13 +740,16 @@ function App() {
   }
 
   return (
+    mode === "chapter" && selectedGame ? (
+      <ChapterPlaythrough game={selectedGame} onExit={() => setMode("studio")} />
+    ) : (
     <main className="studio-shell">
       <header className="studio-topbar">
         <div className="brand-lockup">
-          <span className="brand-mark" aria-hidden="true">AK</span>
+          <span className="brand-mark" aria-hidden="true">LS</span>
           <div>
-            <h1>AdventureKit</h1>
-            <p>Local cinematic narrative game authoring studio</p>
+            <h1>Lorecraft Studio</h1>
+            <p>Agent-friendly cinematic story studio</p>
           </div>
         </div>
 
@@ -692,10 +764,14 @@ function App() {
               <span>Play</span>
             </button>
           </div>
+          <button type="button" className="play-chapter-button" onClick={() => setMode("chapter")}>
+            <PlayIcon size={16} aria-hidden="true" />
+            <span>Play Chapter</span>
+          </button>
 
-          <label className="game-picker" htmlFor="prototype-select">
-            <span>Prototype</span>
-            <select id="prototype-select" value={selectedGameId} onChange={(event) => setSelectedGameId(event.target.value)}>
+          <label className="game-picker" htmlFor="project-select">
+            <span>Project</span>
+            <select id="project-select" value={selectedGameId} onChange={(event) => setSelectedGameId(event.target.value)}>
             {orderedGames.map(({ game }) => (
               <option key={game.metadata.id} value={game.metadata.id}>
                 {game.metadata.title}
@@ -730,9 +806,10 @@ function App() {
       </section>
 
       {selectedGame && mode === "studio" && (
-        <section className="studio-workbench" aria-label="AdventureKit Studio">
+        <section className="studio-workbench" aria-label="Lorecraft Studio">
           <aside className="project-rail" aria-label="Studio navigation">
             <div className="project-summary">
+              {selectedGame.metadata.id === flagshipGameId && <em>Flagship Chapter 1</em>}
               <span>{selectedGame.metadata.genre}</span>
               <strong>{selectedGame.metadata.title}</strong>
               <p>{selectedGame.metadata.summary}</p>
@@ -770,13 +847,13 @@ function App() {
         <section className={`preview-wrap mode-${previewMode}`} aria-label={`${previewMode} preview`}>
           <div className="preview-device">
             {previewMode === "mobile-portrait" && (
-              <div className="portrait-note">Portrait fallback keeps the prototype stacked and touch-safe.</div>
+              <div className="portrait-note">Portrait fallback keeps the project stacked and touch-safe.</div>
             )}
             {selectedGame ? (
               <AdventureRuntime key={selectedGame.metadata.id} game={selectedGame} />
             ) : (
               <div className="empty-library">
-                <h2>No playable prototypes found.</h2>
+                <h2>No playable projects found.</h2>
                 <p>Add a valid game file under content/name/game.json.</p>
               </div>
             )}
@@ -807,6 +884,7 @@ function App() {
         </div>
       )}
     </main>
+    )
   );
 }
 

@@ -10,17 +10,20 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
 
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "AdventureKit" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Lorecraft Studio" })).toBeVisible();
+  await expect(page.getByText("Agent-friendly cinematic story studio", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Studio" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play Chapter" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Scene Editor" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Characters" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Assets" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Gameplay Hooks" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Export" })).toBeVisible();
-  await expect(page.getByLabel("Prototype")).toContainText("Code Blue: Midnight Shift");
-  await expect(page.getByLabel("Prototype")).toContainText("The Last Testimony");
-  await expect(page.getByLabel("Prototype")).toContainText("The Clocktower Riddle");
+  await expect(page.getByLabel("Project")).toHaveValue("the-last-testimony");
+  await expect(page.getByLabel("Project")).toContainText("Code Blue: Midnight Shift");
+  await expect(page.getByLabel("Project")).toContainText("The Last Testimony");
+  await expect(page.getByLabel("Project")).toContainText("The Clocktower Riddle");
 
   await page.getByRole("button", { name: "Generate/Improve Scene Draft" }).click();
   await expect(page.getByRole("dialog", { name: "Local Agent Prompt" })).toBeVisible();
@@ -43,7 +46,7 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
     await expect(page.getByRole("button", { name: mode })).toHaveAttribute("aria-pressed", "true");
   }
 
-  await page.getByLabel("Prototype").selectOption("code-blue-midnight-shift");
+  await page.getByLabel("Project").selectOption("code-blue-midnight-shift");
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Bay Seven Alert" })).toBeVisible();
   await page.getByRole("button", { name: "Pull a clean rhythm strip" }).click();
@@ -55,18 +58,39 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
   await page.getByRole("button", { name: "Send the patient upstairs with the right story" }).click();
   await expect(page.getByRole("heading", { name: "Safe Transfer" })).toBeVisible();
 
-  await page.getByLabel("Prototype").selectOption("the-last-testimony");
+  await page.getByLabel("Project").selectOption("the-last-testimony");
   await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
-  await page.getByLabel("Prototype").selectOption("the-clocktower-riddle");
+  await page.getByLabel("Project").selectOption("the-clocktower-riddle");
   await expect(page.getByRole("heading", { name: "Moonlit Square" })).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
 });
 
+test("the last testimony launches as a dedicated chapter playthrough", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByLabel("Project")).toHaveValue("the-last-testimony");
+  await page.getByRole("button", { name: "Play Chapter" }).click();
+
+  await expect(page.getByRole("heading", { name: "The Last Testimony" })).toBeVisible();
+  await expect(page.getByText("Chapter 1 Playthrough", { exact: true })).toBeVisible();
+  await expect(page.getByText("Objective", { exact: true })).toBeVisible();
+  await expect(page.getByText("Progress", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Enter Fullscreen" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Restart Chapter" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Exit Playthrough" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Studio" })).not.toBeVisible();
+  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Exit Playthrough" }).click();
+  await expect(page.getByRole("heading", { name: "Lorecraft Studio" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Studio" })).toBeVisible();
+});
+
 test("the last testimony presents an image-backed courtroom visual novel scene", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByLabel("Prototype").selectOption("the-last-testimony");
+  await page.getByLabel("Project").selectOption("the-last-testimony");
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
   await page.getByRole("button", { name: "Return to court with the keycard" }).click();
@@ -125,7 +149,7 @@ test("the last testimony presents an image-backed courtroom visual novel scene",
 test("the last testimony punishes presenting the right evidence on the wrong statement", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByLabel("Prototype").selectOption("the-last-testimony");
+  await page.getByLabel("Project").selectOption("the-last-testimony");
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
   await page.getByRole("button", { name: "Return to court with the keycard" }).click();

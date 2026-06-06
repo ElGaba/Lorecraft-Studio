@@ -1,6 +1,6 @@
 # Mobile-First Design
 
-AdventureKit targets mobile landscape first, then adapts to portrait, tablet, and desktop.
+Lorecraft Studio targets mobile landscape first, then adapts to portrait, tablet, and desktop.
 
 ## Principles
 

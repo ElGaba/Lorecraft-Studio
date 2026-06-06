@@ -604,7 +604,7 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
               <span>{ending.tone}</span>
               <p>{ending.summary}</p>
               {ending.cinematicNotes && <small>{ending.cinematicNotes}</small>}
-              <button type="button" onClick={restart}>Restart Prototype</button>
+              <button type="button" onClick={restart}>Restart Chapter</button>
             </div>
           ) : (
             <>
