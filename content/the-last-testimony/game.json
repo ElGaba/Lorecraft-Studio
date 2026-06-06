@@ -10,7 +10,8 @@
   "variables": {
     "judgePatience": 2,
     "witnessPressure": 0,
-    "maraPressure": 0
+    "maraPressure": 0,
+    "chainOfCustody": 0
   },
   "storyBible": {
     "premise": "At dawn, defense attorney Mara Vey must find the contradiction hidden in a final testimony before an innocent man is convicted.",
@@ -21,13 +22,13 @@
     "visualDirection": "rain-streaked windows, polished wood, cold blue dawn, amber legal lamps",
     "pacingRules": ["Start at the verdict", "Make every clue physical", "Reward careful pressure over theatrics"],
     "worldRules": ["Evidence must be internally consistent", "Witness memory can be coached", "The court responds to tone"],
-    "mainCast": ["mara_vey", "lyra_mont", "judge_hale", "cassian_roe", "elias_vorn", "tobin_clerk"],
-    "keyLocations": ["predawn_courtroom", "witness_stand", "records_room", "kiosk", "study_projection"],
+    "mainCast": ["mara_vey", "lyra_mont", "judge_hale", "cassian_roe", "elias_vorn", "tobin_clerk", "ione_marr"],
+    "keyLocations": ["predawn_courtroom", "witness_stand", "records_room", "kiosk", "study_projection", "photo_lab"],
     "coreMystery": "A window that should have been closed was described as open.",
-    "chapterOutline": ["Verdict before dawn", "Final testimony", "Closed window contradiction", "Staged scene path", "Witness break"],
+    "chapterOutline": ["Verdict before dawn", "Final testimony", "Closed window contradiction", "Staged scene path", "Chain of custody challenge", "Witness break"],
     "writingStyleGuide": "Precise legal lines, noir narration, emotional restraint until evidence lands.",
     "contentBoundaries": ["No real legal cases", "No gore", "No copied mechanics"],
-    "gameplayModulePlan": ["contradiction", "evidence_presentation", "inspection", "timed_choice"]
+    "gameplayModulePlan": ["contradiction", "evidence_presentation", "inspection", "timed_choice", "chain_of_custody"]
   },
   "characters": [
     {
@@ -203,6 +204,35 @@
           "usageNotes": "Use in investigation scenes."
         }
       ]
+    },
+    {
+      "id": "ione_marr",
+      "displayName": "Ione Marr",
+      "role": "Court evidence photographer",
+      "archetype": "wary chain-of-custody witness",
+      "biography": "The overnight photographer who logged the study-window photo after the testimony draft had already circulated.",
+      "traits": ["observant", "guarded", "practical"],
+      "secrets": "She kept the rejected first envelope because its seal time proved the photo was handled late.",
+      "motivations": "Protect her license without letting a staged record become the verdict.",
+      "visualDescription": "Short rain cape, camera bag, amber darkroom glasses pushed into silver hair.",
+      "baseImagePrompt": "Noir court evidence photographer in dim courthouse photo lab, camera bag, amber safety glasses, rainlight, cinematic portrait.",
+      "portraitUrl": "",
+      "emotions": ["neutral", "wary", "resolved"],
+      "stances": ["holding_envelope", "checking_negative", "pointing_to_seal"],
+      "screenPositions": ["center-right", "upper-left"],
+      "voiceNotes": "Dry, technical, never wastes a syllable.",
+      "relationshipNotes": "Trusts Tobin's records but distrusts both attorneys until Mara asks about the seal.",
+      "variants": [
+        {
+          "emotionId": "resolved",
+          "stanceId": "pointing_to_seal",
+          "description": "Ione commits to the chain-of-custody proof.",
+          "imagePrompt": "Evidence photographer pointing to sealed photo envelope in noir courthouse photo lab, rainlit glass, cinematic visual novel.",
+          "imageUrl": "",
+          "animation": "tool-ready",
+          "usageNotes": "Use when the late photo envelope enters the court record."
+        }
+      ]
     }
   ],
   "items": [
@@ -245,6 +275,46 @@
       "description": "Heavy rain and eastern winds near the courthouse district.",
       "imageAssetId": "asset_weather_report",
       "initiallyOwned": true
+    },
+    {
+      "id": "photo-envelope-chain",
+      "name": "Sealed Photo Envelope",
+      "kind": "evidence",
+      "description": "A chain-of-custody envelope showing the study-window photo was sealed after Lyra's testimony draft.",
+      "imageAssetId": "asset_photo_envelope",
+      "initiallyOwned": false
+    },
+    {
+      "id": "maintenance-call-slip",
+      "name": "Maintenance Call Slip",
+      "kind": "evidence",
+      "description": "A late repair slip for an east-window leak that explains why the porter left the lobby.",
+      "imageAssetId": "asset_maintenance_call",
+      "initiallyOwned": false
+    },
+    {
+      "id": "witness-script-fragment",
+      "name": "Witness Script Fragment",
+      "kind": "evidence",
+      "description": "A torn line of testimony using the same phrase Lyra repeats on the stand.",
+      "imageAssetId": "asset_script_fragment",
+      "initiallyOwned": false
+    },
+    {
+      "id": "charcoal-glove-thread",
+      "name": "Charcoal Glove Thread",
+      "kind": "evidence",
+      "description": "A dark thread caught on the photo-envelope seal, matching the prosecutor aide's gloves.",
+      "imageAssetId": "asset_glove_thread",
+      "initiallyOwned": false
+    },
+    {
+      "id": "silent-alarm-log",
+      "name": "Silent Alarm Log",
+      "kind": "evidence",
+      "description": "A security alarm entry that triggered downstairs before the courtroom record claims anyone knew.",
+      "imageAssetId": "asset_alarm_log",
+      "initiallyOwned": false
     }
   ],
   "assets": [
@@ -414,6 +484,90 @@
       "url": "",
       "linkedSceneIds": ["kiosk-receipt"],
       "linkedCharacterIds": [],
+      "status": "needed"
+    },
+    {
+      "id": "bg_photo_lab_chain",
+      "type": "background",
+      "title": "Courthouse Photo Lab",
+      "description": "A cramped evidence photo lab where wet envelopes dry under amber light.",
+      "prompt": "Noir courthouse evidence photo lab, amber safety light, sealed photo envelopes, rain-streaked interior glass, cinematic 16:9, no text.",
+      "negativePrompt": "real logos, readable names, watermark",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "chain-of-custody evidence scene",
+      "url": "",
+      "linkedSceneIds": ["photo_envelope_chain"],
+      "linkedCharacterIds": ["ione_marr"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_photo_envelope",
+      "type": "evidence_item",
+      "title": "Sealed Photo Envelope",
+      "description": "Chain-of-custody envelope with a late seal mark.",
+      "prompt": "Fictional sealed evidence photo envelope, late seal mark, generic court stamp shape without readable real text, noir prop, 4:3.",
+      "negativePrompt": "real court seal, real names, readable private data, logo",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence card and chain-of-custody scene",
+      "url": "",
+      "linkedSceneIds": ["photo_envelope_chain"],
+      "linkedCharacterIds": ["ione_marr"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_maintenance_call",
+      "type": "evidence_item",
+      "title": "Maintenance Call Slip",
+      "description": "Repair slip for an east-window leak.",
+      "prompt": "Fictional courthouse maintenance call slip, water stain, simple icons, no real agency or readable private information, 4:3.",
+      "negativePrompt": "real logo, real address, personal data",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence card",
+      "url": "",
+      "linkedSceneIds": ["photo_envelope_chain", "security-desk"],
+      "linkedCharacterIds": ["tobin_clerk", "ione_marr"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_script_fragment",
+      "type": "evidence_item",
+      "title": "Witness Script Fragment",
+      "description": "A torn scripted testimony line.",
+      "prompt": "Fictional torn witness note fragment with abstract lines and one highlighted phrase shape, no readable real names, noir evidence prop, 4:3.",
+      "negativePrompt": "real handwriting sample, private data, logo",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence card and pressure sequence",
+      "url": "",
+      "linkedSceneIds": ["photo_envelope_chain", "lyra_pressure_first_crack"],
+      "linkedCharacterIds": ["lyra_mont", "ione_marr"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_glove_thread",
+      "type": "evidence_item",
+      "title": "Charcoal Glove Thread",
+      "description": "A dark thread caught on an evidence seal.",
+      "prompt": "Macro fictional evidence photo of charcoal glove thread caught on paper seal, noir forensic prop, shallow depth of field, 4:3, no text.",
+      "negativePrompt": "gore, real case evidence, logo",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence card and inspection detail",
+      "url": "",
+      "linkedSceneIds": ["photo_envelope_chain"],
+      "linkedCharacterIds": ["ione_marr", "cassian_roe"],
+      "status": "needed"
+    },
+    {
+      "id": "asset_alarm_log",
+      "type": "evidence_item",
+      "title": "Silent Alarm Log",
+      "description": "Security alarm entry that pre-dates the witness account.",
+      "prompt": "Fictional courthouse silent alarm log prop, abstract timestamp rows, no real company name, noir legal thriller evidence card, 4:3.",
+      "negativePrompt": "real brand, real database screenshot, private data",
+      "aspectRatio": "4:3",
+      "targetDeviceUsage": "evidence card and timeline sequence",
+      "url": "",
+      "linkedSceneIds": ["photo_envelope_chain", "records-crosscheck"],
+      "linkedCharacterIds": ["tobin_clerk"],
       "status": "needed"
     }
   ],
@@ -898,7 +1052,7 @@
       ],
       "choices": [
         { "id": "follow-coaching", "label": "Follow who coached Lyra", "target": { "type": "scene", "id": "lyra_pressure_first_crack" } },
-        { "id": "build-closing", "label": "Build the closing argument", "target": { "type": "scene", "id": "closing-argument" } }
+        { "id": "build-closing", "label": "Build the closing argument", "target": { "type": "scene", "id": "photo_envelope_chain" } }
       ]
     },
     {
@@ -943,7 +1097,7 @@
         { "type": "gameplay_hook", "hookId": "coaching-thread" }
       ],
       "choices": [
-        { "id": "build-final-close", "label": "Build the closing argument", "target": { "type": "scene", "id": "closing-argument" } }
+        { "id": "build-final-close", "label": "Build the closing argument", "target": { "type": "scene", "id": "photo_envelope_chain" } }
       ]
     },
     {
@@ -966,7 +1120,33 @@
       ],
       "choices": [
         { "id": "retreat-to-doubt", "label": "Retreat to reasonable doubt", "target": { "type": "ending", "id": "thin-acquittal" } },
-        { "id": "answer-with-proof", "label": "Answer with the photo", "target": { "type": "scene", "id": "closing-argument" } }
+        { "id": "answer-with-proof", "label": "Answer with the photo", "target": { "type": "scene", "id": "photo_envelope_chain" } }
+      ]
+    },
+    {
+      "id": "photo_envelope_chain",
+      "title": "Photo Envelope Chain",
+      "purpose": "Turn the staged-window reveal into chain-of-custody proof.",
+      "synopsis": "Ione Marr proves the crime-scene photo moved after Lyra's testimony had already been scripted.",
+      "location": "photo_lab",
+      "camera": "sealed envelope foreground, Ione at amber light",
+      "background": "Amber photo-lab light turns the sealed envelope the color of a warning.",
+      "backgroundPrompt": "Noir courthouse evidence photo lab under amber safety light, sealed envelope foreground, rain-streaked interior glass, cinematic 16:9, no text.",
+      "musicMood": "quiet investigative pulse",
+      "soundMood": "photo tray drip, rain behind glass",
+      "transition": "tool-ready",
+      "layoutNotes": { "mobileLandscape": "Envelope and script fragment center, Ione right, evidence choices bottom.", "mobilePortrait": "Evidence cards above Ione dialogue." },
+      "assetIds": ["bg_photo_lab_chain", "asset_photo_envelope", "asset_script_fragment", "asset_glove_thread", "asset_alarm_log"],
+      "mood": ["forensic", "decisive"],
+      "blocks": [
+        { "type": "dialogue", "speaker": "Ione Marr", "characterId": "ione_marr", "emotion": "wary", "stance": "holding_envelope", "position": "center-right", "animation": "tool-ready", "text": "This seal was signed after the testimony draft crossed my desk. The photo did not shape her memory. Someone shaped the photo around it." },
+        { "type": "dialogue", "speaker": "Mara Vey", "characterId": "mara_vey", "emotion": "thinking", "stance": "reading_file", "position": "lower-left", "text": "Then the window was not evidence. It was rehearsal." },
+        { "type": "narration", "text": "The envelope, the script fragment, and the alarm log become one timeline: a staged scene wrapped around a coached witness." }
+      ],
+      "choices": [
+        { "id": "log-envelope-seal", "label": "Log the late photo envelope", "target": { "type": "scene", "id": "closing-argument" }, "effects": [{ "type": "addItem", "itemId": "photo-envelope-chain" }, { "type": "addItem", "itemId": "witness-script-fragment" }, { "type": "incrementVariable", "variable": "chainOfCustody", "by": 1 }] },
+        { "id": "pull-alarm-and-maintenance", "label": "Pair the alarm log with the maintenance slip", "target": { "type": "scene", "id": "closing-argument" }, "effects": [{ "type": "addItem", "itemId": "silent-alarm-log" }, { "type": "addItem", "itemId": "maintenance-call-slip" }, { "type": "incrementVariable", "variable": "witnessPressure", "by": 1 }] },
+        { "id": "bag-thread-on-seal", "label": "Bag the thread on the envelope seal", "target": { "type": "scene", "id": "closing-argument" }, "effects": [{ "type": "addItem", "itemId": "charcoal-glove-thread" }, { "type": "incrementVariable", "variable": "chainOfCustody", "by": 1 }] }
       ]
     },
     {

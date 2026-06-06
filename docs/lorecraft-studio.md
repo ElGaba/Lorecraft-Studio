@@ -24,7 +24,7 @@ Lorecraft Studio helps creators and agents produce:
 
 The Last Testimony is the flagship project and should be treated as the main showcase. Secondary demos can remain useful examples, but they should not distract from the Chapter 1 polish pass.
 
-The current Chapter 1 direction is a noir courtroom mystery with testimony navigation, evidence presentation, contradiction feedback, and cinematic payoff moments.
+The current Chapter 1 direction is a noir courtroom mystery with testimony navigation, evidence presentation, contradiction feedback, chain-of-custody review, and cinematic payoff moments. The flagship content floor is now represented in source data: at least 18 scenes, 7 characters, 10 evidence items, 8 gameplay sequences, 4 variable-driven choices, and 3 outcomes.
 
 ## Compatibility Names
 

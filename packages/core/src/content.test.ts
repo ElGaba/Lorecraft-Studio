@@ -33,6 +33,13 @@ function hookFromBlock(game: GameDefinition, block: GameplayHookBlock) {
   return block.hook ?? game.gameplayHooks.find((hook) => hook.id === block.hookId);
 }
 
+function countChoicesWithVariableEffects(game: GameDefinition) {
+  return game.scenes
+    .flatMap((scene) => scene.choices ?? [])
+    .filter((choice) => choice.effects?.some((effect) => effect.type === "setVariable" || effect.type === "incrementVariable"))
+    .length;
+}
+
 function parsedGameById(id: string) {
   const gameFile = loadContentGames().find(({ data }) => data.metadata.id === id);
   if (!gameFile) {
@@ -125,6 +132,28 @@ describe("demo content library", () => {
     expect(clocktowerState.endingId).toBe("tower-restored");
   });
 
+  it("routes The Last Testimony through chain-of-custody proof before closing", () => {
+    const testimony = parsedGameById("the-last-testimony");
+    let testimonyState = createInitialState(testimony);
+
+    testimonyState = choose(testimonyState, "inspect-basement-log");
+    testimonyState = choose(testimonyState, "enter-court-with-keycard");
+    testimonyState = resolveGameplayHook(testimonyState, "present-contradiction", "success");
+    testimonyState = choose(testimonyState, "reveal-window");
+    testimonyState = resolveGameplayHook(testimonyState, "inspect_crime_scene_photo_detail", "success");
+    testimonyState = choose(testimonyState, "build-closing");
+    expect(testimonyState.currentSceneId).toBe("photo_envelope_chain");
+
+    testimonyState = choose(testimonyState, "log-envelope-seal");
+    expect(testimonyState.currentSceneId).toBe("closing-argument");
+    expect(testimonyState.inventory).toContain("photo-envelope-chain");
+    expect(testimonyState.inventory).toContain("witness-script-fragment");
+    expect(testimonyState.variables.chainOfCustody).toBe(1);
+
+    testimonyState = choose(testimonyState, "complete-revealed-timeline");
+    expect(testimonyState.endingId).toBe("timeline-revealed");
+  });
+
   it("upgrades every prototype into a rich studio project vertical slice", () => {
     const requirements = {
       "code-blue-midnight-shift": { scenes: 12, characters: 6, hooks: 8, endings: 3 },
@@ -144,5 +173,16 @@ describe("demo content library", () => {
       expect(data.scenes.every((scene) => scene.layoutNotes?.mobileLandscape && scene.backgroundPrompt)).toBe(true);
       expect(data.characters?.every((character) => character.variants.length > 0)).toBe(true);
     }
+  });
+
+  it("makes The Last Testimony the flagship Chapter 1 content floor", () => {
+    const testimony = parsedGameById("the-last-testimony");
+
+    expect(testimony.scenes.length).toBeGreaterThanOrEqual(18);
+    expect(testimony.characters.length).toBeGreaterThanOrEqual(7);
+    expect(testimony.items.filter((item) => item.kind === "evidence").length).toBeGreaterThanOrEqual(10);
+    expect(testimony.gameplayHooks.length).toBeGreaterThanOrEqual(8);
+    expect(countChoicesWithVariableEffects(testimony)).toBeGreaterThanOrEqual(4);
+    expect(testimony.endings.length).toBeGreaterThanOrEqual(3);
   });
 });

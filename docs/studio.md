@@ -22,7 +22,7 @@ The user-facing product name is Lorecraft Studio. Internal packages still use `@
 
 ## Flagship Focus
 
-The Last Testimony is the flagship project. It should be the default project and the main target for Chapter 1 polish, gameplay integration, animation work, and export improvements.
+The Last Testimony is the flagship project. It should be the default project and the main target for Chapter 1 polish, gameplay integration, animation work, and export improvements. Its source data now carries the Chapter 1 content floor: 18 scenes, 7 characters, 10 evidence items, 8 gameplay hooks, variable-driven choices, and 3 outcomes.
 
 ## Preview Modes
 

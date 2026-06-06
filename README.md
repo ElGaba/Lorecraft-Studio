@@ -53,7 +53,7 @@ The playthrough is designed around mobile landscape first, with tablet and deskt
 
 **Genre:** investigation / courtroom mystery / noir legal thriller.
 
-The Last Testimony currently contains the strongest story direction and is the main showcase. It includes courtroom VN scenes, image-backed backgrounds, character sprites, evidence selection, testimony navigation, Press Statement / HOLD IT beats, statement-aware evidence presentation, failure branches, and an OBJECTION payoff.
+The Last Testimony currently contains the strongest story direction and is the main showcase. It includes 18 playable scenes, 7 characters, 10 evidence items, 8 gameplay hook sequences, variable-driven choices, and 3 outcomes. The current route covers courtroom VN scenes, image-backed backgrounds, character sprites, evidence selection, testimony navigation, Press Statement / HOLD IT beats, statement-aware evidence presentation, failure branches, chain-of-custody review, and an OBJECTION payoff.
 
 The Chapter 1 target is a complete beginning, middle, climax, and chapter ending with:
 
@@ -63,6 +63,7 @@ The Chapter 1 target is a complete beginning, middle, climax, and chapter ending
 - contradiction gameplay
 - revelation sequence
 - investigation or reconstruction sequence
+- chain-of-custody proof
 - pressure/interrogation sequence
 - courtroom escalation
 - major twist
