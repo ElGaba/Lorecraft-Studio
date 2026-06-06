@@ -1,0 +1,263 @@
+{
+  "metadata": {
+    "id": "the-last-testimony",
+    "title": "The Last Testimony",
+    "genre": "investigation courtroom",
+    "author": "AdventureKit",
+    "summary": "An evidence-forward testimony prototype with investigation setup, witness dialogue, contradiction pressure, and a presentation hook."
+  },
+  "startScene": "rain-at-the-courthouse",
+  "variables": {
+    "judgePatience": 2,
+    "witnessPressure": 0
+  },
+  "items": [
+    {
+      "id": "elevator-keycard",
+      "name": "Elevator Keycard",
+      "kind": "evidence",
+      "description": "A keycard showing a basement elevator access at 11:42 p.m.",
+      "initiallyOwned": false
+    },
+    {
+      "id": "torn-schedule",
+      "name": "Torn Security Schedule",
+      "kind": "evidence",
+      "description": "A ripped schedule that contradicts the guard's claimed post.",
+      "initiallyOwned": false
+    },
+    {
+      "id": "raincoat-receipt",
+      "name": "Raincoat Receipt",
+      "kind": "evidence",
+      "description": "A receipt from the courthouse kiosk, timestamped minutes before the alarm.",
+      "initiallyOwned": false
+    }
+  ],
+  "scenes": [
+    {
+      "id": "rain-at-the-courthouse",
+      "title": "Rain at the Courthouse",
+      "background": "Stone steps reflecting blue security lights and late rain.",
+      "mood": ["measured", "uneasy"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "By morning, the trial has one witness left and one truth too many."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Ari Vale",
+          "text": "We do not need the whole night. We need the one minute the witness keeps stepping around."
+        }
+      ],
+      "choices": [
+        {
+          "id": "inspect-basement-log",
+          "label": "Inspect the basement elevator log",
+          "target": { "type": "scene", "id": "basement-log" },
+          "effects": [{ "type": "addItem", "itemId": "elevator-keycard" }]
+        },
+        {
+          "id": "question-security-clerk",
+          "label": "Question the security clerk",
+          "target": { "type": "scene", "id": "security-desk" },
+          "effects": [{ "type": "addItem", "itemId": "torn-schedule" }]
+        }
+      ]
+    },
+    {
+      "id": "basement-log",
+      "title": "Basement Log",
+      "background": "A humming records room with a single terminal awake in the dark.",
+      "mood": ["investigative", "quiet"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Court Clerk",
+          "text": "Nobody was meant to use the basement elevator after eleven."
+        },
+        {
+          "type": "narration",
+          "text": "The access record says someone did, and the keycard number belongs to the witness."
+        }
+      ],
+      "choices": [
+        {
+          "id": "collect-clerk-schedule",
+          "label": "Cross-check the security schedule",
+          "target": { "type": "scene", "id": "security-desk" },
+          "effects": [{ "type": "addItem", "itemId": "torn-schedule" }]
+        },
+        {
+          "id": "enter-court-with-keycard",
+          "label": "Return to court with the keycard",
+          "target": { "type": "scene", "id": "witness-stand" }
+        }
+      ]
+    },
+    {
+      "id": "security-desk",
+      "title": "Security Desk",
+      "background": "A narrow desk stacked with umbrellas, thermal paper, and a silent radio.",
+      "mood": ["methodical", "claustrophobic"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Security Clerk",
+          "text": "The guard swapped posts when the rain started. Said the east doors were leaking again."
+        },
+        {
+          "type": "narration",
+          "text": "A torn schedule places the witness away from the route he swore he never took."
+        }
+      ],
+      "choices": [
+        {
+          "id": "buy-time-with-receipt",
+          "label": "Check the kiosk receipt box",
+          "target": { "type": "scene", "id": "kiosk-receipt" },
+          "effects": [{ "type": "addItem", "itemId": "raincoat-receipt" }]
+        },
+        {
+          "id": "return-to-testimony",
+          "label": "Return to the witness stand",
+          "target": { "type": "scene", "id": "witness-stand" }
+        }
+      ]
+    },
+    {
+      "id": "kiosk-receipt",
+      "title": "Kiosk Receipt",
+      "background": "A closed coffee kiosk beneath a maintenance light that buzzes like a held breath.",
+      "mood": ["specific", "revealing"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "The receipt is small, damp, and decisive: a raincoat bought after the witness claimed he was already home."
+        }
+      ],
+      "choices": [
+        {
+          "id": "enter-court-with-receipt",
+          "label": "Bring the timestamp to court",
+          "target": { "type": "scene", "id": "witness-stand" }
+        }
+      ]
+    },
+    {
+      "id": "witness-stand",
+      "title": "Witness Stand",
+      "background": "A courtroom washed in gray daylight, every surface too polished for comfort.",
+      "mood": ["formal", "dangerous"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Witness",
+          "text": "I left through the front doors before the alarm. I never went below the lobby."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Judge Ren",
+          "text": "Counsel, your next question should matter."
+        },
+        {
+          "type": "gameplay_hook",
+          "hook": {
+            "id": "present-contradiction",
+            "type": "evidence_presentation",
+            "module": "future-contradiction-presentation-module",
+            "successTarget": { "type": "scene", "id": "witness-cracks" },
+            "failureTarget": { "type": "scene", "id": "objection-sustained" },
+            "successEffects": [{ "type": "incrementVariable", "variable": "witnessPressure", "by": 2 }],
+            "failureEffects": [{ "type": "incrementVariable", "variable": "judgePatience", "by": -1 }],
+            "notes": "Future module can let players select evidence and point to the exact line of testimony it contradicts."
+          }
+        }
+      ],
+      "choices": [
+        {
+          "id": "press-with-keycard",
+          "label": "Press the elevator keycard contradiction",
+          "target": { "type": "scene", "id": "witness-cracks" },
+          "conditions": [{ "type": "hasItem", "itemId": "elevator-keycard" }],
+          "effects": [{ "type": "incrementVariable", "variable": "witnessPressure", "by": 1 }]
+        },
+        {
+          "id": "press-too-early",
+          "label": "Press without enough proof",
+          "target": { "type": "scene", "id": "objection-sustained" },
+          "conditions": [{ "type": "notHasItem", "itemId": "elevator-keycard" }]
+        }
+      ]
+    },
+    {
+      "id": "objection-sustained",
+      "title": "Objection Sustained",
+      "background": "The courtroom sound drops away after the gavel.",
+      "mood": ["setback", "controlled"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Judge Ren",
+          "text": "The court will not follow speculation into the basement."
+        },
+        {
+          "type": "narration",
+          "text": "The witness exhales as if the floor has returned under him."
+        }
+      ],
+      "choices": [
+        {
+          "id": "recover-with-receipt",
+          "label": "Recover with the raincoat timestamp",
+          "target": { "type": "scene", "id": "witness-cracks" },
+          "conditions": [{ "type": "hasItem", "itemId": "raincoat-receipt" }]
+        },
+        {
+          "id": "close-with-doubt",
+          "label": "Close on reasonable doubt",
+          "target": { "type": "ending", "id": "thin-acquittal" }
+        }
+      ]
+    },
+    {
+      "id": "witness-cracks",
+      "title": "Witness Cracks",
+      "background": "A bead of rainwater falls from the witness's sleeve onto the rail.",
+      "mood": ["sharp", "decisive"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Witness",
+          "text": "I only went down because I heard the alarm before it sounded upstairs."
+        },
+        {
+          "type": "narration",
+          "text": "The contradiction is not just where he was. It is what he knew too early."
+        }
+      ],
+      "choices": [
+        {
+          "id": "deliver-final-testimony",
+          "label": "Frame the impossible timeline",
+          "target": { "type": "ending", "id": "timeline-revealed" }
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "timeline-revealed",
+      "title": "Timeline Revealed",
+      "tone": "clean victory",
+      "summary": "The witness admits he knew about the alarm before it sounded, turning the case on a minute no one could explain."
+    },
+    {
+      "id": "thin-acquittal",
+      "title": "Thin Acquittal",
+      "tone": "ambiguous relief",
+      "summary": "The defense creates doubt, but the hidden route through the courthouse remains only half-lit."
+    }
+  ]
+}

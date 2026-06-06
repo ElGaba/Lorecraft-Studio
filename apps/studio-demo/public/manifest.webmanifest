@@ -1,0 +1,10 @@
+{
+  "name": "AdventureKit Studio Demo",
+  "short_name": "AdventureKit",
+  "description": "Mobile-first cinematic narrative prototype engine demo.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080b10",
+  "theme_color": "#080b10",
+  "icons": []
+}

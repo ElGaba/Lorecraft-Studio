@@ -1,0 +1,247 @@
+{
+  "metadata": {
+    "id": "the-clocktower-riddle",
+    "title": "The Clocktower Riddle",
+    "genre": "puzzle adventure",
+    "author": "AdventureKit",
+    "summary": "A mysterious exploration prototype with item discovery, atmospheric choices, and a clockwork puzzle hook."
+  },
+  "startScene": "moonlit-square",
+  "variables": {
+    "bellsAligned": 0,
+    "lanternLit": false
+  },
+  "items": [
+    {
+      "id": "brass-winder",
+      "name": "Brass Winder",
+      "kind": "item",
+      "description": "A palm-sized winding key with teeth worn smooth by many hands.",
+      "initiallyOwned": false
+    },
+    {
+      "id": "inked-map",
+      "name": "Ink-Spattered Map",
+      "kind": "evidence",
+      "description": "A map showing the clocktower stairs and three marked bell chambers.",
+      "initiallyOwned": false
+    },
+    {
+      "id": "blue-lantern",
+      "name": "Blue Lantern",
+      "kind": "item",
+      "description": "A lantern that glows only when the tower bells are near alignment.",
+      "initiallyOwned": false
+    }
+  ],
+  "scenes": [
+    {
+      "id": "moonlit-square",
+      "title": "Moonlit Square",
+      "background": "An empty old-town square under a clocktower whose hands point to different hours.",
+      "mood": ["mysterious", "windy", "expectant"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "Every window in the square is dark except the clocktower face, which burns blue at midnight."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Ilen",
+          "text": "The town stopped at twelve. The riddle says the tower starts again when someone remembers the missing hour."
+        }
+      ],
+      "choices": [
+        {
+          "id": "search-fountain",
+          "label": "Search the dry fountain",
+          "target": { "type": "scene", "id": "fountain-cache" },
+          "effects": [{ "type": "addItem", "itemId": "brass-winder" }]
+        },
+        {
+          "id": "enter-clocktower",
+          "label": "Enter the clocktower",
+          "target": { "type": "scene", "id": "tower-stairs" }
+        }
+      ]
+    },
+    {
+      "id": "fountain-cache",
+      "title": "Fountain Cache",
+      "background": "A cracked fountain basin filled with dry leaves and a hidden brass glint.",
+      "mood": ["curious", "delicate"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "Under the leaves rests a brass winder, warm despite the cold square."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Ilen",
+          "text": "A key without a lock means the lock is pretending to be something else."
+        }
+      ],
+      "choices": [
+        {
+          "id": "map-the-tower",
+          "label": "Sketch the tower markings",
+          "target": { "type": "scene", "id": "tower-stairs" },
+          "effects": [{ "type": "addItem", "itemId": "inked-map" }]
+        }
+      ]
+    },
+    {
+      "id": "tower-stairs",
+      "title": "Tower Stairs",
+      "background": "A spiral stairwell with bell ropes descending like black threads.",
+      "mood": ["vertical", "hushed"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "The steps count upward, but the tower shadows count down."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Ilen",
+          "text": "Listen. One bell is late, one is early, and one is lying."
+        }
+      ],
+      "choices": [
+        {
+          "id": "take-blue-lantern",
+          "label": "Take the blue lantern from the hook",
+          "target": { "type": "scene", "id": "bell-chamber" },
+          "effects": [
+            { "type": "addItem", "itemId": "blue-lantern" },
+            { "type": "setVariable", "variable": "lanternLit", "value": true }
+          ]
+        },
+        {
+          "id": "climb-with-map",
+          "label": "Follow the inked map upward",
+          "target": { "type": "scene", "id": "bell-chamber" },
+          "conditions": [{ "type": "hasItem", "itemId": "inked-map" }]
+        },
+        {
+          "id": "climb-blind",
+          "label": "Climb by sound alone",
+          "target": { "type": "scene", "id": "bell-chamber" }
+        }
+      ]
+    },
+    {
+      "id": "bell-chamber",
+      "title": "Bell Chamber",
+      "background": "Three silent bells hang over a clockwork floor etched with moons and hour marks.",
+      "mood": ["ornate", "dangerous", "wonder"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "The brass winder fits into the floor, not the clock. The whole chamber waits to turn."
+        },
+        {
+          "type": "gameplay_hook",
+          "hook": {
+            "id": "align-bells",
+            "type": "puzzle",
+            "module": "future-clockwork-alignment-module",
+            "successTarget": { "type": "scene", "id": "hidden-hour" },
+            "failureTarget": { "type": "scene", "id": "wrong-chime" },
+            "successEffects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": 3 }],
+            "failureEffects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": -1 }],
+            "notes": "Future module can mount a rotational ring puzzle where the player aligns bell tones with the missing hour."
+          }
+        }
+      ],
+      "choices": [
+        {
+          "id": "solve-with-winder",
+          "label": "Set the winder into the clockwork floor",
+          "target": { "type": "scene", "id": "hidden-hour" },
+          "conditions": [{ "type": "hasItem", "itemId": "brass-winder" }],
+          "effects": [{ "type": "incrementVariable", "variable": "bellsAligned", "by": 1 }]
+        },
+        {
+          "id": "pull-random-rope",
+          "label": "Pull the nearest bell rope",
+          "target": { "type": "scene", "id": "wrong-chime" }
+        }
+      ]
+    },
+    {
+      "id": "wrong-chime",
+      "title": "Wrong Chime",
+      "background": "The chamber rings once, far too loud, and dust falls like gray rain.",
+      "mood": ["alarmed", "unstable"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "The tower accepts the attempt, then rejects it with a chime that sends shadows racing downstairs."
+        }
+      ],
+      "choices": [
+        {
+          "id": "retry-with-map",
+          "label": "Use the map to reset the bells",
+          "target": { "type": "scene", "id": "bell-chamber" },
+          "conditions": [{ "type": "hasItem", "itemId": "inked-map" }]
+        },
+        {
+          "id": "escape-before-collapse",
+          "label": "Escape before the hour collapses",
+          "target": { "type": "ending", "id": "square-unchanged" }
+        }
+      ]
+    },
+    {
+      "id": "hidden-hour",
+      "title": "Hidden Hour",
+      "background": "A thirteenth hour opens behind the clock face, full of soft blue dust and suspended rain.",
+      "mood": ["revelatory", "quiet"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Ilen",
+          "text": "It was not a missing hour. It was a hidden one."
+        },
+        {
+          "type": "narration",
+          "text": "The tower begins to move, not forward, but honestly."
+        }
+      ],
+      "choices": [
+        {
+          "id": "restore-clock",
+          "label": "Let the square hear the hidden hour",
+          "target": { "type": "ending", "id": "tower-restored" }
+        },
+        {
+          "id": "keep-secret-hour",
+          "label": "Close the chamber and keep the hour safe",
+          "target": { "type": "ending", "id": "secret-kept" },
+          "conditions": [{ "type": "hasItem", "itemId": "blue-lantern" }]
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "tower-restored",
+      "title": "The Tower Restored",
+      "tone": "wonder",
+      "summary": "The bells align and the town hears the hour it forgot, waking into motion under blue dawn."
+    },
+    {
+      "id": "secret-kept",
+      "title": "The Secret Kept",
+      "tone": "protective mystery",
+      "summary": "The tower keeps its hidden hour, and only the lantern remembers how close the town came to waking."
+    },
+    {
+      "id": "square-unchanged",
+      "title": "Square Unchanged",
+      "tone": "haunted setback",
+      "summary": "The tower settles back into silence, but the wrong chime leaves a new crack in the moonlit square."
+    }
+  ]
+}

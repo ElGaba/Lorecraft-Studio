@@ -1,0 +1,33 @@
+{
+  "name": "adventurekit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm --workspace @adventurekit/studio-demo run dev",
+    "build": "npm run typecheck && npm --workspace @adventurekit/studio-demo run build",
+    "preview": "npm --workspace @adventurekit/studio-demo run preview",
+    "smoke": "playwright test",
+    "test": "vitest run",
+    "typecheck": "tsc -b",
+    "validate": "vitest run packages/core/src/content.test.ts"
+  },
+  "dependencies": {
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.2",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^4.1.8"
+  }
+}

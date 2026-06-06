@@ -1,0 +1,272 @@
+{
+  "metadata": {
+    "id": "code-blue-midnight-shift",
+    "title": "Code Blue: Midnight Shift",
+    "genre": "procedure drama",
+    "author": "AdventureKit",
+    "summary": "A compressed night-shift medical drama showing urgent choices, procedure hooks, and branching outcomes."
+  },
+  "startScene": "bay-seven-alert",
+  "variables": {
+    "teamTrust": 0,
+    "stability": 1
+  },
+  "items": [
+    {
+      "id": "portable-monitor",
+      "name": "Portable Monitor Strip",
+      "kind": "evidence",
+      "description": "A clipped rhythm strip from the hallway monitor.",
+      "initiallyOwned": false
+    },
+    {
+      "id": "family-med-list",
+      "name": "Family Medication List",
+      "kind": "evidence",
+      "description": "A folded note from the patient's daughter, written in hurried block letters.",
+      "initiallyOwned": false
+    }
+  ],
+  "scenes": [
+    {
+      "id": "bay-seven-alert",
+      "title": "Bay Seven Alert",
+      "background": "A trauma bay under amber task lights, privacy curtains moving with every urgent step.",
+      "mood": ["urgent", "clinical", "compressed"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "The midnight board flashes red before the ambulance crew reaches the doors."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Mara, charge nurse",
+          "text": "New admit in Bay Seven. Vitals are noisy, family is scared, and the resident is still three halls away."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Dr. Hale",
+          "text": "Then the room is ours until it is not. Give me the first clean signal."
+        }
+      ],
+      "choices": [
+        {
+          "id": "lead-monitor-first",
+          "label": "Pull a clean rhythm strip",
+          "target": { "type": "scene", "id": "first-read" },
+          "effects": [
+            { "type": "addItem", "itemId": "portable-monitor" },
+            { "type": "incrementVariable", "variable": "teamTrust", "by": 1 }
+          ]
+        },
+        {
+          "id": "speak-to-family-first",
+          "label": "Ask the daughter what changed",
+          "target": { "type": "scene", "id": "family-window" },
+          "effects": [
+            { "type": "addItem", "itemId": "family-med-list" },
+            { "type": "incrementVariable", "variable": "teamTrust", "by": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "first-read",
+      "title": "First Read",
+      "background": "The monitor throws pale green peaks across a reflective wall clock.",
+      "mood": ["focused", "unstable"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "The rhythm is almost readable, then it skids into artifact as the stretcher brake squeals."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Mara",
+          "text": "You got enough to call a path?"
+        },
+        {
+          "type": "gameplay_hook",
+          "hook": {
+            "id": "rapid-assessment",
+            "type": "procedure_interaction",
+            "module": "future-rapid-assessment-module",
+            "successTarget": { "type": "scene", "id": "medication-crosscheck" },
+            "failureTarget": { "type": "scene", "id": "pressure-drop" },
+            "successEffects": [{ "type": "incrementVariable", "variable": "stability", "by": 1 }],
+            "failureEffects": [{ "type": "incrementVariable", "variable": "stability", "by": -1 }],
+            "notes": "Future module can ask the player to sequence airway, rhythm confirmation, and urgent escalation under time pressure."
+          }
+        }
+      ],
+      "choices": [
+        {
+          "id": "ask-family-after-strip",
+          "label": "Cross-check with the daughter",
+          "target": { "type": "scene", "id": "family-window" },
+          "conditions": [{ "type": "notHasItem", "itemId": "family-med-list" }]
+        }
+      ]
+    },
+    {
+      "id": "family-window",
+      "title": "Family Window",
+      "background": "A quiet strip outside the bay where vending-machine light catches rain on the glass.",
+      "mood": ["human", "fragile"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Daughter",
+          "text": "He took the new pills after dinner. He said the room sounded underwater."
+        },
+        {
+          "type": "narration",
+          "text": "The medication list is incomplete, but one brand name is circled twice."
+        }
+      ],
+      "choices": [
+        {
+          "id": "return-with-med-list",
+          "label": "Bring the list back to the team",
+          "target": { "type": "scene", "id": "medication-crosscheck" },
+          "effects": [{ "type": "addItem", "itemId": "family-med-list" }]
+        },
+        {
+          "id": "push-procedure-without-strip",
+          "label": "Return and start rapid assessment",
+          "target": { "type": "scene", "id": "first-read" },
+          "conditions": [{ "type": "notHasItem", "itemId": "portable-monitor" }]
+        }
+      ]
+    },
+    {
+      "id": "pressure-drop",
+      "title": "Pressure Drop",
+      "background": "The bay narrows into overlapping alarms and hard fluorescent edges.",
+      "mood": ["dangerous", "loud"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "The first attempt buys seconds, not stability. The room needs a second anchor."
+        },
+        {
+          "type": "dialogue",
+          "speaker": "Dr. Hale",
+          "text": "We missed something. Find the contradiction before the next minute takes it from us."
+        }
+      ],
+      "choices": [
+        {
+          "id": "stabilize-through-crosscheck",
+          "label": "Rebuild the plan from medication clues",
+          "target": { "type": "scene", "id": "medication-crosscheck" },
+          "conditions": [{ "type": "hasItem", "itemId": "family-med-list" }]
+        },
+        {
+          "id": "handoff-risk-now",
+          "label": "Call an early transfer",
+          "target": { "type": "ending", "id": "hard-lesson" }
+        }
+      ]
+    },
+    {
+      "id": "medication-crosscheck",
+      "title": "Medication Crosscheck",
+      "background": "A workstation balanced between the family note, the rhythm strip, and the patient bay.",
+      "mood": ["analytical", "urgent"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Mara",
+          "text": "One clue says rhythm. One clue says medication. Pick the one that explains both."
+        },
+        {
+          "type": "gameplay_hook",
+          "hook": {
+            "id": "med-reconciliation",
+            "type": "procedure_interaction",
+            "module": "future-med-reconciliation-module",
+            "successTarget": { "type": "scene", "id": "safe-handoff" },
+            "failureTarget": { "type": "scene", "id": "uncertain-handoff" },
+            "successEffects": [
+              { "type": "incrementVariable", "variable": "teamTrust", "by": 1 },
+              { "type": "incrementVariable", "variable": "stability", "by": 1 }
+            ],
+            "failureEffects": [{ "type": "incrementVariable", "variable": "stability", "by": -1 }],
+            "notes": "Future module can mount a medication comparison puzzle that asks players to reconcile family notes against clinical signs."
+          }
+        }
+      ],
+      "choices": [
+        {
+          "id": "take-confident-handoff",
+          "label": "Prepare a confident transfer brief",
+          "target": { "type": "scene", "id": "safe-handoff" },
+          "conditions": [
+            { "type": "hasItem", "itemId": "family-med-list" },
+            { "type": "hasItem", "itemId": "portable-monitor" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "safe-handoff",
+      "title": "Safe Handoff",
+      "background": "The bay settles into a lower register, alarms replaced by measured instructions.",
+      "mood": ["relieved", "precise"],
+      "blocks": [
+        {
+          "type": "dialogue",
+          "speaker": "Dr. Hale",
+          "text": "That is the version of the night that makes it to morning."
+        }
+      ],
+      "choices": [
+        {
+          "id": "complete-safe-transfer",
+          "label": "Send the patient upstairs with the right story",
+          "target": { "type": "ending", "id": "safe-transfer" }
+        }
+      ]
+    },
+    {
+      "id": "uncertain-handoff",
+      "title": "Uncertain Handoff",
+      "background": "The transfer elevator opens onto a colder, quieter floor.",
+      "mood": ["somber", "unresolved"],
+      "blocks": [
+        {
+          "type": "narration",
+          "text": "The patient survives the bay, but the missing reason follows the chart upstairs."
+        }
+      ],
+      "choices": [
+        {
+          "id": "accept-hard-lesson",
+          "label": "Log the miss and brief the morning team",
+          "target": { "type": "ending", "id": "hard-lesson" }
+        },
+        {
+          "id": "reopen-crosscheck",
+          "label": "Reopen the medication crosscheck",
+          "target": { "type": "scene", "id": "medication-crosscheck" },
+          "conditions": [{ "type": "variableAtLeast", "variable": "teamTrust", "value": 1 }]
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "safe-transfer",
+      "title": "Safe Transfer",
+      "tone": "hard-won relief",
+      "summary": "The team turns scattered signals into a clean handoff and the patient leaves the bay with the right care plan."
+    },
+    {
+      "id": "hard-lesson",
+      "title": "The Hard Lesson",
+      "tone": "reflective",
+      "summary": "The patient makes it onward, but the team carries the cost of a rushed read into the next shift."
+    }
+  ]
+}
