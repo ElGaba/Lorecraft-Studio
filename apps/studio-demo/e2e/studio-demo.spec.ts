@@ -6,7 +6,7 @@ async function visibleButton(page: Page, buttonName: string) {
   for (let index = 0; index < count; index += 1) {
     const button = buttons.nth(index);
     const text = (await button.textContent())?.trim();
-    if (text === buttonName && await button.isVisible()) {
+    if ((text === buttonName || text?.includes(buttonName)) && await button.isVisible()) {
       return button;
     }
   }
@@ -30,6 +30,7 @@ async function revealChoice(page: Page, choiceName: string) {
     "Begin final testimony",
     "Continue",
     "Choose courtroom tone",
+    "Cite the weather report and ask once more",
     "Ask for one more question",
     "Choose your next move",
     "Review choices",
@@ -219,8 +220,12 @@ test("the last testimony launches as a dedicated chapter playthrough", async ({ 
   await page.getByRole("button", { name: "Choose courtroom tone" }).click();
   await expect(page.getByText("Court Pressure", { exact: true }).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "One More Question" })).toBeVisible();
+  await expect(page.getByText("Hale's gavel hangs over the verdict. Tie the request to the court record before the verdict closes.")).toBeVisible();
+  await expect(page.getByText("Timed tone choice.")).not.toBeVisible();
+  await expect(page.getByText("Pick careful pressure.")).not.toBeVisible();
   await expect(page.getByText("witness-pressure-timed-choice")).not.toBeVisible();
-  await expect(page.getByRole("button", { name: "Ask for one more question" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cite the weather report and ask once more" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Accuse Lyra without proof" })).toBeVisible();
 
   await page.getByRole("button", { name: "Exit Playthrough" }).click();
   await expect(page.getByRole("heading", { name: "Lorecraft Studio" })).toBeVisible();

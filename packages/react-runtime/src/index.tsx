@@ -329,7 +329,7 @@ function hookSuccessLabel(hook: GameplayHook, isPlaythrough: boolean) {
     return "Simulate Success";
   }
   if (hook.id === "witness-pressure-timed-choice") {
-    return "Ask for one more question";
+    return "Cite the weather report and ask once more";
   }
   if (hook.id === "receipt-timeline-build") {
     return "Assemble the timestamp order";
@@ -342,7 +342,7 @@ function hookFailureLabel(hook: GameplayHook, isPlaythrough: boolean) {
     return "Simulate Failure";
   }
   if (hook.id === "witness-pressure-timed-choice") {
-    return "Push too hard";
+    return "Accuse Lyra without proof";
   }
   if (hook.id === "receipt-timeline-build") {
     return "Force the timeline";
@@ -372,6 +372,14 @@ function inspectionFailureLabel(hook: GameplayHook) {
   return "Choose irrelevant detail";
 }
 
+function playthroughHookPrompt(hook: GameplayHook, fallback: string | undefined) {
+  if (hook.id === "witness-pressure-timed-choice") {
+    return "Hale's gavel hangs over the verdict. Tie the request to the court record before the verdict closes.";
+  }
+
+  return fallback;
+}
+
 function GameplayHookPanel({
   hook,
   onResolve,
@@ -396,6 +404,7 @@ function GameplayHookPanel({
   const [selectedEvidenceId, setSelectedEvidenceId] = useState("");
   const isCrossExam = isCourtroomHook(hook);
   const isInspectionHook = hook.type === "inspection";
+  const isPlaythroughPressureChoice = isPlaythrough && hook.type === "timed_choice";
   const hookLabel = isCrossExam
     ? "Cross-Examination"
     : isInspectionHook
@@ -408,7 +417,10 @@ function GameplayHookPanel({
           ? "Evidence Timeline"
           : "Action";
   const hookTitle = isCrossExam ? "Find the contradiction" : isInspectionHook ? "Photo Inspection" : isPlaythrough ? hook.title ?? hook.id : hook.id;
-  const hookPrompt = isCrossExam || isInspectionHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : hook.gameplayPurpose ?? hook.narrativePurpose ?? hook.notes;
+  const hookPrompt = playthroughHookPrompt(
+    hook,
+    isCrossExam || isInspectionHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : hook.gameplayPurpose ?? hook.narrativePurpose ?? hook.notes
+  );
   const successLabel = isCrossExam ? "Present Evidence" : isInspectionHook ? inspectionSuccessLabel(hook) : hookSuccessLabel(hook, isPlaythrough);
   const failureLabel = isCrossExam ? "Press Witness" : isInspectionHook ? inspectionFailureLabel(hook) : hookFailureLabel(hook, isPlaythrough);
   const activeStatement = testimonyStatements[activeStatementIndex];
@@ -505,15 +517,17 @@ function GameplayHookPanel({
         </div>
       )}
 
-      {hook.type === "timed_choice" && isPlaythrough && (
-        <div className="ak-pressure-module">
-          <span className="ak-section-label">Court Pressure</span>
-          <strong>Judge patience is limited.</strong>
-          <p>{hook.expectedPlayerAction ?? hook.gameplayPurpose ?? hook.narrativePurpose}</p>
-          <div aria-hidden="true">
-            <span />
-            <span />
-            <span />
+      {isPlaythroughPressureChoice && (
+        <div className="ak-pressure-module" aria-label="Court pressure meter">
+          <div>
+            <span className="ak-section-label">Judge Patience</span>
+            <strong>Two beats before the gavel falls.</strong>
+            <p>Careful pressure keeps Hale listening. Speculation hands the room to Cassian.</p>
+          </div>
+          <div className="ak-pressure-track" aria-hidden="true">
+            <span>Record</span>
+            <span>Tone</span>
+            <span>Question</span>
           </div>
         </div>
       )}
@@ -542,14 +556,29 @@ function GameplayHookPanel({
         </div>
       )}
 
-      <div className="ak-hook-actions">
-        <button type="button" disabled={!canPresent} onClick={() => onResolve(hook.id, presentOutcome)}>
-          {successLabel}
-        </button>
-        <button type="button" className="ak-danger" onClick={() => onResolve(hook.id, "failure")}>
-          {failureLabel}
-        </button>
-      </div>
+      {isPlaythroughPressureChoice ? (
+        <div className="ak-hook-actions ak-pressure-actions">
+          <button type="button" disabled={!canPresent} onClick={() => onResolve(hook.id, presentOutcome)}>
+            <span>Evidence-led</span>
+            <strong>{successLabel}</strong>
+            <small>The weather report gives Hale a factual reason to listen.</small>
+          </button>
+          <button type="button" className="ak-danger" onClick={() => onResolve(hook.id, "failure")}>
+            <span>Speculative</span>
+            <strong>{failureLabel}</strong>
+            <small>Cassian can frame it as drama instead of proof.</small>
+          </button>
+        </div>
+      ) : (
+        <div className="ak-hook-actions">
+          <button type="button" disabled={!canPresent} onClick={() => onResolve(hook.id, presentOutcome)}>
+            {successLabel}
+          </button>
+          <button type="button" className="ak-danger" onClick={() => onResolve(hook.id, "failure")}>
+            {failureLabel}
+          </button>
+        </div>
+      )}
 
       <dl className="ak-hook-details">
         <div>

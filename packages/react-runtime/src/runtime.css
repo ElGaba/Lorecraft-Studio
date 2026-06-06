@@ -465,11 +465,16 @@
 
 .ak-pressure-module {
   background:
-    linear-gradient(180deg, rgba(7, 12, 18, 0.94), rgba(4, 8, 13, 0.92));
+    linear-gradient(135deg, rgba(11, 18, 25, 0.94), rgba(4, 8, 13, 0.9));
   border: 1px solid rgba(242, 169, 59, 0.32);
   display: grid;
-  gap: 0.38rem;
+  gap: 0.54rem;
   padding: 0.68rem 0.78rem;
+}
+
+.ak-pressure-module > div:first-child {
+  display: grid;
+  gap: 0.24rem;
 }
 
 .ak-pressure-module strong {
@@ -485,16 +490,71 @@
   margin: 0;
 }
 
-.ak-pressure-module > div {
+.ak-pressure-track {
   display: grid;
-  gap: 0.28rem;
+  gap: 0.32rem;
   grid-template-columns: repeat(3, 1fr);
   margin-top: 0.18rem;
 }
 
-.ak-pressure-module > div span {
-  background: linear-gradient(90deg, var(--ak-accent), var(--ak-warm));
-  height: 0.24rem;
+.ak-pressure-track span {
+  background: linear-gradient(90deg, rgba(91, 211, 223, 0.22), rgba(242, 169, 59, 0.28));
+  border-bottom: 0.18rem solid var(--ak-warm);
+  color: #d8feff;
+  font-size: 0.64rem;
+  font-weight: 850;
+  line-height: 1;
+  padding: 0.42rem 0.48rem 0.36rem;
+  text-transform: uppercase;
+}
+
+.ak-pressure-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(52rem, 100%);
+}
+
+.ak-pressure-actions button {
+  background: linear-gradient(180deg, rgba(11, 25, 31, 0.98), rgba(7, 16, 22, 0.98));
+  border: 1px solid rgba(91, 211, 223, 0.34);
+  border-left: 0.22rem solid var(--ak-accent);
+  color: var(--ak-text);
+  display: grid;
+  gap: 0.22rem;
+  justify-items: start;
+  min-height: 5.4rem;
+  padding: 0.68rem 0.78rem;
+  text-align: left;
+}
+
+.ak-pressure-actions button:hover {
+  filter: brightness(1.12);
+}
+
+.ak-pressure-actions button span {
+  color: var(--ak-accent);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ak-pressure-actions button strong {
+  color: var(--ak-text);
+  font-size: 0.94rem;
+  line-height: 1.12;
+}
+
+.ak-pressure-actions button small {
+  color: var(--ak-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.ak-pressure-actions .ak-danger {
+  background: linear-gradient(180deg, rgba(31, 12, 17, 0.98), rgba(18, 9, 13, 0.98));
+  border-color: rgba(245, 112, 112, 0.38);
+  border-left-color: #f57070;
 }
 
 .ak-dialogue-advance {
@@ -1136,6 +1196,14 @@
   .ak-runtime-playthrough .ak-dialogue-advance {
     min-width: 0;
     padding-inline: 0.82rem;
+  }
+
+  .ak-pressure-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .ak-pressure-actions button {
+    min-height: 4.6rem;
   }
 }
 
