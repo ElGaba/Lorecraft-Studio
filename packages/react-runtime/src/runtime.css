@@ -331,6 +331,8 @@
 
 .ak-runtime-playthrough .ak-scene.has-art .ak-script {
   margin-top: auto;
+  position: relative;
+  z-index: 6;
 }
 
 .ak-runtime-playthrough .ak-scene.has-art .ak-dialogue,
@@ -342,6 +344,15 @@
 
 .ak-runtime-playthrough .ak-scene.has-art .ak-dialogue {
   background: linear-gradient(180deg, rgba(5, 9, 14, 0.98), rgba(3, 6, 10, 0.96));
+}
+
+.ak-runtime-playthrough .ak-scene.has-art .ak-narration {
+  background: rgba(5, 9, 14, 0.96);
+  border-color: rgba(242, 169, 59, 0.48);
+  box-shadow: 0 0.85rem 2.2rem rgba(0, 0, 0, 0.54), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  color: var(--ak-text);
+  font-weight: 720;
+  text-shadow: 0 0.1rem 0.22rem rgba(0, 0, 0, 0.58);
 }
 
 .ak-dialogue p {
@@ -1188,9 +1199,12 @@
 
   .ak-runtime-playthrough .ak-scene.has-art .ak-dialogue,
   .ak-runtime-playthrough .ak-scene.has-art .ak-narration {
-    background: rgba(3, 8, 13, 0.92);
     font-size: 0.9rem;
     line-height: 1.28;
+  }
+
+  .ak-runtime-playthrough .ak-scene.has-art .ak-narration {
+    background: rgba(5, 9, 14, 0.96);
   }
 
   .ak-runtime-playthrough .ak-dialogue-advance {

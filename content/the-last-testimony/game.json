@@ -328,8 +328,22 @@
       "aspectRatio": "16:9",
       "targetDeviceUsage": "mobile landscape courtroom stage",
       "url": "/story-assets/last-testimony/courtroom-predawn.png",
-      "linkedSceneIds": ["rain-at-the-courthouse", "cold_open_verdict_before_dawn"],
+      "linkedSceneIds": ["cold_open_verdict_before_dawn"],
       "linkedCharacterIds": ["mara_vey", "judge_hale"],
+      "status": "generated"
+    },
+    {
+      "id": "bg_courthouse_rain_arrival",
+      "type": "background",
+      "title": "Rain at the Courthouse",
+      "description": "Predawn courthouse steps under heavy rain and blue security lights.",
+      "prompt": "Rainy courthouse steps before dawn, wet stone reflecting blue security lights and warm doorway lamps, noir legal thriller, 16:9, no text.",
+      "negativePrompt": "readable sign, logo, watermark, people blocking the lower-left dialogue area",
+      "aspectRatio": "16:9",
+      "targetDeviceUsage": "investigation arrival scene",
+      "url": "/story-assets/last-testimony/courthouse-rain-arrival.png",
+      "linkedSceneIds": ["rain-at-the-courthouse"],
+      "linkedCharacterIds": ["mara_vey"],
       "status": "generated"
     },
     {
@@ -749,7 +763,7 @@
       "title": "Rain at the Courthouse",
       "purpose": "Set noir pressure and start investigation.",
       "synopsis": "Mara arrives before dawn with one final testimony to break.",
-      "location": "predawn_courtroom",
+      "location": "courthouse_steps",
       "camera": "wide courthouse steps into courtroom dissolve",
       "background": "Stone steps reflecting blue security lights and late rain.",
       "backgroundImage": "",
@@ -757,8 +771,8 @@
       "musicMood": "low strings",
       "soundMood": "rain and paper shuffling",
       "transition": "fade-in",
-      "layoutNotes": { "mobileLandscape": "16:9 courtroom stage with case title top left.", "mobilePortrait": "Stack courtroom frame and dialogue.", "tablet": "Stage with case rail.", "desktop": "Large stage and metadata panels." },
-      "assetIds": ["bg_courtroom_predawn_rain"],
+      "layoutNotes": { "mobileLandscape": "16:9 rain arrival stage with case title top left.", "mobilePortrait": "Stack rain arrival frame and dialogue.", "tablet": "Stage with case rail.", "desktop": "Large exterior stage and metadata panels." },
+      "assetIds": ["bg_courthouse_rain_arrival"],
       "mood": ["measured", "uneasy"],
       "blocks": [
         { "type": "narration", "animation": "fade-in", "text": "By morning, the trial has one witness left and one truth too many." },

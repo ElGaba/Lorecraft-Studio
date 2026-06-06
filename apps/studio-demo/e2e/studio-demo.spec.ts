@@ -227,6 +227,21 @@ test("the last testimony launches as a dedicated chapter playthrough", async ({ 
   await expect(page.getByRole("button", { name: "Cite the weather report and ask once more" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Accuse Lyra without proof" })).toBeVisible();
 
+  await page.getByRole("button", { name: "Cite the weather report and ask once more" }).click();
+  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Scene background: Rain at the Courthouse" })).toHaveAttribute(
+    "src",
+    /courthouse-rain-arrival\.png/
+  );
+  const rainNarration = page.getByText("By morning, the trial has one witness left and one truth too many.", { exact: true });
+  await expect(rainNarration).toBeVisible();
+  const narrationPanelAlpha = await rainNarration.evaluate((element) => {
+    const colorMatch = getComputedStyle(element).backgroundColor.match(/rgba?\(([^)]+)\)/);
+    const channels = colorMatch?.[1]?.split(",").map((channel) => Number.parseFloat(channel.trim())) ?? [];
+    return channels[3] ?? 1;
+  });
+  expect(narrationPanelAlpha).toBeGreaterThanOrEqual(0.95);
+
   await page.getByRole("button", { name: "Exit Playthrough" }).click();
   await expect(page.getByRole("heading", { name: "Lorecraft Studio" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Studio" })).toBeVisible();
