@@ -365,6 +365,12 @@
   filter: brightness(1.06);
 }
 
+.ak-hook-actions button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.42) brightness(0.58);
+  opacity: 0.72;
+}
+
 .ak-dialogue-advance {
   align-self: end;
   box-shadow: 0 0.7rem 1.3rem rgba(0, 0, 0, 0.28);
@@ -403,6 +409,75 @@
 
 .ak-scene.has-art .ak-hook-actions {
   margin-top: 0;
+}
+
+.ak-cross-exam-module {
+  display: grid;
+  gap: 0.62rem;
+}
+
+.ak-statement-select,
+.ak-evidence-select {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.ak-statement-select button,
+.ak-evidence-select button {
+  appearance: none;
+  background: rgba(3, 8, 13, 0.78);
+  border: 1px solid rgba(91, 211, 223, 0.22);
+  color: var(--ak-text);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1.28;
+  min-width: 0;
+  padding: 0.55rem 0.62rem;
+  text-align: left;
+}
+
+.ak-statement-select button {
+  border-left: 4px solid rgba(242, 169, 59, 0.75);
+}
+
+.ak-evidence-select > div {
+  display: grid;
+  gap: 0.48rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+}
+
+.ak-evidence-select button {
+  align-items: center;
+  display: grid;
+  gap: 0.38rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-items: start;
+}
+
+.ak-evidence-select img {
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  object-fit: cover;
+  width: min(4.8rem, 24vw);
+}
+
+.ak-evidence-select strong {
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.ak-statement-select button.is-selected,
+.ak-evidence-select button.is-selected {
+  background: linear-gradient(180deg, rgba(15, 42, 49, 0.95), rgba(5, 16, 20, 0.95));
+  border-color: rgba(91, 211, 223, 0.8);
+  box-shadow: 0 0 0 1px rgba(91, 211, 223, 0.16), 0 0.6rem 1.5rem rgba(91, 211, 223, 0.1);
+}
+
+.ak-selected-evidence {
+  color: #f8ead3;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin: -0.12rem 0 0;
 }
 
 .ak-hook-header {

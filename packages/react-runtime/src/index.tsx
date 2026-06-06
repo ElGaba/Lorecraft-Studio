@@ -195,19 +195,44 @@ function TargetLabel({ target }: { target: GameplayHook["successTarget"] }) {
   );
 }
 
+function lastDialogueBeforeHook(scene: SceneDefinition) {
+  const hookIndex = scene.blocks.findIndex((block) => block.type === "gameplay_hook");
+  const searchBlocks = hookIndex >= 0 ? scene.blocks.slice(0, hookIndex) : scene.blocks;
+  for (let index = searchBlocks.length - 1; index >= 0; index -= 1) {
+    const block = searchBlocks[index];
+    if (block.type === "dialogue") {
+      return block.text;
+    }
+  }
+  return "";
+}
+
 function GameplayHookPanel({
   hook,
-  onResolve
+  onResolve,
+  statement,
+  evidenceItems,
+  assets
 }: {
   hook: GameplayHook;
   onResolve: (hookId: string, outcome: "success" | "failure") => void;
+  statement?: string;
+  evidenceItems?: ItemDefinition[];
+  assets?: Map<string, AssetDefinition>;
 }) {
+  const [statementSelected, setStatementSelected] = useState(false);
+  const [selectedEvidenceId, setSelectedEvidenceId] = useState("");
   const isCourtroomHook = hook.type === "evidence_presentation" || hook.type === "contradiction";
   const hookLabel = isCourtroomHook ? "Cross-Examination" : "Gameplay Hook";
   const hookTitle = isCourtroomHook ? "Find the contradiction" : hook.id;
   const hookPrompt = isCourtroomHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : "";
   const successLabel = isCourtroomHook ? "Present Evidence" : "Simulate Success";
   const failureLabel = isCourtroomHook ? "Press Witness" : "Simulate Failure";
+  const selectedEvidence = evidenceItems?.find((item) => item.id === selectedEvidenceId);
+  const canPresent = !isCourtroomHook || (statementSelected && Boolean(selectedEvidence));
+  const requiredAssetIds = hook.assetRequirements ?? [];
+  const evidenceMatches = selectedEvidence?.imageAssetId ? requiredAssetIds.includes(selectedEvidence.imageAssetId) : false;
+  const presentOutcome = !isCourtroomHook || requiredAssetIds.length === 0 || evidenceMatches ? "success" : "failure";
 
   return (
     <section className="ak-hook" aria-label={`Gameplay hook ${hook.id}`}>
@@ -221,8 +246,47 @@ function GameplayHookPanel({
 
       {hookPrompt && <p className="ak-hook-prompt">{hookPrompt}</p>}
 
+      {isCourtroomHook && (
+        <div className="ak-cross-exam-module">
+          <div className="ak-statement-select">
+            <span className="ak-section-label">Witness Statement</span>
+            <button
+              type="button"
+              aria-pressed={statementSelected}
+              className={statementSelected ? "is-selected" : ""}
+              onClick={() => setStatementSelected(true)}
+            >
+              {statement || hook.successCondition || "Select the contradicted statement."}
+            </button>
+          </div>
+
+          <div className="ak-evidence-select">
+            <span className="ak-section-label">Select Evidence</span>
+            <div>
+              {evidenceItems?.map((item) => {
+                const imageUrl = item.imageAssetId ? assets?.get(item.imageAssetId)?.url : "";
+                return (
+                  <button
+                    type="button"
+                    key={item.id}
+                    aria-pressed={selectedEvidenceId === item.id}
+                    className={selectedEvidenceId === item.id ? "is-selected" : ""}
+                    onClick={() => setSelectedEvidenceId(item.id)}
+                  >
+                    {imageUrl && <img src={imageUrl} alt="" />}
+                    <strong>{item.name}</strong>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {selectedEvidence && <p className="ak-selected-evidence">Selected Evidence: {selectedEvidence.name}</p>}
+        </div>
+      )}
+
       <div className="ak-hook-actions">
-        <button type="button" onClick={() => onResolve(hook.id, "success")}>
+        <button type="button" disabled={!canPresent} onClick={() => onResolve(hook.id, presentOutcome)}>
           {successLabel}
         </button>
         <button type="button" className="ak-danger" onClick={() => onResolve(hook.id, "failure")}>
@@ -368,9 +432,13 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
         ? [activeStoryBlock]
         : []
     : scene.blocks;
-  const visibleChoices = isArtScriptComplete ? choices : [];
   const visibleHooks = isArtScriptComplete ? hooks : [];
+  const visibleChoices = isArtScriptComplete && (!isArtScene || visibleHooks.length === 0) ? choices : [];
   const advanceLabel = safeScriptCursor < artStoryBlocks.length - 1 ? "Advance testimony" : "Start cross-examination";
+  const courtroomStatement = lastDialogueBeforeHook(scene);
+  const evidenceItems = state.inventory
+    .map((itemId) => items.get(itemId))
+    .filter((item): item is ItemDefinition => item !== undefined && item.kind === "evidence");
 
   useEffect(() => {
     setScriptCursor(0);
@@ -445,7 +513,16 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
                 {visibleBlocks.map((block, index) => {
                   const hook = hookForBlock(block);
                   return block.type === "gameplay_hook" ? (
-                    hook ? <GameplayHookPanel key={`${hook.id}-${index}`} hook={hook} onResolve={handleHook} /> : null
+                    hook ? (
+                      <GameplayHookPanel
+                        key={`${hook.id}-${index}`}
+                        hook={hook}
+                        onResolve={handleHook}
+                        statement={courtroomStatement}
+                        evidenceItems={evidenceItems}
+                        assets={assets}
+                      />
+                    ) : null
                   ) : (
                     <SceneBlock key={`${block.type}-${index}`} block={block} characters={characters} />
                   );

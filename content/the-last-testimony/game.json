@@ -425,9 +425,9 @@
       "module": "future-contradiction-presentation-module",
       "narrativePurpose": "Mara must prove the witness's final answer cannot be true.",
       "gameplayPurpose": "Select testimony and present evidence.",
-      "expectedPlayerAction": "Select the window statement and present the crime scene photo.",
+      "expectedPlayerAction": "Select the basement denial and present the elevator keycard.",
       "requiredInputs": ["testimony_statement", "evidence_selection"],
-      "successCondition": "Statement four plus crime scene photo.",
+      "successCondition": "Basement denial plus elevator keycard.",
       "failureCondition": "Wrong statement or irrelevant evidence.",
       "successTarget": { "type": "scene", "id": "witness-cracks" },
       "failureTarget": { "type": "scene", "id": "objection-sustained" },
@@ -437,8 +437,8 @@
       "mobileGestureNotes": "Tap statement, tap evidence, press present.",
       "futureModuleType": "contradiction",
       "implementationNotes": "Core contradiction module candidate.",
-      "assetRequirements": ["asset_window_photo", "asset_weather_report"],
-      "agentPrompt": "Design contradiction gameplay for an impossible open window testimony.",
+      "assetRequirements": ["asset_keycard"],
+      "agentPrompt": "Design contradiction gameplay for an impossible basement elevator denial.",
       "notes": "Primary evidence hook."
     },
     {
