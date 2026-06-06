@@ -117,6 +117,7 @@ describe("demo content library", () => {
 
     const testimony = parsedGameById("the-last-testimony");
     let testimonyState = createInitialState(testimony);
+    testimonyState = resolveGameplayHook(testimonyState, "witness-pressure-timed-choice", "success");
     testimonyState = choose(testimonyState, "inspect-basement-log");
     testimonyState = choose(testimonyState, "enter-court-with-keycard");
     testimonyState = resolveGameplayHook(testimonyState, "present-contradiction", "success");
@@ -137,6 +138,7 @@ describe("demo content library", () => {
     const testimony = parsedGameById("the-last-testimony");
     let testimonyState = createInitialState(testimony);
 
+    testimonyState = resolveGameplayHook(testimonyState, "witness-pressure-timed-choice", "success");
     testimonyState = choose(testimonyState, "inspect-basement-log");
     testimonyState = choose(testimonyState, "enter-court-with-keycard");
     testimonyState = resolveGameplayHook(testimonyState, "present-contradiction", "success");

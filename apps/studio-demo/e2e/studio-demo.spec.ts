@@ -1,23 +1,59 @@
 import { expect, test, type Page } from "@playwright/test";
 
+async function visibleButton(page: Page, buttonName: string) {
+  const buttons = page.locator("button");
+  const count = await buttons.count();
+  for (let index = 0; index < count; index += 1) {
+    const button = buttons.nth(index);
+    const text = (await button.textContent())?.trim();
+    if (text === buttonName && await button.isVisible()) {
+      return button;
+    }
+  }
+
+  return undefined;
+}
+
+async function clickVisibleButton(page: Page, buttonName: string) {
+  const button = await visibleButton(page, buttonName);
+  if (button) {
+    await button.click();
+    return;
+  }
+
+  await page.getByRole("button", { name: buttonName }).click();
+}
+
 async function revealChoice(page: Page, choiceName: string) {
   const choice = page.getByRole("button", { name: choiceName });
+  const flowButtons = [
+    "Begin final testimony",
+    "Continue",
+    "Choose courtroom tone",
+    "Ask for one more question",
+    "Choose your next move",
+    "Review choices",
+    "Advance testimony",
+    "Start pressure choice",
+    "Simulate Success"
+  ];
 
-  for (let step = 0; step < 6; step += 1) {
-    if (await choice.isVisible()) {
+  for (let step = 0; step < 12; step += 1) {
+    if (await visibleButton(page, choiceName)) {
       return;
     }
 
-    const reviewChoices = page.getByRole("button", { name: "Review choices" });
-    if (await reviewChoices.isVisible()) {
-      await reviewChoices.click();
-      continue;
+    let acted = false;
+    for (const buttonName of flowButtons) {
+      if (await visibleButton(page, buttonName)) {
+        await clickVisibleButton(page, buttonName);
+        acted = true;
+        break;
+      }
     }
 
-    const advanceTestimony = page.getByRole("button", { name: "Advance testimony" });
-    if (await advanceTestimony.isVisible()) {
-      await advanceTestimony.click();
-      continue;
+    if (!acted) {
+      await page.waitForTimeout(100);
     }
   }
 
@@ -28,9 +64,19 @@ async function revealOpeningChoices(page: Page) {
   await revealChoice(page, "Inspect the basement elevator log");
 }
 
+async function enterBasementLog(page: Page) {
+  await revealChoice(page, "Inspect the basement elevator log");
+  await clickVisibleButton(page, "Inspect the basement elevator log");
+}
+
 async function inspectBasementLog(page: Page) {
-  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
-  await page.getByRole("button", { name: "Start inspection" }).click();
+  await enterBasementLog(page);
+  const inspectLog = page.getByRole("button", { name: "Inspect the elevator log" });
+  if (await inspectLog.isVisible()) {
+    await inspectLog.click();
+  } else {
+    await page.getByRole("button", { name: "Start inspection" }).click();
+  }
   await page.getByRole("button", { name: "Select the 11:42 row" }).click();
 }
 
@@ -104,7 +150,7 @@ test("studio demo loads prototypes, switches previews, and plays through hook zo
   await expect(page.getByRole("heading", { name: "Safe Transfer" })).toBeVisible();
 
   await page.getByLabel("Project").selectOption("the-last-testimony");
-  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The Verdict Before Dawn" })).toBeVisible();
   await page.getByLabel("Project").selectOption("the-clocktower-riddle");
   await expect(page.getByRole("heading", { name: "Moonlit Square" })).toBeVisible();
 
@@ -128,15 +174,25 @@ test("the last testimony launches as a dedicated chapter playthrough", async ({ 
   await expect(page.getByLabel("Project")).toHaveValue("the-last-testimony");
   await page.getByRole("button", { name: "Play Chapter" }).click();
 
-  await expect(page.getByRole("heading", { name: "The Last Testimony" })).toBeVisible();
+  const briefing = page.getByLabel("Case briefing");
+  await expect(briefing.getByRole("heading", { name: "The Last Testimony" })).toBeVisible();
+  await expect(briefing.getByRole("img", { name: "Mara Vey" })).toBeVisible();
+  await expect(briefing.getByRole("img", { name: "Elias Vorn" })).toBeVisible();
+  await expect(briefing.getByRole("img", { name: "Lyra Mont" })).toBeVisible();
+  await expect(page.getByText("Elias Vorn will be convicted at dawn unless Mara breaks the last witness account before the judge ends the trial.")).toBeVisible();
+  await expect(page.getByText("You play Mara Vey. Read the testimony, inspect the physical record, and present the contradiction hidden in Lyra's story.")).toBeVisible();
+  await expect(page.getByText("Opening move: prove the window was staged.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Begin final testimony" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).not.toBeVisible();
+
+  await expect(page.locator(".chapter-title-lockup").getByRole("heading", { name: "The Last Testimony" })).toBeVisible();
   await expect(page.getByText("Chapter 1 Playthrough", { exact: true })).toBeVisible();
-  await expect(page.getByText("Objective", { exact: true })).toBeVisible();
-  await expect(page.getByText("Progress", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Current chapter objective")).not.toBeVisible();
+  await expect(page.getByText("Progress", { exact: true })).not.toBeVisible();
   await expect(page.getByRole("button", { name: "Enter Fullscreen" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Restart Chapter" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Exit Playthrough" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Studio" })).not.toBeVisible();
-  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
   await expect(page.getByLabel("The Last Testimony game viewport")).toBeVisible();
   await expect(page.getByLabel("Inventory and evidence")).not.toBeVisible();
   await expect(page.getByLabel("Playthrough evidence access")).not.toBeVisible();
@@ -146,6 +202,25 @@ test("the last testimony launches as a dedicated chapter playthrough", async ({ 
   await expect.poll(() =>
     page.evaluate(() => (window as Window & typeof globalThis & { __fullscreenTarget?: string }).__fullscreenTarget)
   ).toBe("The Last Testimony game viewport");
+
+  await page.getByRole("button", { name: "Begin final testimony" }).click();
+  await expect(page.getByLabel("Current chapter objective").getByText("Objective", { exact: true })).toBeVisible();
+  await expect(page.getByText("Progress", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The Verdict Before Dawn" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Judge Arden Hale" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Mara Vey" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Advance testimony" })).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Simulate Success" })).not.toBeVisible();
+  await expect(page.getByText("Camera:")).not.toBeVisible();
+  await expect(page.getByText("Prompt ready")).not.toBeVisible();
+
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Choose courtroom tone" }).click();
+  await expect(page.getByText("Court Pressure", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "One More Question" })).toBeVisible();
+  await expect(page.getByText("witness-pressure-timed-choice")).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Ask for one more question" })).toBeVisible();
 
   await page.getByRole("button", { name: "Exit Playthrough" }).click();
   await expect(page.getByRole("heading", { name: "Lorecraft Studio" })).toBeVisible();
@@ -190,8 +265,7 @@ test("the last testimony chapter playthrough resumes local progress until restar
   await page.goto("/");
 
   await page.getByRole("button", { name: "Play Chapter" }).click();
-  await revealOpeningChoices(page);
-  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
+  await enterBasementLog(page);
   await expect(page.getByRole("heading", { name: "Basement Log" })).toBeVisible();
 
   await page.getByRole("button", { name: "Exit Playthrough" }).click();
@@ -201,12 +275,12 @@ test("the last testimony chapter playthrough resumes local progress until restar
   await expect(page.getByText("Saved Progress", { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "Restart Chapter" }).click();
-  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
+  await expect(page.getByLabel("Case briefing").getByRole("heading", { name: "The Last Testimony" })).toBeVisible();
 
   await page.getByRole("button", { name: "Exit Playthrough" }).click();
   await page.getByRole("button", { name: "Play Chapter" }).click();
 
-  await expect(page.getByRole("heading", { name: "Rain at the Courthouse" })).toBeVisible();
+  await expect(page.getByLabel("Case briefing").getByRole("heading", { name: "The Last Testimony" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Basement Log" })).not.toBeVisible();
 });
 
@@ -285,12 +359,11 @@ test("the last testimony supports inspection and chain-of-custody gameplay modes
   await page.getByRole("button", { name: "Present Evidence" }).click();
 
   await expect(page.getByRole("heading", { name: "Witness Cracks" })).toBeVisible();
-  await page.getByRole("button", { name: "Advance testimony" }).click();
-  await page.getByRole("button", { name: "Review choices" }).click();
+  await revealChoice(page, "Reveal the window contradiction");
   await page.getByRole("button", { name: "Reveal the window contradiction" }).click();
 
   await expect(page.getByRole("heading", { name: "Rain on the Inside" })).toBeVisible();
-  await page.getByRole("button", { name: "Start inspection" }).click();
+  await page.getByRole("button", { name: "Inspect the crime scene photo" }).click();
   await expect(page.getByRole("heading", { name: "Photo Inspection" })).toBeVisible();
   await expect(page.getByText("The Stain Beneath the Sill", { exact: true })).toBeVisible();
   await expect(page.getByText("Tap the narrow stain below the latch.", { exact: true })).toBeVisible();

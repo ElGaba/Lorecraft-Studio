@@ -175,6 +175,31 @@
   padding-top: clamp(4.55rem, 8vh, 5.7rem);
 }
 
+.ak-runtime-playthrough .ak-scene.has-art .ak-background,
+.ak-runtime-playthrough .ak-scene.has-art .ak-cinematic-notes,
+.ak-runtime-playthrough .ak-scene.has-art .ak-mood-list,
+.ak-runtime-playthrough .ak-performance,
+.ak-runtime-playthrough .ak-portrait-card span {
+  display: none;
+}
+
+.ak-runtime-playthrough .ak-scene.has-art .ak-scene-header {
+  background: none;
+  margin: 0;
+  max-width: min(32rem, 42vw);
+  padding: 0;
+  pointer-events: none;
+  text-shadow: 0 0.12rem 0.8rem rgba(0, 0, 0, 0.74);
+}
+
+.ak-runtime-playthrough .ak-scene.has-art .ak-scene-header .ak-section-label {
+  display: none;
+}
+
+.ak-runtime-playthrough .ak-scene.has-art .ak-scene-header h2 {
+  font-size: clamp(1.35rem, 2.4vw, 2.35rem);
+}
+
 .ak-scene.has-art::-webkit-scrollbar {
   width: 0.42rem;
 }
@@ -385,6 +410,31 @@
   z-index: 2;
 }
 
+.ak-choice-heading {
+  background: rgba(3, 9, 14, 0.78);
+  border: 1px solid rgba(91, 211, 223, 0.24);
+  flex: 0 0 100%;
+  padding: 0.58rem 0.68rem;
+}
+
+.ak-choice-heading strong {
+  color: var(--ak-text);
+  display: block;
+  font-size: 0.94rem;
+  line-height: 1.15;
+  margin-top: 0.12rem;
+}
+
+.ak-runtime-playthrough .ak-choice-list {
+  align-items: stretch;
+  max-width: min(58rem, calc(100% - 1rem));
+}
+
+.ak-runtime-playthrough .ak-choice-list button {
+  box-shadow: 0 0.8rem 1.6rem rgba(0, 0, 0, 0.28);
+  text-align: left;
+}
+
 .ak-choice-list button,
 .ak-hook-actions button,
 .ak-ending button,
@@ -411,6 +461,40 @@
   cursor: not-allowed;
   filter: grayscale(0.42) brightness(0.58);
   opacity: 0.72;
+}
+
+.ak-pressure-module {
+  background:
+    linear-gradient(180deg, rgba(7, 12, 18, 0.94), rgba(4, 8, 13, 0.92));
+  border: 1px solid rgba(242, 169, 59, 0.32);
+  display: grid;
+  gap: 0.38rem;
+  padding: 0.68rem 0.78rem;
+}
+
+.ak-pressure-module strong {
+  color: var(--ak-text);
+  font-size: 1rem;
+  line-height: 1.18;
+}
+
+.ak-pressure-module p {
+  color: var(--ak-muted);
+  font-size: 0.86rem;
+  line-height: 1.32;
+  margin: 0;
+}
+
+.ak-pressure-module > div {
+  display: grid;
+  gap: 0.28rem;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 0.18rem;
+}
+
+.ak-pressure-module > div span {
+  background: linear-gradient(90deg, var(--ak-accent), var(--ak-warm));
+  height: 0.24rem;
 }
 
 .ak-dialogue-advance {

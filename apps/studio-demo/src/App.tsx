@@ -397,6 +397,7 @@ function ScenePreview({ scene }: { scene: SceneDefinition }) {
 function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: () => void }) {
   const gameViewportRef = useRef<HTMLDivElement>(null);
   const [restoredProgress, setRestoredProgress] = useState(() => loadChapterProgress(game));
+  const [showBriefing, setShowBriefing] = useState(() => !restoredProgress);
   const [runtimeState, setRuntimeState] = useState<RuntimeState | undefined>(() => restoredProgress?.state);
   const [saveStatusAt, setSaveStatusAt] = useState(restoredProgress?.savedAt);
   const [restartKey, setRestartKey] = useState(0);
@@ -405,6 +406,8 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
   const chapterProgress = currentSceneIndex >= 0 ? Math.round(((currentSceneIndex + 1) / game.scenes.length) * 100) : 0;
   const objective = runtimeState?.endingId
     ? "Review the chapter outcome."
+    : showBriefing
+      ? "Read the case and begin the final testimony."
     : currentScene?.purpose ?? currentScene?.synopsis ?? "Advance the chapter.";
   const evidenceCount = runtimeState?.inventory.length ?? game.items.filter((item) => item.initiallyOwned).length;
   const hasSavedProgress = Boolean(saveStatusAt && runtimeState && shouldPersistChapterProgress(runtimeState));
@@ -417,6 +420,7 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
   function restartChapter() {
     clearChapterProgress(game);
     setRestoredProgress(undefined);
+    setShowBriefing(true);
     setRuntimeState(undefined);
     setSaveStatusAt(undefined);
     setRestartKey((current) => current + 1);
@@ -432,7 +436,11 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
     <main className="chapter-playthrough-shell">
       <section
         ref={gameViewportRef}
-        className={["chapter-game-viewport", hasSavedProgress ? "has-save-status" : ""].filter(Boolean).join(" ")}
+        className={[
+          "chapter-game-viewport",
+          hasSavedProgress ? "has-save-status" : "",
+          showBriefing ? "is-briefing" : ""
+        ].filter(Boolean).join(" ")}
         aria-label="The Last Testimony game viewport"
       >
         <header className="chapter-hud" aria-label="Chapter playthrough controls">
@@ -442,27 +450,29 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
             <p>Chapter 1 Playthrough</p>
           </div>
 
-          <div className="chapter-hud-panel" aria-label="Current chapter objective">
-            <span>Objective</span>
-            <strong>{objective}</strong>
-          </div>
-
-          <div className="chapter-progress" aria-label="Chapter progress">
-            <span>Progress</span>
-            <strong>{chapterProgress}%</strong>
-            <div aria-hidden="true"><span style={{ width: `${chapterProgress}%` }} /></div>
-          </div>
-
-          {hasSavedProgress && (
-            <div className="chapter-hud-panel chapter-save-status" aria-label="Local save status">
-              <span>Saved Progress</span>
-              <strong>{currentScene?.title ?? "Chapter progress"}</strong>
+          <div className="chapter-hud-status" aria-label="Chapter state">
+            <div className="chapter-hud-panel" aria-label="Current chapter objective">
+              <span>Objective</span>
+              <strong>{objective}</strong>
             </div>
-          )}
 
-          <div className="chapter-record-pill" aria-label="Court Record count">
-            <span>Court Record</span>
-            <strong>{evidenceCount}</strong>
+            <div className="chapter-progress" aria-label="Chapter progress">
+              <span>Progress</span>
+              <strong>{chapterProgress}%</strong>
+              <div aria-hidden="true"><span style={{ width: `${chapterProgress}%` }} /></div>
+            </div>
+
+            {hasSavedProgress && (
+              <div className="chapter-hud-panel chapter-save-status" aria-label="Local save status">
+                <span>Saved Progress</span>
+                <strong>{currentScene?.title ?? "Chapter progress"}</strong>
+              </div>
+            )}
+
+            <div className="chapter-record-pill" aria-label="Court Record count">
+              <span>Court Record</span>
+              <strong>{evidenceCount}</strong>
+            </div>
           </div>
 
           <div className="chapter-hud-actions">
@@ -482,16 +492,91 @@ function ChapterPlaythrough({ game, onExit }: { game: GameDefinition; onExit: ()
         </header>
 
         <div className="chapter-stage">
-          <AdventureRuntime
-            key={`${game.metadata.id}-${restartKey}`}
-            game={game}
-            initialState={restoredProgress?.state}
-            onStateChange={handleRuntimeStateChange}
-            presentation="playthrough"
-          />
+          {showBriefing ? (
+            <ChapterBriefing game={game} onBegin={() => setShowBriefing(false)} />
+          ) : (
+            <AdventureRuntime
+              key={`${game.metadata.id}-${restartKey}`}
+              game={game}
+              initialState={restoredProgress?.state}
+              onStateChange={handleRuntimeStateChange}
+              presentation="playthrough"
+            />
+          )}
         </div>
       </section>
     </main>
+  );
+}
+
+function ChapterBriefing({ game, onBegin }: { game: GameDefinition; onBegin: () => void }) {
+  const startingEvidence = game.items.filter((item) => item.initiallyOwned && item.kind === "evidence");
+  const assets = new Map(game.assets.map((asset) => [asset.id, asset]));
+  const characterById = new Map(game.characters.map((character) => [character.id, character]));
+  const cast = [
+    { id: "mara_vey", role: "Defense", className: "is-mara" },
+    { id: "elias_vorn", role: "Accused", className: "is-elias" },
+    { id: "lyra_mont", role: "Witness", className: "is-lyra" }
+  ]
+    .map((entry) => {
+      const character = characterById.get(entry.id);
+      return character?.portraitUrl ? { ...entry, character } : undefined;
+    })
+    .filter((entry): entry is { id: string; role: string; className: string; character: CharacterDefinition } => Boolean(entry));
+
+  return (
+    <section className="chapter-briefing" aria-label="Case briefing">
+      <img className="chapter-briefing-art" src="/story-assets/last-testimony/courtroom-predawn.png" alt="" />
+      <div className="chapter-briefing-cast" aria-label="Opening cast">
+        {cast.map((entry) => (
+          <figure key={entry.id} className={entry.className}>
+            <img src={entry.character.portraitUrl} alt={entry.character.displayName} />
+            <figcaption>
+              <span>{entry.role}</span>
+              <strong>{entry.character.displayName}</strong>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      {startingEvidence.length > 0 && (
+        <div className="chapter-briefing-record" aria-label="Opening court record">
+          <span>Opening Court Record</span>
+          <div>
+            {startingEvidence.map((item) => {
+              const asset = item.imageAssetId ? assets.get(item.imageAssetId) : undefined;
+              return (
+                <strong key={item.id}>
+                  {asset?.url && <img src={asset.url} alt="" />}
+                  {item.name}
+                </strong>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <div className="chapter-briefing-panel">
+        <span className="chapter-briefing-kicker">Predawn Courtroom / Final Testimony</span>
+        <h2>The Last Testimony</h2>
+        <p className="chapter-briefing-lede">
+          Elias Vorn will be convicted at dawn unless Mara breaks the last witness account before the judge ends the trial.
+        </p>
+        <p>
+          You play Mara Vey. Read the testimony, inspect the physical record, and present the contradiction hidden in Lyra's story.
+        </p>
+
+        <div className="chapter-briefing-directive">
+          <BookOpen aria-hidden="true" />
+          <strong>Opening move: prove the window was staged.</strong>
+        </div>
+
+        <button type="button" onClick={onBegin}>
+          <PlayIcon aria-hidden="true" />
+          <span>Begin final testimony</span>
+        </button>
+      </div>
+    </section>
   );
 }
 

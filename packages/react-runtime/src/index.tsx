@@ -291,10 +291,19 @@ function isCourtroomHook(hook: GameplayHook) {
   return hook.type === "evidence_presentation" || hook.type === "contradiction";
 }
 
-function startInteractionLabel(hooks: GameplayHook[]) {
+function startInteractionLabel(hooks: GameplayHook[], isPlaythrough = false) {
   const firstHook = hooks[0];
   if (!firstHook) {
-    return "Review choices";
+    return isPlaythrough ? "Choose your next move" : "Review choices";
+  }
+  if (firstHook.id === "elevator-log-parse") {
+    return "Inspect the elevator log";
+  }
+  if (firstHook.id === "inspect_crime_scene_photo_detail") {
+    return "Inspect the crime scene photo";
+  }
+  if (firstHook.id === "closing-argument-build") {
+    return "Build the closing argument";
   }
   if (isCourtroomHook(firstHook)) {
     return "Start cross-examination";
@@ -303,12 +312,42 @@ function startInteractionLabel(hooks: GameplayHook[]) {
     return "Start inspection";
   }
   if (firstHook.type === "timed_choice") {
-    return "Start pressure choice";
+    return isPlaythrough ? "Choose courtroom tone" : "Start pressure choice";
   }
   if (firstHook.type === "puzzle") {
-    return "Start puzzle";
+    return isPlaythrough ? "Build evidence timeline" : "Start puzzle";
   }
-  return "Start gameplay";
+  return isPlaythrough ? "Take action" : "Start gameplay";
+}
+
+function continueStoryLabel(isPlaythrough: boolean) {
+  return isPlaythrough ? "Continue" : "Advance testimony";
+}
+
+function hookSuccessLabel(hook: GameplayHook, isPlaythrough: boolean) {
+  if (!isPlaythrough) {
+    return "Simulate Success";
+  }
+  if (hook.id === "witness-pressure-timed-choice") {
+    return "Ask for one more question";
+  }
+  if (hook.id === "receipt-timeline-build") {
+    return "Assemble the timestamp order";
+  }
+  return "Confirm the read";
+}
+
+function hookFailureLabel(hook: GameplayHook, isPlaythrough: boolean) {
+  if (!isPlaythrough) {
+    return "Simulate Failure";
+  }
+  if (hook.id === "witness-pressure-timed-choice") {
+    return "Push too hard";
+  }
+  if (hook.id === "receipt-timeline-build") {
+    return "Force the timeline";
+  }
+  return "Take the wrong read";
 }
 
 function inspectionSuccessLabel(hook: GameplayHook) {
@@ -338,13 +377,15 @@ function GameplayHookPanel({
   onResolve,
   statements,
   evidenceItems,
-  assets
+  assets,
+  isPlaythrough = false
 }: {
   hook: GameplayHook;
   onResolve: (hookId: string, outcome: "success" | "failure") => void;
   statements?: TestimonyStatement[];
   evidenceItems?: ItemDefinition[];
   assets?: Map<string, AssetDefinition>;
+  isPlaythrough?: boolean;
 }) {
   const testimonyStatements = statements?.length
     ? statements
@@ -355,11 +396,21 @@ function GameplayHookPanel({
   const [selectedEvidenceId, setSelectedEvidenceId] = useState("");
   const isCrossExam = isCourtroomHook(hook);
   const isInspectionHook = hook.type === "inspection";
-  const hookLabel = isCrossExam ? "Cross-Examination" : isInspectionHook ? "Inspection Mode" : "Gameplay Mode";
-  const hookTitle = isCrossExam ? "Find the contradiction" : isInspectionHook ? "Photo Inspection" : hook.id;
+  const hookLabel = isCrossExam
+    ? "Cross-Examination"
+    : isInspectionHook
+      ? "Inspection Mode"
+      : !isPlaythrough
+        ? "Gameplay Mode"
+        : hook.type === "timed_choice"
+        ? "Court Pressure"
+        : hook.type === "puzzle"
+          ? "Evidence Timeline"
+          : "Action";
+  const hookTitle = isCrossExam ? "Find the contradiction" : isInspectionHook ? "Photo Inspection" : isPlaythrough ? hook.title ?? hook.id : hook.id;
   const hookPrompt = isCrossExam || isInspectionHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : hook.gameplayPurpose ?? hook.narrativePurpose ?? hook.notes;
-  const successLabel = isCrossExam ? "Present Evidence" : isInspectionHook ? inspectionSuccessLabel(hook) : "Simulate Success";
-  const failureLabel = isCrossExam ? "Press Witness" : isInspectionHook ? inspectionFailureLabel(hook) : "Simulate Failure";
+  const successLabel = isCrossExam ? "Present Evidence" : isInspectionHook ? inspectionSuccessLabel(hook) : hookSuccessLabel(hook, isPlaythrough);
+  const failureLabel = isCrossExam ? "Press Witness" : isInspectionHook ? inspectionFailureLabel(hook) : hookFailureLabel(hook, isPlaythrough);
   const activeStatement = testimonyStatements[activeStatementIndex];
   const selectedEvidence = evidenceItems?.find((item) => item.id === selectedEvidenceId);
   const matchingStatementIndex = targetStatementIndex(testimonyStatements, hook);
@@ -454,6 +505,19 @@ function GameplayHookPanel({
         </div>
       )}
 
+      {hook.type === "timed_choice" && isPlaythrough && (
+        <div className="ak-pressure-module">
+          <span className="ak-section-label">Court Pressure</span>
+          <strong>Judge patience is limited.</strong>
+          <p>{hook.expectedPlayerAction ?? hook.gameplayPurpose ?? hook.narrativePurpose}</p>
+          <div aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
+      )}
+
       {isInspectionHook && (
         <div className="ak-inspection-module">
           <div className="ak-inspection-view">
@@ -513,13 +577,27 @@ function GameplayHookPanel({
   );
 }
 
-function ChoiceList({ choices, onChoose }: { choices: Choice[]; onChoose: (choiceId: string) => void }) {
+function ChoiceList({
+  choices,
+  onChoose,
+  isPlaythrough = false
+}: {
+  choices: Choice[];
+  onChoose: (choiceId: string) => void;
+  isPlaythrough?: boolean;
+}) {
   if (choices.length === 0) {
     return null;
   }
 
   return (
     <div className="ak-choice-list" aria-label="Scene choices">
+      {isPlaythrough && (
+        <div className="ak-choice-heading">
+          <span className="ak-section-label">Decision</span>
+          <strong>Choose your next move</strong>
+        </div>
+      )}
       {choices.map((choice) => (
         <button type="button" key={choice.id} onClick={() => onChoose(choice.id)}>
           {choice.label}
@@ -615,6 +693,7 @@ export function AdventureRuntime({
   const characters = useMemo(() => characterMap(game.characters), [game.characters]);
   const hooks = getSceneGameplayHooks(scene, game);
   const backgroundUrl = ending ? "" : sceneBackgroundUrl(scene, game, assets);
+  const isPlaythrough = presentation === "playthrough";
   const sceneImpactLabel = !ending ? impactLabel(state) : "";
   const isArtScene = Boolean(backgroundUrl) && !ending;
   const artStoryBlocks = isArtScene
@@ -633,7 +712,7 @@ export function AdventureRuntime({
     : scene.blocks;
   const visibleHooks = isArtScriptComplete ? hooks : [];
   const visibleChoices = isArtScriptComplete && (!isArtScene || visibleHooks.length === 0) ? choices : [];
-  const advanceLabel = safeScriptCursor < artStoryBlocks.length - 1 ? "Advance testimony" : startInteractionLabel(hooks);
+  const advanceLabel = safeScriptCursor < artStoryBlocks.length - 1 ? continueStoryLabel(isPlaythrough) : startInteractionLabel(hooks, isPlaythrough);
   const testimonyStatements = testimonyStatementsBeforeHook(scene, characters);
   const evidenceItems = state.inventory
     .map((itemId) => items.get(itemId))
@@ -720,6 +799,7 @@ export function AdventureRuntime({
                         statements={testimonyStatements}
                         evidenceItems={evidenceItems}
                         assets={assets}
+                        isPlaythrough={isPlaythrough}
                       />
                     ) : null
                   ) : (
@@ -732,7 +812,7 @@ export function AdventureRuntime({
                   </button>
                 )}
               </div>
-              <ChoiceList choices={visibleChoices} onChoose={handleChoice} />
+              <ChoiceList choices={visibleChoices} onChoose={handleChoice} isPlaythrough={isPlaythrough} />
             </>
           )}
         </section>

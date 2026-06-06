@@ -6,7 +6,7 @@
     "author": "Lorecraft Studio",
     "summary": "A noir legal thriller vertical slice about a defense attorney proving that the witness saw an impossible open window."
   },
-  "startScene": "rain-at-the-courthouse",
+  "startScene": "cold_open_verdict_before_dawn",
   "variables": {
     "judgePatience": 2,
     "witnessPressure": 0,
@@ -100,7 +100,7 @@
       "motivations": "Protect the court from spectacle.",
       "visualDescription": "Older judge under high bench shadow, silver hair, folded hands.",
       "baseImagePrompt": "Severe judge in shadowed predawn courtroom, cinematic noir portrait.",
-      "portraitUrl": "",
+      "portraitUrl": "/story-assets/last-testimony/judge-hale-sprite.png",
       "emotions": ["serious", "surprised", "thinking"],
       "stances": ["seated", "leaning_forward"],
       "screenPositions": ["center-back"],
@@ -112,7 +112,7 @@
           "stanceId": "leaning_forward",
           "description": "The judge recognizes a real contradiction.",
           "imagePrompt": "Judge leaning forward in noir courtroom, alert expression, rain windows.",
-          "imageUrl": "",
+          "imageUrl": "/story-assets/last-testimony/judge-hale-sprite.png",
           "animation": "dramatic-zoom",
           "usageNotes": "Use when judge trust rises."
         }
@@ -129,7 +129,7 @@
       "motivations": "Protect the verdict and his record.",
       "visualDescription": "Tailored charcoal suit, immaculate tie, half-lit smile.",
       "baseImagePrompt": "Confident prosecutor in noir courtroom, cold dawn light, cinematic portrait.",
-      "portraitUrl": "",
+      "portraitUrl": "/story-assets/last-testimony/cassian-roe-sprite.png",
       "emotions": ["confident", "angry", "serious"],
       "stances": ["arms_behind_back", "stepping_forward"],
       "screenPositions": ["lower-right"],
@@ -141,7 +141,7 @@
           "stanceId": "stepping_forward",
           "description": "Cassian counters after the window reveal.",
           "imagePrompt": "Irritated prosecutor stepping forward in rainlit courtroom.",
-          "imageUrl": "",
+          "imageUrl": "/story-assets/last-testimony/cassian-roe-sprite.png",
           "animation": "slide-in-right",
           "usageNotes": "Use for counterattack."
         }
@@ -158,7 +158,7 @@
       "motivations": "Survive the verdict without betraying the real witness.",
       "visualDescription": "Thin man at defense table, cuffed hands still.",
       "baseImagePrompt": "Accused man at defense table in predawn noir courtroom, solemn.",
-      "portraitUrl": "",
+      "portraitUrl": "/story-assets/last-testimony/elias-vorn-sprite.png",
       "emotions": ["afraid", "thinking", "relieved"],
       "stances": ["seated", "standing"],
       "screenPositions": ["lower-left"],
@@ -170,7 +170,7 @@
           "stanceId": "standing",
           "description": "Elias hears the first crack in the case.",
           "imagePrompt": "Accused man standing in noir courtroom, dawn light, restrained relief.",
-          "imageUrl": "",
+          "imageUrl": "/story-assets/last-testimony/elias-vorn-sprite.png",
           "animation": "fade-in",
           "usageNotes": "Use for hopeful branch."
         }
@@ -187,7 +187,7 @@
       "motivations": "Tell the truth without losing his post.",
       "visualDescription": "Raincoat over courthouse uniform, ink-stained fingers.",
       "baseImagePrompt": "Nervous courthouse records clerk in dim archive, noir rainlight.",
-      "portraitUrl": "",
+      "portraitUrl": "/story-assets/last-testimony/tobin-vale-sprite.png",
       "emotions": ["afraid", "thinking", "confident"],
       "stances": ["holding_log", "pointing_to_record"],
       "screenPositions": ["center-right"],
@@ -199,7 +199,7 @@
           "stanceId": "holding_log",
           "description": "Tobin offers the elevator record.",
           "imagePrompt": "Courthouse clerk holding logbook in dim records room, noir style.",
-          "imageUrl": "",
+          "imageUrl": "/story-assets/last-testimony/tobin-vale-sprite.png",
           "animation": "slide-in-left",
           "usageNotes": "Use in investigation scenes."
         }
@@ -216,7 +216,7 @@
       "motivations": "Protect her license without letting a staged record become the verdict.",
       "visualDescription": "Short rain cape, camera bag, amber darkroom glasses pushed into silver hair.",
       "baseImagePrompt": "Noir court evidence photographer in dim courthouse photo lab, camera bag, amber safety glasses, rainlight, cinematic portrait.",
-      "portraitUrl": "",
+      "portraitUrl": "/story-assets/last-testimony/ione-marr-sprite.png",
       "emotions": ["neutral", "wary", "resolved"],
       "stances": ["holding_envelope", "checking_negative", "pointing_to_seal"],
       "screenPositions": ["center-right", "upper-left"],
@@ -228,7 +228,7 @@
           "stanceId": "pointing_to_seal",
           "description": "Ione commits to the chain-of-custody proof.",
           "imagePrompt": "Evidence photographer pointing to sealed photo envelope in noir courthouse photo lab, rainlit glass, cinematic visual novel.",
-          "imageUrl": "",
+          "imageUrl": "/story-assets/last-testimony/ione-marr-sprite.png",
           "animation": "tool-ready",
           "usageNotes": "Use when the late photo envelope enters the court record."
         }
@@ -669,7 +669,7 @@
       "requiredInputs": ["choice"],
       "successCondition": "Preserve judge patience.",
       "failureCondition": "Overreach.",
-      "successTarget": { "type": "scene", "id": "final_testimony_review" },
+      "successTarget": { "type": "scene", "id": "rain-at-the-courthouse" },
       "failureTarget": { "type": "scene", "id": "objection-sustained" },
       "uiLayoutNotes": "Two large legal tone cards.",
       "mobileGestureNotes": "Tap response.",
