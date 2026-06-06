@@ -80,6 +80,7 @@
   max-width: 46%;
   object-fit: contain;
   position: absolute;
+  transition: filter 220ms ease, opacity 220ms ease, transform 220ms ease;
 }
 
 .ak-character-sprite.is-left {
@@ -93,6 +94,18 @@
 .ak-character-sprite.is-center {
   left: 50%;
   transform: translateX(-50%);
+}
+
+.ak-character-sprite.is-active {
+  filter: drop-shadow(0 1.4rem 1.4rem rgba(0, 0, 0, 0.55)) drop-shadow(0 0 1rem rgba(91, 211, 223, 0.18));
+  opacity: 1;
+  z-index: 2;
+}
+
+.ak-character-sprite.is-muted {
+  filter: grayscale(0.16) brightness(0.58) drop-shadow(0 1.4rem 1.4rem rgba(0, 0, 0, 0.55));
+  opacity: 0.46;
+  z-index: 1;
 }
 
 .ak-scene {
@@ -211,6 +224,10 @@
   margin-top: auto;
 }
 
+.ak-scene.has-art .ak-script.is-vn-beat {
+  justify-items: stretch;
+}
+
 .ak-narration {
   color: #f8ead3;
   font-size: 1.05rem;
@@ -308,7 +325,8 @@
 
 .ak-choice-list button,
 .ak-hook-actions button,
-.ak-ending button {
+.ak-ending button,
+.ak-dialogue-advance {
   appearance: none;
   background: linear-gradient(180deg, rgba(91, 211, 223, 0.96), rgba(51, 153, 170, 0.96));
   border: 0;
@@ -322,8 +340,17 @@
 
 .ak-choice-list button:hover,
 .ak-hook-actions button:hover,
-.ak-ending button:hover {
+.ak-ending button:hover,
+.ak-dialogue-advance:hover {
   filter: brightness(1.06);
+}
+
+.ak-dialogue-advance {
+  align-self: end;
+  box-shadow: 0 0.7rem 1.3rem rgba(0, 0, 0, 0.28);
+  justify-self: end;
+  min-width: 10.8rem;
+  width: auto;
 }
 
 .ak-hook-actions .ak-danger {

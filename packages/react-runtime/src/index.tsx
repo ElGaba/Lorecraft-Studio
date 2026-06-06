@@ -114,10 +114,12 @@ function sceneDialogueBlocks(scene: SceneDefinition, characters: Map<string, Cha
 
 function SceneCharacterLayer({
   scene,
-  characters
+  characters,
+  activeBlock
 }: {
   scene: SceneDefinition;
   characters: Map<string, CharacterDefinition>;
+  activeBlock?: DialogueBlock;
 }) {
   const blocks = sceneDialogueBlocks(scene, characters);
   if (blocks.length === 0) {
@@ -133,10 +135,17 @@ function SceneCharacterLayer({
           return null;
         }
 
+        const isActive = !activeBlock || activeBlock.characterId === character.id;
+
         return (
           <img
             key={character.id}
-            className={["ak-character-sprite", positionClass(block.position), block.animation ? `ak-anim-${block.animation}` : ""].filter(Boolean).join(" ")}
+            className={[
+              "ak-character-sprite",
+              positionClass(block.position),
+              isActive ? "is-active" : "is-muted",
+              isActive && block.animation ? `ak-anim-${block.animation}` : ""
+            ].filter(Boolean).join(" ")}
             src={imageUrl}
             alt={character.displayName}
           />
@@ -323,6 +332,7 @@ function VariableReadout({ state }: { state: RuntimeState }) {
 
 export function AdventureRuntime({ game, className, onStateChange }: AdventureRuntimeProps) {
   const [state, setState] = useRuntimeState(game, onStateChange);
+  const [scriptCursor, setScriptCursor] = useState(0);
   const scene = getCurrentScene(state);
   const ending = getCurrentEnding(state);
   const choices = getAvailableChoices(state);
@@ -331,6 +341,28 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
   const characters = useMemo(() => characterMap(game.characters), [game.characters]);
   const hooks = getSceneGameplayHooks(scene, game);
   const backgroundUrl = ending ? "" : sceneBackgroundUrl(scene, game, assets);
+  const isArtScene = Boolean(backgroundUrl) && !ending;
+  const artStoryBlocks = isArtScene
+    ? scene.blocks.filter((block): block is Extract<ContentBlock, { type: "dialogue" | "narration" }> => block.type === "dialogue" || block.type === "narration")
+    : [];
+  const safeScriptCursor = Math.min(scriptCursor, artStoryBlocks.length);
+  const activeStoryBlock = isArtScene && safeScriptCursor < artStoryBlocks.length ? artStoryBlocks[safeScriptCursor] : undefined;
+  const activeDialogueBlock = activeStoryBlock?.type === "dialogue" ? activeStoryBlock : undefined;
+  const isArtScriptComplete = !isArtScene || artStoryBlocks.length === 0 || safeScriptCursor >= artStoryBlocks.length;
+  const visibleBlocks = isArtScene
+    ? isArtScriptComplete
+      ? scene.blocks.filter((block) => block.type === "gameplay_hook")
+      : activeStoryBlock
+        ? [activeStoryBlock]
+        : []
+    : scene.blocks;
+  const visibleChoices = isArtScriptComplete ? choices : [];
+  const visibleHooks = isArtScriptComplete ? hooks : [];
+  const advanceLabel = safeScriptCursor < artStoryBlocks.length - 1 ? "Advance testimony" : "Start cross-examination";
+
+  useEffect(() => {
+    setScriptCursor(0);
+  }, [ending?.id, game.metadata.id, scene.id]);
 
   function handleChoice(choiceId: string) {
     setState((current) => choose(current, choiceId));
@@ -342,6 +374,10 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
 
   function restart() {
     setState(createInitialState(game));
+  }
+
+  function advanceScript() {
+    setScriptCursor((current) => Math.min(current + 1, artStoryBlocks.length));
   }
 
   function hookForBlock(block: ContentBlock) {
@@ -359,7 +395,7 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
         ) : (
           <div className="ak-scene-backdrop" aria-hidden="true" />
         )}
-        {!ending && <SceneCharacterLayer scene={scene} characters={characters} />}
+        {!ending && <SceneCharacterLayer scene={scene} characters={characters} activeBlock={activeDialogueBlock} />}
         <section className={["ak-scene", backgroundUrl ? "has-art" : ""].filter(Boolean).join(" ")} key={ending?.id ?? scene.id}>
           <header className="ak-scene-header">
             <div>
@@ -392,8 +428,8 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
                   {scene.backgroundPrompt && <span>Prompt ready</span>}
                 </div>
               )}
-              <div className="ak-script">
-                {scene.blocks.map((block, index) => {
+              <div className={["ak-script", isArtScene && !isArtScriptComplete ? "is-vn-beat" : ""].filter(Boolean).join(" ")} aria-live={isArtScene ? "polite" : undefined}>
+                {visibleBlocks.map((block, index) => {
                   const hook = hookForBlock(block);
                   return block.type === "gameplay_hook" ? (
                     hook ? <GameplayHookPanel key={`${hook.id}-${index}`} hook={hook} onResolve={handleHook} /> : null
@@ -401,8 +437,13 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
                     <SceneBlock key={`${block.type}-${index}`} block={block} characters={characters} />
                   );
                 })}
+                {isArtScene && !isArtScriptComplete && (
+                  <button type="button" className="ak-dialogue-advance" onClick={advanceScript}>
+                    {advanceLabel}
+                  </button>
+                )}
               </div>
-              <ChoiceList choices={choices} onChoose={handleChoice} />
+              <ChoiceList choices={visibleChoices} onChoose={handleChoice} />
             </>
           )}
         </section>
@@ -411,10 +452,10 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
       <div className="ak-side-rail">
         <InventoryPanel state={state} items={items} assets={assets} />
         <VariableReadout state={state} />
-        {hooks.length > 0 && (
+        {visibleHooks.length > 0 && (
           <div className="ak-hook-index" aria-label="Active gameplay hooks">
             <span className="ak-section-label">Active hook zones</span>
-            {hooks.map((hook) => (
+            {visibleHooks.map((hook) => (
               <span key={hook.id}>{hook.id}</span>
             ))}
           </div>

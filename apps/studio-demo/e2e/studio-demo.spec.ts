@@ -76,6 +76,20 @@ test("the last testimony presents an image-backed courtroom visual novel scene",
   await expect(page.getByRole("img", { name: "Mara Vey" })).toBeVisible();
   await expect(page.getByRole("img", { name: "Lyra Mont" })).toBeVisible();
   await expect(page.getByText("Court Record", { exact: true })).toBeVisible();
+
+  await expect(page.getByText("The court record says otherwise. Let's test the exact minute you say never happened.")).toBeVisible();
+  await expect(page.getByText("I left through the front doors before the alarm. I never went below the lobby.")).not.toBeVisible();
+  await expect(page.getByRole("heading", { name: "Find the contradiction" })).not.toBeVisible();
+  await expect(page.getByText("present-contradiction")).not.toBeVisible();
+
+  await page.getByRole("button", { name: "Advance testimony" }).click();
+  await expect(page.getByText("I left through the front doors before the alarm. I never went below the lobby.")).toBeVisible();
+  await expect(page.getByText("The court record says otherwise. Let's test the exact minute you say never happened.")).not.toBeVisible();
+  await expect(page.getByText("present-contradiction")).not.toBeVisible();
+
+  await page.getByRole("button", { name: "Start cross-examination" }).click();
+  await expect(page.getByRole("heading", { name: "Find the contradiction" })).toBeVisible();
+  await expect(page.getByText("present-contradiction")).toBeVisible();
   await expect(page.getByRole("button", { name: "Present Evidence" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Press Witness" })).toBeVisible();
 });
