@@ -38,5 +38,6 @@ https://www.nintendo.com/en-gb/Games/Nintendo-DS/Professor-Layton-and-the-Curiou
 - Progression can be gated by attention checks and special puzzles.
 
 Applied direction:
-- Evidence inspection should become a puzzle-framed reveal with a clear prompt, hint rhythm, and story reward.
-- Future slices should add a Layton-like inspection step for the rain stain/photo contradiction after the keycard crack.
+- Evidence inspection is now a puzzle-framed reveal with a clear prompt, hotspot-style framing, and story reward.
+- `Rain on the Inside` opens `Photo Inspection`, asking the player to mark the stain beneath the sill before the staged-window path continues.
+- Future slices should add deeper hint rhythm, timing, and reconstruction ordering after the inspection step.

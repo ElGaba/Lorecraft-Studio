@@ -146,6 +146,48 @@ test("the last testimony presents an image-backed courtroom visual novel scene",
   await expect(page.getByText("I only went down because I heard the alarm before it sounded upstairs.")).toBeVisible();
 });
 
+test("the last testimony supports inspection and chain-of-custody gameplay modes", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByLabel("Project").selectOption("the-last-testimony");
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await page.getByRole("button", { name: "Inspect the basement elevator log" }).click();
+  await page.getByRole("button", { name: "Return to court with the keycard" }).click();
+  await page.getByRole("button", { name: "Advance testimony" }).click();
+  await page.getByRole("button", { name: "Advance testimony" }).click();
+  await page.getByRole("button", { name: "Start cross-examination" }).click();
+  await page.getByRole("button", { name: "Next statement" }).click();
+  await page.getByRole("button", { name: "I left through the front doors before the alarm. I never went below the lobby." }).click();
+  await page.getByRole("button", { name: "Elevator Keycard" }).click();
+  await page.getByRole("button", { name: "Present Evidence" }).click();
+
+  await expect(page.getByRole("heading", { name: "Witness Cracks" })).toBeVisible();
+  await page.getByRole("button", { name: "Advance testimony" }).click();
+  await page.getByRole("button", { name: "Review choices" }).click();
+  await page.getByRole("button", { name: "Reveal the window contradiction" }).click();
+
+  await expect(page.getByRole("heading", { name: "Rain on the Inside" })).toBeVisible();
+  await page.getByRole("button", { name: "Start inspection" }).click();
+  await expect(page.getByRole("heading", { name: "Photo Inspection" })).toBeVisible();
+  await expect(page.getByText("The Stain Beneath the Sill", { exact: true })).toBeVisible();
+  await expect(page.getByText("Tap the narrow stain below the latch.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Mark the stain beneath the sill" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Tap the rain reflection" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Mark the stain beneath the sill" }).click();
+  await expect(page.getByRole("heading", { name: "Staged Window Path" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Build the closing argument" }).click();
+  await expect(page.getByRole("heading", { name: "Photo Envelope Chain" })).toBeVisible();
+  await expect(page.getByText("Ione Marr", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Log the late photo envelope" }).click();
+
+  await expect(page.getByRole("heading", { name: "Closing Argument", exact: true })).toBeVisible();
+  await expect(page.getByText("Sealed Photo Envelope")).toBeVisible();
+  await expect(page.getByText("Witness Script Fragment")).toBeVisible();
+  await expect(page.getByText("chainOfCustody: 1")).toBeVisible();
+});
+
 test("the last testimony punishes presenting the right evidence on the wrong statement", async ({ page }) => {
   await page.goto("/");
 

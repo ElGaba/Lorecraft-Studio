@@ -1,6 +1,6 @@
 # Gameplay Hooks
 
-Gameplay hooks are first-class Studio objects and playable runtime placeholders. They let a project describe future interaction modules without blocking the narrative playthrough.
+Gameplay hooks are first-class Studio objects and playable runtime interaction points. They let a project describe specialized modules without blocking the narrative playthrough.
 
 ## Top-Level Hook
 
@@ -40,7 +40,13 @@ Inline hooks are still supported for compatibility, but top-level hooks are pref
 
 ## Runtime Display
 
-Each hook shows the id, type, future module, success/failure targets, narrative purpose, expected action, required inputs, and buttons to simulate success or failure.
+The React runtime currently supports typed hook panels:
+
+- `evidence_presentation` and `contradiction`: cross-examination mode with statement navigation, Press Statement feedback, Court Record evidence selection, and precise success/failure resolution.
+- `inspection`: photo/document inspection mode with a focused evidence detail prompt, hotspot-style framing, and success/failure choices.
+- other hook types: structured gameplay-mode cards with the hook's player action, required inputs, targets, and success/failure resolution.
+
+Each hook also preserves module metadata: id, type, future module, success/failure targets, narrative purpose, expected action, required inputs, layout notes, and implementation notes.
 
 The core engine resolves hook outcomes through `resolveGameplayHook(state, hookId, outcome)`.
 

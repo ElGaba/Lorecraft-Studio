@@ -273,6 +273,52 @@ function pressInsight(statement: TestimonyStatement | undefined) {
   return "Mara presses for texture. The answer holds, for now.";
 }
 
+function isCourtroomHook(hook: GameplayHook) {
+  return hook.type === "evidence_presentation" || hook.type === "contradiction";
+}
+
+function startInteractionLabel(hooks: GameplayHook[]) {
+  const firstHook = hooks[0];
+  if (!firstHook) {
+    return "Review choices";
+  }
+  if (isCourtroomHook(firstHook)) {
+    return "Start cross-examination";
+  }
+  if (firstHook.type === "inspection") {
+    return "Start inspection";
+  }
+  if (firstHook.type === "timed_choice") {
+    return "Start pressure choice";
+  }
+  if (firstHook.type === "puzzle") {
+    return "Start puzzle";
+  }
+  return "Start gameplay";
+}
+
+function inspectionSuccessLabel(hook: GameplayHook) {
+  const hint = `${hook.title ?? ""} ${hook.successCondition ?? ""} ${hook.expectedPlayerAction ?? ""}`.toLowerCase();
+  if (hint.includes("stain") || hint.includes("sill")) {
+    return "Mark the stain beneath the sill";
+  }
+  if (hint.includes("11:42") || hint.includes("row")) {
+    return "Select the 11:42 row";
+  }
+  return "Confirm inspected detail";
+}
+
+function inspectionFailureLabel(hook: GameplayHook) {
+  const hint = `${hook.title ?? ""} ${hook.failureCondition ?? ""} ${hook.expectedPlayerAction ?? ""}`.toLowerCase();
+  if (hint.includes("stain") || hint.includes("sill") || hint.includes("photo")) {
+    return "Tap the rain reflection";
+  }
+  if (hint.includes("row") || hint.includes("timestamp")) {
+    return "Select an unrelated row";
+  }
+  return "Choose irrelevant detail";
+}
+
 function GameplayHookPanel({
   hook,
   onResolve,
@@ -293,20 +339,22 @@ function GameplayHookPanel({
   const [selectedStatementIndex, setSelectedStatementIndex] = useState<number | undefined>();
   const [pressedStatementIndex, setPressedStatementIndex] = useState<number | undefined>();
   const [selectedEvidenceId, setSelectedEvidenceId] = useState("");
-  const isCourtroomHook = hook.type === "evidence_presentation" || hook.type === "contradiction";
-  const hookLabel = isCourtroomHook ? "Cross-Examination" : "Gameplay Hook";
-  const hookTitle = isCourtroomHook ? "Find the contradiction" : hook.id;
-  const hookPrompt = isCourtroomHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : "";
-  const successLabel = isCourtroomHook ? "Present Evidence" : "Simulate Success";
-  const failureLabel = isCourtroomHook ? "Press Witness" : "Simulate Failure";
+  const isCrossExam = isCourtroomHook(hook);
+  const isInspectionHook = hook.type === "inspection";
+  const hookLabel = isCrossExam ? "Cross-Examination" : isInspectionHook ? "Inspection Mode" : "Gameplay Mode";
+  const hookTitle = isCrossExam ? "Find the contradiction" : isInspectionHook ? "Photo Inspection" : hook.id;
+  const hookPrompt = isCrossExam || isInspectionHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : hook.gameplayPurpose ?? hook.narrativePurpose ?? hook.notes;
+  const successLabel = isCrossExam ? "Present Evidence" : isInspectionHook ? inspectionSuccessLabel(hook) : "Simulate Success";
+  const failureLabel = isCrossExam ? "Press Witness" : isInspectionHook ? inspectionFailureLabel(hook) : "Simulate Failure";
   const activeStatement = testimonyStatements[activeStatementIndex];
   const selectedEvidence = evidenceItems?.find((item) => item.id === selectedEvidenceId);
   const matchingStatementIndex = targetStatementIndex(testimonyStatements, hook);
-  const statementMatches = !isCourtroomHook || selectedStatementIndex === matchingStatementIndex;
-  const canPresent = !isCourtroomHook || (selectedStatementIndex !== undefined && Boolean(selectedEvidence));
+  const statementMatches = !isCrossExam || selectedStatementIndex === matchingStatementIndex;
+  const canPresent = !isCrossExam || (selectedStatementIndex !== undefined && Boolean(selectedEvidence));
   const requiredAssetIds = hook.assetRequirements ?? [];
   const evidenceMatches = selectedEvidence?.imageAssetId ? requiredAssetIds.includes(selectedEvidence.imageAssetId) : false;
-  const presentOutcome = !isCourtroomHook || (statementMatches && (requiredAssetIds.length === 0 || evidenceMatches)) ? "success" : "failure";
+  const presentOutcome = !isCrossExam || (statementMatches && (requiredAssetIds.length === 0 || evidenceMatches)) ? "success" : "failure";
+  const inspectionAssets = requiredAssetIds.map((assetId) => assets?.get(assetId)).filter((asset): asset is AssetDefinition => Boolean(asset));
 
   return (
     <section className="ak-hook" aria-label={`Gameplay hook ${hook.id}`}>
@@ -320,7 +368,7 @@ function GameplayHookPanel({
 
       {hookPrompt && <p className="ak-hook-prompt">{hookPrompt}</p>}
 
-      {isCourtroomHook && (
+      {isCrossExam && (
         <div className="ak-cross-exam-module">
           <div className="ak-statement-select">
             <div className="ak-testimony-nav">
@@ -392,6 +440,30 @@ function GameplayHookPanel({
         </div>
       )}
 
+      {isInspectionHook && (
+        <div className="ak-inspection-module">
+          <div className="ak-inspection-view">
+            <span className="ak-section-label">Inspect Evidence</span>
+            <strong>{hook.title ?? "Evidence Detail"}</strong>
+            <p>{hook.gameplayPurpose ?? hook.narrativePurpose ?? hook.notes}</p>
+            <div className="ak-hotspot-map" aria-hidden="true">
+              <span />
+            </div>
+          </div>
+          {inspectionAssets.length > 0 && (
+            <div className="ak-inspection-assets" aria-label="Inspection assets">
+              {inspectionAssets.map((asset) => (
+                <div key={asset.id}>
+                  {asset.url ? <img src={asset.url} alt="" /> : <span aria-hidden="true" />}
+                  <strong>{asset.title}</strong>
+                  <p>{asset.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="ak-hook-actions">
         <button type="button" disabled={!canPresent} onClick={() => onResolve(hook.id, presentOutcome)}>
           {successLabel}
@@ -417,9 +489,9 @@ function GameplayHookPanel({
       </dl>
 
       <p className="ak-hook-notes">{hook.narrativePurpose ?? hook.notes}</p>
-      {(hook.expectedPlayerAction || hook.requiredInputs?.length) && (
+      {((!isInspectionHook && hook.expectedPlayerAction) || hook.requiredInputs?.length) && (
         <div className="ak-hook-play-spec">
-          {hook.expectedPlayerAction && <span>{hook.expectedPlayerAction}</span>}
+          {!isInspectionHook && hook.expectedPlayerAction && <span>{hook.expectedPlayerAction}</span>}
           {hook.requiredInputs?.map((input) => <span key={input}>{input}</span>)}
         </div>
       )}
@@ -541,7 +613,7 @@ export function AdventureRuntime({ game, className, onStateChange }: AdventureRu
     : scene.blocks;
   const visibleHooks = isArtScriptComplete ? hooks : [];
   const visibleChoices = isArtScriptComplete && (!isArtScene || visibleHooks.length === 0) ? choices : [];
-  const advanceLabel = safeScriptCursor < artStoryBlocks.length - 1 ? "Advance testimony" : "Start cross-examination";
+  const advanceLabel = safeScriptCursor < artStoryBlocks.length - 1 ? "Advance testimony" : startInteractionLabel(hooks);
   const testimonyStatements = testimonyStatementsBeforeHook(scene, characters);
   const evidenceItems = state.inventory
     .map((itemId) => items.get(itemId))

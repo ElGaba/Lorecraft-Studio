@@ -81,16 +81,18 @@ The Chapter 1 target is a complete beginning, middle, climax, and chapter ending
 
 ## Gameplay Sequences
 
-The current runtime supports a playable courtroom evidence flow:
+The current runtime supports multiple playable courtroom modes:
 
 - testimony statement cards
 - statement navigation
 - Press Statement feedback
 - selectable Court Record evidence
 - correct and incorrect presentation branches
+- photo/document inspection prompts
+- chain-of-custody proof routing
 - animated impact moments
 
-The next gameplay modules planned for The Last Testimony are inspection hotspots, pressure/interrogation, and reconstruction/timeline ordering.
+The next gameplay modules planned for The Last Testimony are pressure/interrogation, deeper inspection hinting, and reconstruction/timeline ordering.
 
 ## Asset Prompts
 
