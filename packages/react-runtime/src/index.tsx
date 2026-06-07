@@ -376,6 +376,9 @@ function playthroughHookPrompt(hook: GameplayHook, fallback: string | undefined)
   if (hook.id === "witness-pressure-timed-choice") {
     return "Hale's gavel hangs over the verdict. Tie the request to the court record before the verdict closes.";
   }
+  if (hook.id === "elevator-log-parse") {
+    return "Tobin's denial is clean until the access terminal repeats one minute too loudly.";
+  }
 
   return fallback;
 }
@@ -404,10 +407,13 @@ function GameplayHookPanel({
   const [selectedEvidenceId, setSelectedEvidenceId] = useState("");
   const isCrossExam = isCourtroomHook(hook);
   const isInspectionHook = hook.type === "inspection";
+  const isElevatorLogInspection = isPlaythrough && hook.id === "elevator-log-parse";
   const isPlaythroughPressureChoice = isPlaythrough && hook.type === "timed_choice";
   const hookLabel = isCrossExam
     ? "Cross-Examination"
-    : isInspectionHook
+    : isElevatorLogInspection
+      ? "Log Inspection"
+      : isInspectionHook
       ? "Inspection Mode"
       : !isPlaythrough
         ? "Gameplay Mode"
@@ -416,7 +422,13 @@ function GameplayHookPanel({
         : hook.type === "puzzle"
           ? "Evidence Timeline"
           : "Action";
-  const hookTitle = isCrossExam ? "Find the contradiction" : isInspectionHook ? "Photo Inspection" : isPlaythrough ? hook.title ?? hook.id : hook.id;
+  const hookTitle = isCrossExam
+    ? "Find the contradiction"
+    : isElevatorLogInspection
+      ? "Basement Elevator Access Log"
+      : isInspectionHook
+        ? "Photo Inspection"
+        : isPlaythrough ? hook.title ?? hook.id : hook.id;
   const hookPrompt = playthroughHookPrompt(
     hook,
     isCrossExam || isInspectionHook ? hook.expectedPlayerAction ?? hook.narrativePurpose ?? hook.notes : hook.gameplayPurpose ?? hook.narrativePurpose ?? hook.notes
@@ -532,7 +544,43 @@ function GameplayHookPanel({
         </div>
       )}
 
-      {isInspectionHook && (
+      {isElevatorLogInspection && (
+        <div className="ak-log-inspection-module">
+          <div className="ak-log-terminal" aria-label="Basement elevator terminal rows">
+            <div className="ak-log-terminal-header">
+              <span className="ak-section-label">Access Terminal</span>
+              <strong>Storm archive / B2 elevator</strong>
+            </div>
+            <button type="button" aria-label={successLabel} onClick={() => onResolve(hook.id, "success")}>
+              <span>11:42 P.M.</span>
+              <strong>B2 Elevator / Defense file route</strong>
+              <small>Card E-117 used before Lyra says she arrived.</small>
+            </button>
+            <button type="button" aria-label={failureLabel} className="ak-log-row-decoy" onClick={() => onResolve(hook.id, "failure")}>
+              <span>12:08 A.M.</span>
+              <strong>Lobby service corridor</strong>
+              <small>After the alarm, after the witness statement was already set.</small>
+            </button>
+          </div>
+
+          {inspectionAssets.length > 0 && (
+            <div className="ak-log-evidence" aria-label="Matched evidence">
+              {inspectionAssets.map((asset) => (
+                <figure key={asset.id}>
+                  {asset.url && <img src={asset.url} alt={asset.title} />}
+                  <figcaption>
+                    <span>Matched Record</span>
+                    <strong>{asset.title}</strong>
+                    <small>{asset.description}</small>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {isInspectionHook && !isElevatorLogInspection && (
         <div className="ak-inspection-module">
           <div className="ak-inspection-view">
             <span className="ak-section-label">Inspect Evidence</span>
@@ -556,7 +604,7 @@ function GameplayHookPanel({
         </div>
       )}
 
-      {isPlaythroughPressureChoice ? (
+      {isElevatorLogInspection ? null : isPlaythroughPressureChoice ? (
         <div className="ak-hook-actions ak-pressure-actions">
           <button type="button" disabled={!canPresent} onClick={() => onResolve(hook.id, presentOutcome)}>
             <span>Evidence-led</span>

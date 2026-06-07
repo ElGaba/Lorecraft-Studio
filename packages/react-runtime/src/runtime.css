@@ -728,6 +728,123 @@
   gap: 0.58rem;
 }
 
+.ak-log-inspection-module {
+  display: grid;
+  gap: 0.64rem;
+  grid-template-columns: minmax(0, 1.1fr) minmax(11rem, 0.45fr);
+}
+
+.ak-log-terminal,
+.ak-log-evidence figure {
+  background:
+    linear-gradient(135deg, rgba(91, 211, 223, 0.12), transparent 36%),
+    rgba(3, 8, 13, 0.88);
+  border: 1px solid rgba(91, 211, 223, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.ak-log-terminal {
+  display: grid;
+  gap: 0.42rem;
+  padding: 0.62rem;
+}
+
+.ak-log-terminal-header {
+  align-items: end;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.ak-log-terminal-header strong {
+  color: #f8ead3;
+  font-size: 0.78rem;
+  line-height: 1.16;
+}
+
+.ak-log-terminal button {
+  appearance: none;
+  background:
+    linear-gradient(90deg, rgba(242, 169, 59, 0.18), rgba(91, 211, 223, 0.06)),
+    rgba(4, 12, 17, 0.94);
+  border: 1px solid rgba(242, 169, 59, 0.38);
+  color: var(--ak-text);
+  cursor: pointer;
+  display: grid;
+  gap: 0.18rem;
+  justify-items: start;
+  min-height: 4rem;
+  padding: 0.58rem 0.66rem;
+  text-align: left;
+}
+
+.ak-log-terminal button:hover {
+  border-color: rgba(242, 169, 59, 0.78);
+  filter: brightness(1.08);
+}
+
+.ak-log-terminal button span {
+  color: var(--ak-warm);
+  font-size: 0.7rem;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.ak-log-terminal button strong {
+  color: var(--ak-text);
+  font-size: 0.94rem;
+  line-height: 1.14;
+}
+
+.ak-log-terminal button small,
+.ak-log-evidence small {
+  color: var(--ak-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.28;
+}
+
+.ak-log-terminal .ak-log-row-decoy {
+  background: rgba(7, 11, 15, 0.86);
+  border-color: rgba(91, 211, 223, 0.2);
+}
+
+.ak-log-terminal .ak-log-row-decoy span {
+  color: var(--ak-muted);
+}
+
+.ak-log-evidence figure {
+  display: grid;
+  gap: 0.48rem;
+  margin: 0;
+  padding: 0.56rem;
+}
+
+.ak-log-evidence img {
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(242, 169, 59, 0.32);
+  object-fit: cover;
+  width: 100%;
+}
+
+.ak-log-evidence figcaption {
+  display: grid;
+  gap: 0.16rem;
+}
+
+.ak-log-evidence figcaption span {
+  color: var(--ak-accent);
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ak-log-evidence figcaption strong {
+  color: #f8ead3;
+  font-size: 0.86rem;
+  line-height: 1.12;
+}
+
 .ak-inspection-view {
   background:
     linear-gradient(135deg, rgba(91, 211, 223, 0.12), transparent 42%),
@@ -1218,6 +1335,48 @@
 
   .ak-pressure-actions button {
     min-height: 4.6rem;
+  }
+
+  .ak-log-inspection-module {
+    gap: 0.42rem;
+    grid-template-columns: 1fr;
+  }
+
+  .ak-log-terminal {
+    gap: 0.34rem;
+    padding: 0.5rem;
+  }
+
+  .ak-log-terminal-header {
+    align-items: start;
+    gap: 0.34rem;
+  }
+
+  .ak-log-terminal button {
+    min-height: 3.25rem;
+    padding: 0.46rem 0.52rem;
+  }
+
+  .ak-log-terminal button strong {
+    font-size: 0.9rem;
+  }
+
+  .ak-log-evidence {
+    order: -1;
+  }
+
+  .ak-log-evidence figure {
+    align-items: center;
+    grid-template-columns: 4.2rem minmax(0, 1fr);
+    padding: 0.42rem;
+  }
+
+  .ak-log-evidence img {
+    width: 4.2rem;
+  }
+
+  .ak-log-evidence small {
+    display: none;
   }
 }
 

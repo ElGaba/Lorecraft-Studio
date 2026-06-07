@@ -258,6 +258,34 @@ test("the last testimony playthrough keeps investigation scenes image-backed", a
   await expect(page.getByRole("img", { name: "Scene background: Records Crosscheck" })).toBeVisible();
 });
 
+test("the last testimony turns the elevator log into an authored inspection", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Play Chapter" }).click();
+  await enterBasementLog(page);
+  await page.getByRole("button", { name: "Inspect the elevator log" }).click();
+
+  await expect(page.getByText("Log Inspection", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Basement Elevator Access Log" })).toBeVisible();
+  await expect(page.getByText("11:42 P.M.", { exact: true })).toBeVisible();
+  await expect(page.getByText("B2 Elevator / Defense file route", { exact: true })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Elevator Keycard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Photo Inspection" })).not.toBeVisible();
+  await expect(page.getByText("Inspect a log and select the matching keycard row.")).not.toBeVisible();
+});
+
+test("the last testimony keeps log evidence visual on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Play Chapter" }).click();
+  await enterBasementLog(page);
+  await page.getByRole("button", { name: "Inspect the elevator log" }).click();
+
+  await expect(page.getByRole("img", { name: "Elevator Keycard" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Select the 11:42 row" })).toBeVisible();
+});
+
 test("the last testimony exposes a chapter overview for production readiness", async ({ page }) => {
   await page.goto("/");
 
